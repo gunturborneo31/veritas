@@ -1,26 +1,100 @@
-import BottomSheet from '@/Components/BottomSheet';
 import Icon from '@/Components/Icon';
 import PhoneFrame from '@/Components/Greeting/PhoneFrame';
 import Player from '@/Components/Greeting/Player';
 import StudioLayout from '@/Layouts/StudioLayout';
+import { FONTS, MOTIFS, PALETTES, paletteFromAccent } from '@/lib/theme';
 import { router } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+function Section({ title, hint, children }) {
+    return (
+        <section className="flex flex-col gap-space-sm px-margin pb-space-lg">
+            <div>
+                <h3 className="text-headline-sm text-on-surface">{title}</h3>
+                {hint && <p className="text-body-sm text-on-surface-variant">{hint}</p>}
+            </div>
+            {children}
+        </section>
+    );
+}
+
+function Swatch({ palette, name, isActive, onClick }) {
+    return (
+        <button type="button" onClick={onClick} className="flex flex-col items-center gap-1.5" aria-pressed={isActive}>
+            <span
+                className={`relative flex h-14 w-14 items-center justify-center rounded-2xl shadow-sm transition-all ${isActive ? 'scale-105 ring-2 ring-offset-2' : 'active:scale-95'}`}
+                style={{ background: `linear-gradient(150deg, ${palette.gradient.join(', ')})`, '--tw-ring-color': palette.accent }}
+            >
+                <span className="h-6 w-6 rounded-full border-2 border-white shadow" style={{ backgroundColor: palette.accent }} />
+                {isActive && (
+                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full text-white shadow" style={{ backgroundColor: palette.accent }}>
+                        <Icon name="check" size={13} />
+                    </span>
+                )}
+            </span>
+            <span className="max-w-[4.5rem] truncate text-[11px] font-semibold text-on-surface-variant">{name}</span>
+        </button>
+    );
+}
 
 /**
- * Langkah 3 — Gaya. Paket 1 memakai gaya default; varian lain tampil terkunci (Paket 2).
+ * Langkah Gaya — pengirim bebas mengganti warna, latar, hiasan, dan huruf judul. Tersimpan otomatis.
  */
-export default function Style({ greeting, template, styleGroups }) {
-    const [activeGroup, setActiveGroup] = useState(styleGroups[0]?.key ?? null);
-    const [lockedFeature, setLockedFeature] = useState(null);
+export default function Style({ greeting, template, templateTheme, style: savedStyle }) {
+    const [style, setStyle] = useState(savedStyle);
+    const [saveState, setSaveState] = useState({ tone: 'saved', label: 'Tersimpan' });
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const group = styleGroups.find((item) => item.key === activeGroup);
+    const isFirstRender = useRef(true);
+
+    const theme = { ...templateTheme, ...(style ?? {}) };
+    const current = style ?? templateTheme;
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+
+            return;
+        }
+
+        setSaveState({ tone: 'saving', label: 'Menyimpan…' });
+        const timer = setTimeout(
+            () =>
+                router.put(
+                    route('studio.style.update', greeting.id),
+                    { style },
+                    {
+                        preserveScroll: true,
+                        preserveState: true,
+                        onSuccess: () => setSaveState({ tone: 'saved', label: 'Tersimpan' }),
+                        onError: () => setSaveState({ tone: 'error', label: 'Gagal menyimpan' }),
+                    },
+                ),
+            450,
+        );
+
+        return () => clearTimeout(timer);
+    }, [style]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const update = (changes) =>
+        setStyle({
+            accent: current.accent,
+            soft: current.soft,
+            gradient: current.gradient,
+            motif: current.motif,
+            font: current.font,
+            ...changes,
+        });
+
+    const isPalette = (palette) => style !== null && current.accent === palette.accent && current.gradient.join() === palette.gradient.join();
+    const isCustomColor = style !== null && !PALETTES.some(isPalette) && current.accent !== templateTheme.accent;
 
     const goToPreview = () => router.post(route('studio.preview', greeting.id), {}, { onStart: () => setIsSubmitting(true), onFinish: () => setIsSubmitting(false) });
 
     return (
         <StudioLayout
-            title="Kustomisasi Kartu"
+            title="Kustomisasi Gaya"
             step={2}
+            saveState={saveState}
             onBack={() => router.visit(route('studio.edit', greeting.id))}
             actions={
                 <>
@@ -33,7 +107,7 @@ export default function Style({ greeting, template, styleGroups }) {
                     </button>
                     <button
                         type="button"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || saveState.tone === 'saving'}
                         onClick={goToPreview}
                         className="flex h-12 flex-1 items-center justify-center gap-space-xs rounded-full bg-primary px-space-lg text-label-lg text-on-primary shadow-[0_4px_16px_rgba(168,50,35,0.25)] hover:bg-primary-container disabled:opacity-60"
                     >
@@ -47,89 +121,115 @@ export default function Style({ greeting, template, styleGroups }) {
                 <div className="rounded-3xl bg-surface-container-low p-space-md shadow-sm">
                     <div className="mb-space-sm flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary" />
+                            <span className="h-2.5 w-2.5 animate-pulse rounded-full" style={{ backgroundColor: theme.accent }} />
                             <span className="text-label-md text-on-surface">Pratinjau Langsung</span>
                         </div>
-                        <span className="rounded-full bg-surface-container px-2.5 py-1 text-label-sm font-semibold text-primary">Gaya Paket 1</span>
+                        <span className="rounded-full bg-surface-container px-2.5 py-1 text-label-sm font-semibold text-on-surface-variant">{template.design_name ?? template.name}</span>
                     </div>
                     <div className="flex justify-center">
                         <PhoneFrame className="max-w-[280px]">
-                            <Player greeting={greeting} mode="studio" watermark />
+                            <Player greeting={{ ...greeting, theme }} mode="studio" watermark />
                         </PhoneFrame>
                     </div>
                 </div>
             </div>
 
-            <div className="mb-space-md px-margin">
-                <h2 className="text-headline-lg-mobile leading-snug text-on-surface">Personalisasi Gaya Visual</h2>
-                <p className="mt-1 text-body-sm text-on-surface-variant">
-                    Paket 1 sudah termasuk gaya terbaik untuk {template.name}. Ganti gaya per komponen akan tersedia di Paket 2.
-                </p>
-            </div>
-
-            <div className="no-scrollbar mb-space-lg flex items-center gap-space-xs overflow-x-auto px-margin">
-                {styleGroups.map((item) => (
+            <div className="mb-space-md flex items-start justify-between gap-3 px-margin">
+                <div>
+                    <h2 className="text-headline-lg-mobile leading-snug text-on-surface">Jadikan gayamu sendiri</h2>
+                    <p className="mt-1 text-body-sm text-on-surface-variant">Ganti warna, hiasan, dan huruf sesukamu. Gratis, sudah termasuk Paket 1.</p>
+                </div>
+                {style !== null && (
                     <button
-                        key={item.key}
                         type="button"
-                        onClick={() => setActiveGroup(item.key)}
-                        className={`whitespace-nowrap rounded-full px-4 py-2 text-label-md transition-all ${
-                            activeGroup === item.key ? 'bg-primary text-on-primary shadow-sm' : 'bg-surface-container text-on-surface'
-                        }`}
+                        onClick={() => setStyle(null)}
+                        className="flex shrink-0 items-center gap-1 rounded-full bg-surface-container px-3 py-2 text-label-sm text-on-surface hover:bg-surface-container-high"
                     >
-                        {item.name}
+                        <Icon name="restart_alt" size={15} />
+                        Warna asli
                     </button>
-                ))}
+                )}
             </div>
 
-            {group && (
-                <div className="grid grid-cols-2 gap-space-md px-margin">
-                    {group.variants.map((variant) => (
-                        <button
-                            key={variant.key}
-                            type="button"
-                            onClick={() => variant.is_locked && setLockedFeature(variant.name)}
-                            className={`relative flex flex-col gap-2 rounded-2xl p-space-sm text-left transition-all ${
-                                variant.is_locked ? 'bg-surface-container-low opacity-90 shadow-sm' : 'bg-surface-container-lowest shadow-md ring-2 ring-primary'
-                            }`}
-                        >
-                            <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-primary-fixed to-tertiary-fixed">
-                                <Icon name="palette" size={32} className="text-primary/50" />
-                                {variant.is_locked ? (
-                                    <>
-                                        <div className="absolute inset-0 flex items-center justify-center bg-inverse-surface/40 backdrop-blur-[2px]">
-                                            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-lowest/90 text-primary shadow">
-                                                <Icon name="lock" size={20} />
-                                            </span>
-                                        </div>
-                                        <span className="absolute bottom-2 left-2 right-2 rounded-full bg-inverse-surface/85 px-1.5 py-0.5 text-center text-[10px] font-medium text-surface">
-                                            🔒 Tersedia di Paket 2
-                                        </span>
-                                    </>
-                                ) : (
-                                    <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-on-primary shadow">
-                                        <Icon name="check" size={14} />
-                                    </span>
-                                )}
-                            </div>
-                            <span className="text-label-md font-semibold text-on-surface">{variant.name}</span>
-                            <span className={`text-[10px] font-semibold ${variant.is_locked ? 'text-primary' : 'text-tertiary-container'}`}>
-                                {variant.is_locked ? 'Paket 2' : 'Termasuk di Paket 1'}
-                            </span>
-                        </button>
+            <Section title="Palet warna" hint="Warna tombol, aksen, dan latar kartu.">
+                <div className="grid grid-cols-4 gap-x-2 gap-y-3 sm:grid-cols-7">
+                    <Swatch palette={templateTheme} name="Asli" isActive={style === null} onClick={() => setStyle(null)} />
+                    {PALETTES.map((palette) => (
+                        <Swatch
+                            key={palette.key}
+                            palette={palette}
+                            name={palette.name}
+                            isActive={isPalette(palette)}
+                            onClick={() => update({ accent: palette.accent, soft: palette.soft, gradient: palette.gradient })}
+                        />
                     ))}
                 </div>
-            )}
+                <label
+                    className={`mt-1 flex cursor-pointer items-center gap-3 rounded-2xl bg-surface-container-lowest p-3 shadow-sm ${isCustomColor ? 'ring-2' : ''}`}
+                    style={{ '--tw-ring-color': current.accent }}
+                >
+                    <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl shadow-inner" style={{ backgroundColor: current.accent }}>
+                        <input
+                            type="color"
+                            value={current.accent}
+                            onChange={(event) => update(paletteFromAccent(event.target.value))}
+                            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                            aria-label="Pilih warna sendiri"
+                        />
+                    </span>
+                    <span className="flex-1">
+                        <span className="block text-label-lg text-on-surface">Warna sendiri</span>
+                        <span className="block text-body-sm text-on-surface-variant">Ketuk untuk memilih warna favoritnya, latar menyesuaikan otomatis.</span>
+                    </span>
+                    <span className="font-mono text-label-sm uppercase text-on-surface-variant">{current.accent}</span>
+                </label>
+            </Section>
 
-            <BottomSheet open={lockedFeature !== null} onClose={() => setLockedFeature(null)} title="Tersedia di Paket 2" icon="workspace_premium">
-                <p className="text-body-sm font-semibold text-primary">{lockedFeature}</p>
-                <p className="text-body-sm text-on-surface-variant">
-                    Ganti gaya visual per komponen akan hadir di Paket 2. Untuk saat ini kartumu memakai gaya Paket 1 yang sudah disiapkan khusus untuk template ini.
-                </p>
-                <button type="button" onClick={() => setLockedFeature(null)} className="h-11 rounded-full bg-primary text-label-md text-on-primary shadow-md">
-                    Mengerti
-                </button>
-            </BottomSheet>
+            <Section title="Hiasan latar">
+                <div className="no-scrollbar -mx-margin flex gap-2 overflow-x-auto px-margin pb-1">
+                    {Object.entries(MOTIFS).map(([key, motif]) => {
+                        const isActive = current.motif === key;
+
+                        return (
+                            <button
+                                key={key}
+                                type="button"
+                                onClick={() => update({ motif: key })}
+                                className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-label-md transition-all active:scale-95 ${
+                                    isActive ? 'text-white shadow-md' : 'bg-surface-container-lowest text-on-surface shadow-sm'
+                                }`}
+                                style={isActive ? { backgroundColor: current.accent } : undefined}
+                            >
+                                <span>{motif.emoji}</span>
+                                {motif.label}
+                            </button>
+                        );
+                    })}
+                </div>
+            </Section>
+
+            <Section title="Huruf judul">
+                <div className="grid grid-cols-3 gap-2">
+                    {Object.entries(FONTS).map(([key, font]) => {
+                        const isActive = current.font === key;
+
+                        return (
+                            <button
+                                key={key}
+                                type="button"
+                                onClick={() => update({ font: key })}
+                                className={`flex flex-col items-center gap-1 rounded-2xl bg-surface-container-lowest p-3 shadow-sm transition-all active:scale-95 ${isActive ? 'ring-2' : ''}`}
+                                style={{ '--tw-ring-color': current.accent }}
+                            >
+                                <span className="text-[28px] font-bold leading-none" style={{ fontFamily: font.family, color: current.accent }}>
+                                    Aa
+                                </span>
+                                <span className="text-label-sm text-on-surface-variant">{font.label}</span>
+                            </button>
+                        );
+                    })}
+                </div>
+            </Section>
         </StudioLayout>
     );
 }

@@ -1,5 +1,5 @@
 import Icon from '@/Components/Icon';
-import TemplateCard, { FlowPeek, visibleFlow } from '@/Components/TemplateCard';
+import TemplateCard, { FlowPeek, cardTitle, visibleFlow } from '@/Components/TemplateCard';
 import TemplateCover from '@/Components/TemplateCover';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { rupiah } from '@/lib/format';
@@ -45,8 +45,22 @@ function Spotlight({ template }) {
                             </span>
                         ))}
                     </div>
-                    <h2 className="font-display text-headline-lg-mobile leading-tight text-on-surface">{template.name}</h2>
-                    <p className="text-body-sm text-on-surface-variant">{template.story ?? template.tagline}</p>
+                    <h2 className="font-display text-headline-lg-mobile leading-tight text-on-surface">{cardTitle(template)}</h2>
+                    <p className="text-body-sm text-on-surface-variant">{template.series?.story ?? template.story ?? template.tagline}</p>
+                    {template.designs?.length > 1 && (
+                        <div className="no-scrollbar -mx-1 flex gap-1.5 overflow-x-auto px-1 py-0.5">
+                            {template.designs.map((design) => (
+                                <Link
+                                    key={design.slug}
+                                    href={route('catalog.show', design.slug)}
+                                    className="flex shrink-0 items-center gap-1.5 rounded-full bg-surface-container-low py-1 pl-1 pr-2.5 text-[11px] font-semibold text-on-surface"
+                                >
+                                    <span className="h-4 w-4 rounded-full" style={{ background: `linear-gradient(135deg, ${design.theme.accent}, ${design.theme.gradient[2]})` }} />
+                                    {design.design_name ?? design.name}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
 
                     <ol className="flex flex-wrap items-center gap-1 text-[11px] text-on-surface">
                         {flow.map((step, index) => (
@@ -67,7 +81,9 @@ function Spotlight({ template }) {
 
                     <div className="mt-auto flex items-end justify-between gap-3 pt-2">
                         <div>
-                            <p className="text-label-sm text-on-surface-variant">Paket 1 • ~{template.duration_minutes} menit</p>
+                            <p className="text-label-sm text-on-surface-variant">
+                                Paket 1 • {template.scene_count} halaman • ~{template.duration_minutes} menit
+                            </p>
                             <p className="font-display text-headline-md" style={{ color: accent }}>
                                 {rupiah(template.price)}
                             </p>
@@ -128,6 +144,7 @@ export default function Index({ categories, templates, filters }) {
     const upcoming = categories.filter((category) => category.templates_count === 0);
     const activeCategory = categories.find((category) => category.slug === filters.kategori);
     const totalTemplates = categories.reduce((sum, category) => sum + category.templates_count, 0);
+    const totalSeries = templates.length;
 
     const chipClass = (isActive) =>
         `flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-label-md transition-all active:scale-95 ${
@@ -142,7 +159,7 @@ export default function Index({ categories, templates, filters }) {
                 <div className="relative">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-container-lowest px-3 py-1 text-label-sm text-primary shadow-sm">
                         <Icon name="auto_awesome" filled size={14} className="text-tertiary" />
-                        Katalog terkurasi • {totalTemplates} cerita interaktif
+                        {isFiltered ? 'Katalog terkurasi' : `${totalSeries} cerita interaktif`} • {totalTemplates} desain
                     </span>
                     <h1 className="mt-3 max-w-md font-display text-headline-lg-mobile leading-tight text-on-surface sm:text-headline-lg">
                         Pilih cara kamu bilang <span className="text-primary">“aku peduli”</span>
@@ -191,7 +208,7 @@ export default function Index({ categories, templates, filters }) {
                 <section className="px-margin pb-space-lg">
                     <div className="mb-space-sm flex items-end justify-between">
                         <h2 className="font-display text-headline-sm text-on-surface">
-                            {isFiltered ? `${templates.length} template ditemukan` : 'Cerita lainnya'}
+                            {isFiltered ? `${templates.length} cerita ditemukan` : 'Cerita lainnya'}
                         </h2>
                         {isFiltered && (
                             <button type="button" onClick={() => router.get(route('catalog.index'))} className="text-label-md text-primary">

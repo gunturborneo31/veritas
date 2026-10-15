@@ -2,21 +2,86 @@ import Icon from '@/Components/Icon';
 import TemplateCover from '@/Components/TemplateCover';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { rupiah } from '@/lib/format';
+import { themeVars } from '@/lib/theme';
 import { Link, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /**
- * Detail template: info, isi yang bisa ditambahkan, "Coba demo" / "Buat sekarang" (desain detailtemplate).
+ * Pemilih desain dalam satu seri: setiap desain punya alur, isi, dan warna sendiri.
+ */
+function DesignPicker({ designs, current }) {
+    const listRef = useRef(null);
+    const activeRef = useRef(null);
+
+    // Geser daftar secara horizontal saja agar desain aktif terlihat, tanpa menggulir halaman.
+    useEffect(() => {
+        const [list, active] = [listRef.current, activeRef.current];
+
+        if (list && active) {
+            list.scrollLeft = active.offsetLeft - (list.clientWidth - active.clientWidth) / 2;
+        }
+    }, [current]);
+
+    return (
+        <section className="mt-space-md flex flex-col gap-space-xs">
+            <div className="flex items-end justify-between px-margin">
+                <h3 className="text-headline-sm text-on-surface">Pilih desain</h3>
+                <span className="text-label-sm text-on-surface-variant">{designs.length} desain • warna bisa diganti</span>
+            </div>
+            <div ref={listRef} className="no-scrollbar relative flex gap-3 overflow-x-auto px-margin py-2">
+                {designs.map((design) => {
+                    const isActive = design.slug === current;
+
+                    return (
+                        <button
+                            key={design.slug}
+                            ref={isActive ? activeRef : null}
+                            type="button"
+                            onClick={() => !isActive && router.visit(route('catalog.show', design.slug), { preserveScroll: true, replace: true })}
+                            aria-pressed={isActive}
+                            className={`flex w-32 shrink-0 flex-col overflow-hidden rounded-2xl bg-surface-container-lowest text-left shadow-sm transition-all active:scale-95 ${
+                                isActive ? 'ring-2 ring-offset-2' : 'opacity-90'
+                            }`}
+                            style={{ '--tw-ring-color': design.theme.accent }}
+                        >
+                            <div className="relative aspect-[4/3] w-full">
+                                <TemplateCover template={design} size="sm" />
+                                {isActive && (
+                                    <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full text-white shadow" style={{ backgroundColor: design.theme.accent }}>
+                                        <Icon name="check" size={13} />
+                                    </span>
+                                )}
+                            </div>
+                            <div className="flex flex-col gap-0.5 p-2.5">
+                                <span className="truncate text-label-md text-on-surface">{design.design_name ?? design.name}</span>
+                                <span className="text-[11px] text-on-surface-variant">{design.scene_count} halaman</span>
+                                <span className="text-label-sm" style={{ color: design.theme.accent }}>
+                                    {rupiah(design.price)}
+                                </span>
+                            </div>
+                        </button>
+                    );
+                })}
+            </div>
+        </section>
+    );
+}
+
+/**
+ * Detail template: pilih desain, info, isi yang bisa ditambahkan, "Coba demo" / "Buat sekarang" (desain detailtemplate).
  */
 export default function Show({ template }) {
     const [isCreating, setIsCreating] = useState(false);
+    // Warna halaman ikut desain, tetapi huruf judul halaman tetap huruf aplikasi.
+    const pageVars = { ...themeVars(template.theme), '--font-display': undefined };
+    const title = template.series ? `${template.series.name} · ${template.design_name ?? template.name}` : template.name;
 
     const create = () =>
         router.post(route('studio.store', template.slug), {}, { onStart: () => setIsCreating(true), onFinish: () => setIsCreating(false) });
 
     return (
         <PublicLayout
-            title={template.name}
+            title={title}
             hideBottomNav
             header={
                 <div className="flex min-w-0 items-center gap-space-sm">
@@ -32,7 +97,7 @@ export default function Show({ template }) {
                 </div>
             }
         >
-            <div className="flex w-full flex-col pb-40">
+            <div className="flex w-full flex-col pb-40" style={pageVars}>
                 <section className="relative flex w-full flex-col items-center px-margin pt-space-md">
                     <div className="pointer-events-none absolute top-12 -z-10 h-64 w-64 rounded-full bg-primary-fixed-dim/40 blur-3xl" />
                     {template.highlight_label && (
@@ -63,14 +128,20 @@ export default function Show({ template }) {
                     </div>
                 </section>
 
+                {template.designs.length > 1 && <DesignPicker designs={template.designs} current={template.slug} />}
+
                 <section className="mt-space-md flex flex-col gap-space-xs px-margin">
                     <div className="flex flex-wrap items-center gap-space-xs">
                         <span className="inline-flex items-center gap-1 rounded-full bg-tertiary-fixed px-2.5 py-0.5 text-label-sm text-on-tertiary-fixed">
                             <Icon name="sell" size={14} /> {rupiah(template.price)} • Paket 1
                         </span>
                         <span className="inline-flex items-center gap-1 rounded-full bg-primary-fixed px-2.5 py-0.5 text-label-sm text-on-primary-fixed">{template.tier}</span>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-surface-container px-2.5 py-0.5 text-label-sm text-on-surface">
+                            <Icon name="auto_stories" size={14} /> {template.scene_count} halaman • ~{template.duration_minutes} menit
+                        </span>
                     </div>
-                    <h2 className="mt-1 text-headline-lg-mobile text-on-surface">{template.name}</h2>
+                    {template.series && <p className="mt-1 text-label-md uppercase tracking-wider text-primary">{template.series.name}</p>}
+                    <h2 className="text-headline-lg-mobile text-on-surface">{template.design_name ?? template.name}</h2>
                     {template.description && <p className="text-body-md leading-relaxed text-on-surface-variant">{template.description}</p>}
                     <div className="no-scrollbar -mx-margin flex items-center gap-2 overflow-x-auto px-margin py-2">
                         {template.category && (
@@ -113,7 +184,7 @@ export default function Show({ template }) {
                 </section>
             </div>
 
-            <footer className="pb-safe fixed inset-x-0 bottom-0 z-40 bg-surface/95 px-margin py-3 shadow-bar backdrop-blur-xl">
+            <footer className="pb-safe fixed inset-x-0 bottom-0 z-40 bg-surface/95 px-margin py-3 shadow-bar backdrop-blur-xl" style={pageVars}>
                 <div className="mx-auto flex max-w-lg items-center gap-space-sm">
                     <Link
                         href={route('catalog.demo', template.slug)}

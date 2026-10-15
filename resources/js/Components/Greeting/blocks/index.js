@@ -1,4 +1,5 @@
 import AskQuestion from './AskQuestion';
+import BigQuote from './BigQuote';
 import BlowCandle from './BlowCandle';
 import Certificate from './Certificate';
 import Closing from './Closing';
@@ -11,7 +12,9 @@ import Gallery from './Gallery';
 import GateBadge from './GateBadge';
 import LayeredMessage from './LayeredMessage';
 import Letter from './Letter';
+import Numbers from './Numbers';
 import Quiz from './Quiz';
+import Reasons from './Reasons';
 import ScratchCard from './ScratchCard';
 import TimeLock from './TimeLock';
 import Timeline from './Timeline';
@@ -36,6 +39,9 @@ export const BLOCKS = {
     kupon_janji: Coupons,
     hitung_mundur: Countdown,
     linimasa: Timeline,
+    kutipan: BigQuote,
+    daftar_alasan: Reasons,
+    angka_kita: Numbers,
     sertifikat: Certificate,
     tanya_jawab: AskQuestion,
     dinding_ucapan: ContributionWall,

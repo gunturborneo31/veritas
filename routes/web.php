@@ -53,7 +53,8 @@ Route::post('katalog/{template}/buat', [StudioController::class, 'store'])
 Route::prefix('studio/{greeting}')->name('studio.')->group(function () {
     Route::get('/', [StudioController::class, 'edit'])->name('edit');
     Route::put('/', [StudioController::class, 'update'])->name('update');
-    Route::get('gaya', StudioStyleController::class)->name('style');
+    Route::get('gaya', [StudioStyleController::class, 'show'])->name('style');
+    Route::put('gaya', [StudioStyleController::class, 'update'])->name('style.update');
     Route::post('media', [GreetingMediaController::class, 'store'])->middleware('throttle:30,1')->name('media.store');
     Route::delete('media/{media}', [GreetingMediaController::class, 'destroy'])->name('media.destroy');
     Route::post('pratinjau', [PreviewController::class, 'store'])->name('preview');

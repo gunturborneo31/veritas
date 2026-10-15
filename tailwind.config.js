@@ -86,7 +86,7 @@ export default {
             },
             fontFamily: {
                 sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-                display: ['Epilogue', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                display: ['var(--font-display)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
             },
             fontSize: {
                 'display-hero': ['40px', { lineHeight: '48px', letterSpacing: '-0.03em', fontWeight: '800' }],

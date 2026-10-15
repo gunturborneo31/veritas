@@ -6,6 +6,7 @@ use App\Enums\GreetingStatus;
 use App\Models\Contribution;
 use App\Models\Greeting;
 use App\Models\GreetingSnapshot;
+use App\Models\Template;
 use Illuminate\Support\Str;
 use LogicException;
 
@@ -24,6 +25,11 @@ class PublishGreeting
         $greeting->loadMissing('template', 'contributions.media');
         $content = [
             ...($greeting->content ?? ['components' => []]),
+            // Tampilan ikut dibekukan agar perubahan tema template kelak tidak mengubah kartu yang sudah terkirim.
+            'style' => array_intersect_key(
+                $greeting->template->resolvedTheme($greeting->content['style'] ?? null),
+                array_flip(Template::CUSTOMIZABLE_THEME_KEYS),
+            ),
             'contributions' => $greeting->contributions
                 ->where('is_hidden', false)
                 ->sortBy('id')

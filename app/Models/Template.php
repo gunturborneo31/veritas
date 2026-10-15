@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
  * Template = rakitan komponen berurutan + data contoh + aset.
  */
 #[Fillable([
-    'category_id', 'slug', 'name', 'tagline', 'story', 'description', 'tier', 'price', 'duration_minutes',
+    'category_id', 'series_id', 'slug', 'name', 'design_name', 'tagline', 'story', 'description', 'tier', 'price', 'duration_minutes',
     'cover_path', 'theme', 'highlight_icon', 'highlight_label', 'tags', 'sample_content', 'is_published', 'sort_order',
 ])]
 class Template extends Model
@@ -28,7 +28,7 @@ class Template extends Model
     /**
      * Tema visual bawaan bila template belum punya tema sendiri.
      *
-     * @var array{accent: string, soft: string, gradient: list<string>, emoji: string, motif: string}
+     * @var array{accent: string, soft: string, gradient: list<string>, emoji: string, motif: string, font: string}
      */
     public const DEFAULT_THEME = [
         'accent' => '#a83223',
@@ -36,7 +36,29 @@ class Template extends Model
         'gradient' => ['#fff7f9', '#ffeff8', '#ffdff7'],
         'emoji' => '💌',
         'motif' => 'hearts',
+        'font' => 'modern',
     ];
+
+    /**
+     * Hiasan latar yang bisa dipilih (lihat TemplateCover.jsx).
+     *
+     * @var list<string>
+     */
+    public const MOTIFS = ['confetti', 'hearts', 'stars', 'petals', 'rain', 'film', 'none'];
+
+    /**
+     * Gaya huruf judul: modern (Epilogue), klasik (Playfair Display), tulisan (Caveat).
+     *
+     * @var list<string>
+     */
+    public const FONTS = ['modern', 'klasik', 'tulisan'];
+
+    /**
+     * Bagian tema yang boleh diganti pengirim di Studio (langkah Gaya).
+     *
+     * @var list<string>
+     */
+    public const CUSTOMIZABLE_THEME_KEYS = ['accent', 'soft', 'gradient', 'motif', 'font'];
 
     protected function casts(): array
     {
@@ -69,6 +91,14 @@ class Template extends Model
     }
 
     /**
+     * @return BelongsTo<Series, $this>
+     */
+    public function series(): BelongsTo
+    {
+        return $this->belongsTo(Series::class);
+    }
+
+    /**
      * @return HasMany<TemplateComponent, $this>
      */
     public function components(): HasMany
@@ -90,11 +120,18 @@ class Template extends Model
     }
 
     /**
-     * @return array{accent: string, soft: string, gradient: list<string>, emoji: string, motif: string}
+     * Tema akhir: bawaan aplikasi ← tema template ← gaya pilihan pengirim (bila ada).
+     *
+     * @param  array<string, mixed>|null  $style
+     * @return array{accent: string, soft: string, gradient: list<string>, emoji: string, motif: string, font: string}
      */
-    public function resolvedTheme(): array
+    public function resolvedTheme(?array $style = null): array
     {
-        return [...self::DEFAULT_THEME, ...($this->theme ?? [])];
+        return [
+            ...self::DEFAULT_THEME,
+            ...($this->theme ?? []),
+            ...array_intersect_key($style ?? [], array_flip(self::CUSTOMIZABLE_THEME_KEYS)),
+        ];
     }
 
     /**
@@ -120,6 +157,11 @@ class Template extends Model
         return [
             'slug' => $this->slug,
             'name' => $this->name,
+            'design_name' => $this->design_name,
+            'series' => $this->series_id !== null && $this->relationLoaded('series')
+                ? ['slug' => $this->series->slug, 'name' => $this->series->name, 'tagline' => $this->series->tagline, 'story' => $this->series->story]
+                : null,
+            'scene_count' => count(array_filter($flow, fn (array $step): bool => ! in_array($step['key'], ['musik_latar', 'gembok_pin'], true))),
             'tagline' => $this->tagline,
             'story' => $this->story,
             'tier' => $this->tier->label(),
@@ -137,6 +179,35 @@ class Template extends Model
             'category' => $this->relationLoaded('category')
                 ? ['name' => $this->category->name, 'slug' => $this->category->slug, 'emoji' => $this->category->emoji]
                 : null,
+        ];
+    }
+
+    /**
+     * Kunci pengelompokan katalog: desain satu seri tampil sebagai satu kartu.
+     */
+    public function catalogGroupKey(): string
+    {
+        return $this->series_id !== null ? "seri-{$this->series_id}" : "template-{$this->id}";
+    }
+
+    /**
+     * Ringkasan satu desain di dalam seri untuk pemilih desain di katalog.
+     *
+     * @return array{slug: string, name: string, design_name: ?string, price: int, duration_minutes: int, scene_count: int, theme: array<string, mixed>, tier: string}
+     */
+    public function toDesignArray(): array
+    {
+        $card = $this->toCardArray();
+
+        return [
+            'slug' => $card['slug'],
+            'name' => $card['name'],
+            'design_name' => $card['design_name'],
+            'price' => $card['price'],
+            'duration_minutes' => $card['duration_minutes'],
+            'scene_count' => $card['scene_count'],
+            'theme' => $card['theme'],
+            'tier' => $card['tier'],
         ];
     }
 

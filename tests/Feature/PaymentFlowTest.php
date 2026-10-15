@@ -9,6 +9,7 @@ use App\Models\Greeting;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
+use App\Support\Greetings\GreetingPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -53,6 +54,22 @@ class PaymentFlowTest extends TestCase
         $this->assertSame($greeting->content['components'], $greeting->snapshot->content['components']);
         $this->assertSame([], $greeting->snapshot->content['contributions']);
         $this->assertSame('sampul', $greeting->snapshot->components[0]['key']);
+    }
+
+    public function test_published_card_keeps_its_colors_when_the_template_theme_changes_later(): void
+    {
+        $order = $this->orderAwaitingReview();
+        $template = $order->greeting->template;
+        $template->update(['theme' => ['accent' => '#1f6b52', 'motif' => 'stars']]);
+        $order->greeting->forceFill(['content' => [...$order->greeting->content, 'style' => ['font' => 'klasik']]])->saveQuietly();
+
+        $this->actingAs(User::factory()->admin()->create())->post(route('admin.orders.confirm', $order));
+        $template->update(['theme' => ['accent' => '#000000', 'motif' => 'rain']]);
+
+        $theme = app(GreetingPresenter::class)->forSnapshot($order->greeting->refresh()->snapshot)['theme'];
+        $this->assertSame('#1f6b52', $theme['accent']);
+        $this->assertSame('stars', $theme['motif']);
+        $this->assertSame('klasik', $theme['font']);
     }
 
     public function test_non_admin_cannot_confirm_payment(): void

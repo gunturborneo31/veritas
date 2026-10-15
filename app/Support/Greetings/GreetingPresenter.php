@@ -49,7 +49,7 @@ class GreetingPresenter
                 'occasion' => $greeting->occasion,
             ],
             gate: $greeting->gate,
-            theme: $greeting->template->resolvedTheme(),
+            theme: $greeting->template->resolvedTheme($greeting->content['style'] ?? null),
         ), 'contributions' => $contributions];
     }
 
@@ -68,7 +68,7 @@ class GreetingPresenter
                 'occasion' => $snapshot->occasion,
             ],
             gate: null,
-            theme: $snapshot->template->resolvedTheme(),
+            theme: $snapshot->template->resolvedTheme($snapshot->content['style'] ?? null),
         ), 'contributions' => $this->presentFrozenContributions($snapshot->content['contributions'] ?? [], $snapshot->greeting_id)];
     }
 

@@ -18,10 +18,12 @@ class HomeController extends Controller
             'categories' => Category::query()->orderBy('sort_order')->get(['name', 'slug', 'emoji']),
             'featured' => Template::query()
                 ->published()
-                ->with('category', 'components.component')
+                ->with('category', 'series', 'components.component')
                 ->orderBy('sort_order')
-                ->limit(3)
                 ->get()
+                ->unique(fn (Template $template): string => $template->catalogGroupKey())
+                ->take(3)
+                ->values()
                 ->map(fn (Template $template): array => $template->toCardArray()),
         ]);
     }

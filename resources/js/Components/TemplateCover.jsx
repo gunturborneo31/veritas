@@ -3,9 +3,9 @@ import Icon from '@/Components/Icon';
 const FALLBACK_THEME = { accent: '#a83223', soft: '#ffdad4', gradient: ['#fff7f9', '#ffeff8', '#ffdff7'], emoji: '💌', motif: 'hearts' };
 
 /**
- * Ornamen latar sesuai motif tema template.
+ * Ornamen latar sesuai motif tema template. Dipakai juga sebagai hiasan latar pemutar ucapan.
  */
-function Motif({ motif, accent }) {
+export function Motif({ motif, accent, opacity = 1 }) {
     const items = {
         confetti: [
             [12, 14, 'rect', 10, 25],
@@ -55,7 +55,7 @@ function Motif({ motif, accent }) {
     }[motif] ?? [];
 
     return (
-        <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" style={{ opacity }} viewBox="0 0 100 100" preserveAspectRatio="none">
             {items.map(([x, y, shape, size = 6, rotate = 0], index) => {
                 const props = { fill: accent, opacity: 0.22 + (index % 3) * 0.08 };
 

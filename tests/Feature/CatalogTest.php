@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Component;
+use App\Models\Series;
 use App\Models\Template;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -63,6 +64,45 @@ class CatalogTest extends TestCase
         $this->get(route('catalog.index'))->assertInertia(fn (Assert $page) => $page
             ->where('templates.0.flow.0.optional', false)
             ->where('templates.0.flow.1.optional', true));
+    }
+
+    public function test_designs_of_one_series_share_a_single_catalog_card(): void
+    {
+        $series = Series::factory()->create(['name' => 'Tiup Lilin']);
+        Template::factory()->for($series)->create(['slug' => 'pesta', 'design_name' => 'Pesta', 'price' => 35000, 'sort_order' => 0]);
+        Template::factory()->for($series)->create(['slug' => 'pastel', 'design_name' => 'Pastel', 'price' => 29000, 'sort_order' => 1]);
+        Template::factory()->create(['slug' => 'mandiri', 'sort_order' => 2]);
+
+        $this->get(route('catalog.index'))->assertInertia(fn (Assert $page) => $page
+            ->has('templates', 2)
+            ->where('templates.0.slug', 'pesta')
+            ->where('templates.0.series.name', 'Tiup Lilin')
+            ->where('templates.0.designs.1.slug', 'pastel')
+            ->where('templates.0.designs.1.price', 29000)
+            ->has('templates.1.designs', 1));
+    }
+
+    public function test_template_detail_lists_only_published_designs_of_its_series(): void
+    {
+        $series = Series::factory()->create();
+        $template = Template::factory()->for($series)->create(['sort_order' => 0]);
+        Template::factory()->for($series)->create(['slug' => 'desain-lain', 'sort_order' => 1]);
+        Template::factory()->for($series)->unpublished()->create();
+
+        $this->get(route('catalog.show', $template))->assertInertia(fn (Assert $page) => $page
+            ->has('template.designs', 2)
+            ->where('template.designs.1.slug', 'desain-lain'));
+    }
+
+    public function test_search_matches_series_name(): void
+    {
+        $series = Series::factory()->create(['name' => 'Lempar Toga']);
+        Template::factory()->for($series)->create(['name' => 'Biru Akademik']);
+        Template::factory()->create(['name' => 'Ketupat']);
+
+        $this->get(route('catalog.index', ['cari' => 'toga']))->assertInertia(fn (Assert $page) => $page
+            ->has('templates', 1)
+            ->where('templates.0.name', 'Biru Akademik'));
     }
 
     public function test_search_matches_template_story(): void

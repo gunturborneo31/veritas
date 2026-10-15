@@ -1,4 +1,5 @@
 import Icon from '@/Components/Icon';
+import { Motif } from '@/Components/TemplateCover';
 import { resolveTheme, themeVars } from '@/lib/theme';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import GateBadge from './blocks/GateBadge';
@@ -110,6 +111,7 @@ export default function Player({
             className="relative flex h-full w-full flex-col overflow-hidden"
             style={{ ...themeVars(theme), background: `linear-gradient(180deg, ${theme.gradient.join(', ')})` }}
         >
+            <Motif motif={theme.motif} accent={theme.accent} opacity={0.55} />
             {watermark && <Watermark recipientName={base.recipient_name} />}
             <div className="pointer-events-none absolute -right-20 -top-32 h-80 w-80 rounded-full blur-3xl" style={{ backgroundColor: theme.soft, opacity: 0.6 }} />
             <div className="pointer-events-none absolute -left-28 top-1/3 h-72 w-72 rounded-full blur-3xl" style={{ backgroundColor: theme.accent, opacity: 0.08 }} />

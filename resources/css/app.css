@@ -9,6 +9,7 @@
         --color-primary-fixed: 255 218 212;
         --color-primary-fixed-dim: 255 180 168;
         --color-on-primary-fixed: 65 1 0;
+        --font-display: Epilogue, ui-sans-serif, system-ui, sans-serif;
     }
 
     html,

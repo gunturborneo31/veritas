@@ -28,8 +28,8 @@ export default function Demo({ template, greeting }) {
                     <Icon name="arrow_back" size={18} />
                     Kembali
                 </Link>
-                <span className="rounded-full bg-white/70 px-3 py-1.5 text-label-sm text-primary shadow-sm backdrop-blur">
-                    {theme.emoji} Demo • {template.name}
+                <span className="max-w-[220px] truncate rounded-full bg-white/70 px-3 py-1.5 text-label-sm text-primary shadow-sm backdrop-blur">
+                    {theme.emoji} Demo • {template.design_name ?? template.name}
                 </span>
             </div>
 

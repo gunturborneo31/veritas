@@ -18,7 +18,7 @@ class SaveGreetingDraft
      * Simpan isi draf (autosave). Mengubah draf yang sedang menunggu bayar
      * membatalkan pesanan lama, karena konfirmasi data harus diulang.
      *
-     * @param  array{recipient_name?: ?string, sender_name?: ?string, occasion?: ?string, content?: ?array<string, mixed>}  $data
+     * @param  array{recipient_name?: ?string, sender_name?: ?string, occasion?: ?string, content?: ?array<string, mixed>, style?: ?array<string, mixed>}  $data
      */
     public function handle(Greeting $greeting, array $data): Greeting
     {
@@ -38,7 +38,11 @@ class SaveGreetingDraft
 
             $greeting->fill([
                 ...array_intersect_key($data, array_flip(['recipient_name', 'sender_name', 'occasion', 'opens_at'])),
-                'content' => ['components' => array_replace($greeting->content['components'] ?? [], $content['components'])],
+                'content' => array_filter([
+                    ...($greeting->content ?? []),
+                    'components' => array_replace($greeting->content['components'] ?? [], $content['components']),
+                    'style' => array_key_exists('style', $data) ? $data['style'] : ($greeting->content['style'] ?? null),
+                ], fn (mixed $value): bool => $value !== null),
                 'status' => GreetingStatus::Draf,
                 'last_edited_at' => now(),
             ])->save();

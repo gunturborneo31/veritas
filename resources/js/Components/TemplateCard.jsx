@@ -40,6 +40,33 @@ export function FlowPeek({ template, onClose }) {
 }
 
 /**
+ * Titik warna tiap desain dalam satu seri ("4 desain").
+ */
+export function DesignDots({ designs = [] }) {
+    if (designs.length < 2) {
+        return null;
+    }
+
+    return (
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-on-surface-variant">
+            <span className="flex -space-x-1">
+                {designs.slice(0, 5).map((design) => (
+                    <span key={design.slug} className="h-3.5 w-3.5 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: design.theme.accent }} />
+                ))}
+            </span>
+            {designs.length} desain
+        </span>
+    );
+}
+
+/**
+ * Judul & cerita kartu: seri bila template bagian dari seri, selain itu template itu sendiri.
+ */
+export function cardTitle(template) {
+    return template.series?.name ?? template.name;
+}
+
+/**
  * Kartu template katalog: sampul bertema, intip alur, info durasi & interaksi.
  */
 export default function TemplateCard({ template, wide = false }) {
@@ -78,8 +105,11 @@ export default function TemplateCard({ template, wide = false }) {
             </div>
 
             <div className="flex flex-1 flex-col gap-1.5 p-3">
-                <h2 className="line-clamp-1 font-display text-headline-sm text-on-surface">{template.name}</h2>
-                {template.story && <p className="line-clamp-2 text-[12.5px] leading-snug text-on-surface-variant">{template.story}</p>}
+                <h2 className="line-clamp-1 font-display text-headline-sm text-on-surface">{cardTitle(template)}</h2>
+                {(template.series?.story ?? template.story) && (
+                    <p className="line-clamp-2 text-[12.5px] leading-snug text-on-surface-variant">{template.series?.story ?? template.story}</p>
+                )}
+                <DesignDots designs={template.designs} />
 
                 <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 pt-1 text-[11px] text-on-surface-variant">
                     <span className="inline-flex items-center gap-0.5">
@@ -87,7 +117,7 @@ export default function TemplateCard({ template, wide = false }) {
                     </span>
                     <span className="inline-flex items-center gap-0.5">
                         <Icon name="auto_stories" size={13} />
-                        {flow.filter((step) => !step.optional).length} bagian
+                        {template.scene_count} halaman
                     </span>
                     {template.needs_microphone && (
                         <span className="inline-flex items-center gap-0.5">
@@ -99,7 +129,8 @@ export default function TemplateCard({ template, wide = false }) {
 
                 <div className="flex items-center justify-between gap-2 pt-1.5">
                     <span className="font-display text-label-lg" style={{ color: accent }}>
-                        {rupiah(template.price)}
+                        {(template.designs?.length ?? 0) > 1 && <span className="text-[10px] font-semibold text-on-surface-variant">mulai </span>}
+                        {rupiah(Math.min(template.price, ...(template.designs ?? []).map((design) => design.price)))}
                     </span>
                     <Link
                         href={route('catalog.demo', template.slug)}
