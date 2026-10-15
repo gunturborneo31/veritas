@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface": "#fff7f9", "primary-fixed-dim": "#ffb4a8", "on-tertiary-container": "#fffbff", "tertiary-fixed": "#ffdead", "tertiary-container": "#9b6b00", "on-error": "#ffffff", "surface-variant": "#fad9f2", "surface-container-highest": "#fad9f2", "secondary": "#635d59", "background": "#fff7f9", "surface-container-lowest": "#ffffff", "on-surface-variant": "#58413d", "inverse-primary": "#ffb4a8", "outline-variant": "#e0bfba", "secondary-fixed": "#eae1dc", "inverse-surface": "#3f293c", "outline": "#8c716c", "on-primary": "#ffffff", "on-tertiary": "#ffffff", "on-error-container": "#93000a", "on-tertiary-fixed": "#281900", "on-secondary": "#ffffff", "on-secondary-container": "#68615e", "surface-container-high": "#ffdff7", "on-secondary-fixed": "#1f1b18", "surface-container": "#ffe7f8", "surface-container-low": "#ffeff8", "on-primary-container": "#fffbff", "inverse-on-surface": "#ffebf8", "surface-bright": "#fff7f9", "surface-tint": "#ab3425", "tertiary-fixed-dim": "#fabc4d", "primary": "#a83223", "surface-dim": "#f1d1e9", "error-container": "#ffdad6", "tertiary": "#7b5500", "primary-container": "#c94a38", "secondary-fixed-dim": "#cec5c0", "on-secondary-fixed-variant": "#4b4642", "on-primary-fixed": "#410100", "on-background": "#281526", "secondary-container": "#e7ded9", "on-surface": "#281526", "error": "#ba1a1a", "on-primary-fixed-variant": "#8a1c10", "primary-fixed": "#ffdad4", "on-tertiary-fixed-variant": "#604100" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-lg": "1.5rem", "gutter": "1rem", "space-xs": "0.25rem", "gutter-tablet": "1.5rem", "space-xl": "2.5rem", "space-md": "1rem", "margin-tablet": "2rem", "gutter-desktop": "2rem", "margin-desktop": "3rem", "margin": "1.25rem", "space-sm": "0.5rem" }, "fontFamily": { "headline-md": ["Epilogue"], "body-lg": ["Plus Jakarta Sans"], "headline-lg": ["Epilogue"], "label-sm": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Epilogue"], "headline-sm": ["Epilogue"], "label-md": ["Plus Jakarta Sans"], "display-hero-mobile": ["Epilogue"], "label-lg": ["Plus Jakarta Sans"], "display-hero": ["Epilogue"], "body-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"] }, "fontSize": { "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }], "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "display-hero-mobile": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "800" }], "label-lg": ["15px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "display-hero": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "800" }], "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs"><button aria-label="Kembali" class="min-w-[44px] min-h-[44px] -ml-2 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-low transition-colors" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[22px]">arrow_back</span></button><img alt="SVG logo for 'KartuKita', an Indonesian interactive digital greetings platform. A warm, cute and heartfelt symbol combining an envelope unfolding with a warm heart and playful sparkles. Flat modern vector aesthetic, warm coral (#E05A47), deep plum (#2E1A2C), and soft gold (#E5A93C) accents, clean and friendly.. Design context: - Primary color: #e05a47
+- Font: epilogue
+- Mode: light
+- Roundness: rounded-md
+. The logo should be visually consistent with these brand tokens." class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Ux5gG-p6wFieuY-2nbnx1v8xWCtBfCiPeNe_NQCQrmfTJFM-uabtlfUX3qUg2Gr0t5Z_9B4tjTMylrX29WIt7ZfRnNOBrZZr8Y67lZbOTjfwCROqNnNcCuGxkuFCQbRn0bpZv50qj1i37VpU9cX8MXZxBY9Ps0FiMVHKbn7sj1DbDW_6qkAYVNroMGCziIYOW7FC0XvaA7FzvAfmQyy-Jk4Lc9a6hShPhyOWClN_5Gm7qKiTkOZ8KfIXo"/><span class="font-headline-sm text-headline-sm text-on-surface ml-space-xs truncate">KartuKita</span></div><div class="flex items-center gap-space-sm"><div class="text-right hidden xs:block"><span class="font-label-sm text-label-sm text-on-surface-variant block">Proses</span><span class="font-label-md text-label-md text-primary font-semibold block">Pembayaran &amp; Checkout</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-safe bg-surface min-h-screen"><div class="flex flex-col w-full pb-32">
+<!-- Top Stepper Header -->
+<section class="px-margin pt-space-md pb-space-sm bg-surface-container-low/70">
+<div class="flex items-center justify-between relative mb-space-sm">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-outline-variant/40 z-0"></div>
+<!-- Step 1 Done -->
+<div class="flex flex-col items-center gap-1 relative z-10">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-on-primary text-[14px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Dasar</span>
+</div>
+<!-- Step 2 Done -->
+<div class="flex flex-col items-center gap-1 relative z-10">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-on-primary text-[14px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Isi</span>
+</div>
+<!-- Step 3 Done -->
+<div class="flex flex-col items-center gap-1 relative z-10">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-on-primary text-[14px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Gaya</span>
+</div>
+<!-- Step 4 Done -->
+<div class="flex flex-col items-center gap-1 relative z-10">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-on-primary text-[14px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Pratinjau</span>
+</div>
+<!-- Step 5 Active -->
+<div class="flex flex-col items-center gap-1 relative z-10">
+<div class="w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md ring-4 ring-primary/20">
+<span class="font-label-md text-label-md font-bold">5</span>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-primary">Bayar</span>
+</div>
+</div>
+<div class="flex items-center justify-center gap-1.5 py-1 text-center">
+<span class="material-symbols-outlined text-[15px] text-tertiary">lock</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Transaksi Aman &amp; Terenkripsi 256-bit</span>
+</div>
+</section>
+<div class="px-margin flex flex-col gap-space-lg mt-space-md">
+<!-- Card 1: Ringkasan Kartu Ucapan -->
+<div class="bg-surface-container-lowest rounded-3xl p-space-md shadow-[0_4px_20px_-2px_rgba(46,26,44,0.06),0_2px_6px_-1px_rgba(224,90,71,0.05)] flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">celebration</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Ringkasan Kartu Ucapan</h2>
+</div>
+<button class="flex items-center gap-1 text-primary hover:text-primary-container transition-colors py-1 px-2 rounded-full hover:bg-surface-container-low" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+<span class="font-label-sm text-label-sm font-semibold">Ubah data</span>
+</button>
+</div>
+<div class="flex gap-space-md items-center bg-surface-container-low/60 rounded-2xl p-space-sm">
+<!-- Thumbnail Preview -->
+<div class="relative w-20 h-24 rounded-xl overflow-hidden shadow-sm flex-shrink-0 bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="A vertical smartphone digital interactive birthday card showing a 3D pastel pink birthday cake on an ornate pedestal stand with lit flickering candles, confetti, balloons, and an interactive microphone prompt for Sarah, warm lighting, celebratory aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsZBnAA1vE8w_kSpWCTX_GliixwmkC4ZdCfVwyzpIMIxibtNfJ45-Iz6_N6OYyGRpDqB7UFhJNnspYVNli4MBDEoLYnXzZkdI0GUiojKgimBNB_wH_Mi_Lq-HFjum6Zw1vskd6Atf-rcHrCu0Ac0qhcP_m-Voylx08pUPVm3SzpUJQvof1_sBMC55DLz7Gxtyt-YUfp-KHMz-6XQ4Zgux_3-gWi1nfJZLEiJ_lRpiQ-mGlIgxV2A_K"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+<span class="absolute bottom-1 left-1 right-1 text-center bg-surface-container-lowest/90 backdrop-blur-xs rounded-md text-[9px] font-bold text-primary py-0.5 tracking-tight">3D Lilin</span>
+</div>
+<!-- Meta Details -->
+<div class="flex flex-col gap-1 min-w-0 flex-1">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm bg-primary/10 text-primary px-2 py-0.5 rounded-full font-semibold">Penerima</span>
+<p class="font-headline-sm text-headline-sm text-on-surface truncate">Sarah Clarissa</p>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary">cake</span>
+            Ulang Tahun ke-24
+          </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">calendar_today</span>
+            18 Mei 2025
+          </p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/80 flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-primary">palette</span>
+            Pastel Peach Bloom (3D Audio)
+          </p>
+</div>
+</div>
+<!-- Verification Checkbox -->
+<label class="flex items-start gap-3 p-space-sm rounded-xl bg-surface cursor-pointer select-none">
+<input checked="" class="mt-0.5 w-5 h-5 rounded-md accent-primary text-on-primary cursor-pointer transition-transform active:scale-95" id="checkValidation" type="checkbox"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-0.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Konfirmasi Data Kartu</span>
+<span class="font-label-sm text-label-sm bg-primary text-on-primary px-1.5 py-0.2 rounded-full uppercase tracking-wider text-[10px]">Wajib</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Saya sudah memeriksa ejaan nama, tanggal, dan pesan di pratinjau.</p>
+</div>
+</label>
+</div>
+<!-- Card 2: Pilihan Paket Kartu -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex flex-col">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Pilih Paket Kartu</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Pilih level pengalaman interaktif untuk Sarah</p>
+</div>
+<!-- Package Option 1: Standar -->
+<div class="relative bg-surface-container-lowest rounded-2xl p-space-md cursor-pointer transition-all shadow-xs hover:shadow-md flex flex-col gap-space-sm" id="tierStandard" onclick="selectTier('standard')">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center" id="radioStandard">
+<div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Paket Standar</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Semua fitur dasar untuk momen berkesan</p>
+</div>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="font-label-sm text-label-sm line-through text-on-surface-variant/60">Rp45.000</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">Rp29.000</span>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-2 pt-space-xs pl-8">
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+<span>Interaksi tiup lilin mikrofon 3D</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+<span>2 foto kenangan polaroid &amp; musik instrumen</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+<span>Masa aktif tautan selamanya</span>
+</div>
+</div>
+</div>
+<!-- Package Option 2: Spesial / Rekomendasi (Active) -->
+<div class="relative bg-surface-container-low rounded-2xl p-space-md cursor-pointer transition-all shadow-md flex flex-col gap-space-sm shadow-[0_8px_24px_rgba(168,50,35,0.12)]" id="tierPremium" onclick="selectTier('premium')">
+<!-- Floating Badge -->
+<div class="absolute -top-3 right-4 bg-gradient-to-r from-primary to-primary-container text-on-primary px-3 py-1 rounded-full font-label-sm text-label-sm shadow-sm flex items-center gap-1 font-bold">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+          Paling Populer
+        </div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 rounded-full bg-primary flex items-center justify-center" id="radioPremium">
+<div class="w-2 h-2 rounded-full bg-on-primary"></div>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Paket Lengkap &amp; Eksklusif</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Pengalaman terbaik tanpa batas</p>
+</div>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="font-label-sm text-label-sm bg-tertiary/15 text-tertiary px-1.5 py-0.2 rounded font-bold">Hemat 30%</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">Rp44.000</span>
+<span class="font-label-sm text-label-sm line-through text-on-surface-variant/60">Rp65.000</span>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-2 pt-space-xs pl-8">
+<div class="flex items-center gap-2 text-on-surface font-body-sm text-body-sm font-medium">
+<span class="material-symbols-outlined text-[18px] text-primary">verified</span>
+<span>Semua keistimewaan di Paket Standar</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px] text-primary">photo_library</span>
+<span>Hingga 6 foto polaroid + animasi melayang</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px] text-primary">mic</span>
+<span>Pesan suara (voice note) jernih studio</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px] text-primary">lock_open</span>
+<span>Gembok rahasia / kuis tebak kata interaktif</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px] text-primary">arrow_back_ios_new</span>
+<span>Buka semua 4 tema visual &amp; efek partikel lilin 3D</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3: Fitur Tambahan Opsional (Add-ons) -->
+<div class="flex flex-col gap-space-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Fitur Tambahan Opsional</h2>
+<!-- Add-on 1 (WA Scheduled) -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-xs flex items-center justify-between gap-3">
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed flex items-center justify-center flex-shrink-0 text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[22px]">send_time_extension</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<p class="font-label-lg text-label-lg text-on-surface font-semibold truncate">Kirim Jadwal Otomatis WA</p>
+<span class="font-label-sm text-label-sm font-bold text-primary">+Rp5.000</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Kirim tautan otomatis ke WhatsApp Sarah tepat pukul 00:00 WIB.</p>
+</div>
+<!-- Toggle ON -->
+<button aria-label="Toggle WhatsApp Schedule" class="w-12 h-7 bg-primary rounded-full p-1 transition-colors flex items-center justify-end shadow-inner" onclick="toggleAddon(this, 'wa')" type="button">
+<div class="w-5 h-5 rounded-full bg-on-primary shadow-xs transition-transform"></div>
+</button>
+</div>
+<!-- Add-on 2 (Printable HQ PDF) -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-xs flex items-center justify-between gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary-container flex items-center justify-center flex-shrink-0 text-on-secondary-container">
+<span class="material-symbols-outlined text-[22px]">picture_as_pdf</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<p class="font-label-lg text-label-lg text-on-surface font-semibold truncate">Sertifikat &amp; PDF Siap Cetak</p>
+<span class="font-label-sm text-label-sm font-bold text-on-surface-variant">+Rp10.000</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">File cetak kartu pos resolusi tinggi dengan QR Code untuk album fisik.</p>
+</div>
+<!-- Toggle OFF -->
+<button aria-label="Toggle PDF Export" class="w-12 h-7 bg-surface-container-highest rounded-full p-1 transition-colors flex items-center justify-start shadow-inner" onclick="toggleAddon(this, 'pdf')" type="button">
+<div class="w-5 h-5 rounded-full bg-on-secondary shadow-xs transition-transform"></div>
+</button>
+</div>
+</div>
+<!-- Prominent Warning Box -->
+<div class="bg-primary-fixed/40 rounded-2xl p-space-md flex gap-3 shadow-xs">
+<div class="text-primary flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[22px]">info</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-label-lg text-label-lg font-bold text-on-primary-fixed mb-1">Catatan Penting Sebelum Bayar</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Setelah pembayaran berhasil, nama penerima, tanggal, dan rekaman suara di dalam kartu terkunci permanen demi menjaga keaslian tautan unik Sarah.
+        </p>
+</div>
+</div>
+<!-- Card 4: Metode Pembayaran -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Metode Pembayaran</h2>
+<span class="font-label-sm text-label-sm bg-tertiary-fixed text-on-tertiary-fixed px-2 py-0.5 rounded-full font-bold">Instan &amp; Otomatis</span>
+</div>
+<div class="bg-surface-container-lowest rounded-3xl p-space-sm shadow-xs flex flex-col gap-1">
+<!-- Option 1: QRIS (Selected) -->
+<label class="flex items-center justify-between p-space-sm rounded-2xl bg-surface-container-low cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-on-primary"></div>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-bold text-on-surface">QRIS</span>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-1.5 rounded">Rekomendasi</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">BCA, Livin, GoPay, OVO, Dana, ShopeePay</span>
+</div>
+</div>
+<div class="px-2.5 py-1 bg-surface-container-lowest rounded-lg shadow-xs">
+<span class="font-headline-sm text-headline-sm font-black text-on-surface tracking-tighter">QRIS</span>
+</div>
+</label>
+<!-- Option 2: Virtual Account -->
+<label class="flex items-center justify-between p-space-sm rounded-2xl hover:bg-surface-container-low/50 cursor-pointer transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-transparent"></div>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-semibold text-on-surface">Virtual Account Bank</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">BCA, Mandiri, BNI, BRI, Permata</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">account_balance</span>
+</label>
+<!-- Option 3: E-Wallet -->
+<label class="flex items-center justify-between p-space-sm rounded-2xl hover:bg-surface-container-low/50 cursor-pointer transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-transparent"></div>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-semibold text-on-surface">E-Wallet Direct</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">GoPay, ShopeePay, OVO, Dana</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">account_balance_wallet</span>
+</label>
+<!-- Option 4: Kartu Kredit/Debit -->
+<label class="flex items-center justify-between p-space-sm rounded-2xl hover:bg-surface-container-low/50 cursor-pointer transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-transparent"></div>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-semibold text-on-surface">Kartu Kredit / Debit Online</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Visa, Mastercard, JCB</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">credit_card</span>
+</label>
+</div>
+</div>
+<!-- Card 5: Rincian Pembayaran (Breakdown) -->
+<div class="bg-surface-container-lowest rounded-3xl p-space-md shadow-xs flex flex-col gap-space-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Rincian Pembayaran</h2>
+<div class="flex flex-col gap-2 font-body-sm text-body-sm text-on-surface-variant">
+<div class="flex justify-between items-center">
+<span id="labelPackage">Paket Lengkap &amp; Eksklusif</span>
+<span class="text-on-surface font-semibold" id="pricePackage">Rp44.000</span>
+</div>
+<div class="flex justify-between items-center" id="rowAddonWA">
+<span>Jadwal Otomatis WA (00:00 WIB)</span>
+<span class="text-on-surface font-semibold">Rp5.000</span>
+</div>
+<div class="hidden justify-between items-center" id="rowAddonPDF">
+<span>Sertifikat &amp; PDF Siap Cetak</span>
+<span class="text-on-surface font-semibold">Rp10.000</span>
+</div>
+<div class="flex justify-between items-center">
+<span>Biaya Layanan &amp; Gateway</span>
+<span class="text-on-surface font-semibold">Rp1.000</span>
+</div>
+<div class="flex justify-between items-center text-primary font-medium">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">local_offer</span>
+            Promo Pengguna Pertama ('KARTUHANGAT')
+          </span>
+<span>-Rp5.000</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container-highest my-1"></div>
+<div class="flex justify-between items-center font-label-lg text-label-lg font-bold text-on-surface">
+<span>Total Akhir</span>
+<span class="text-primary font-headline-sm text-headline-sm" id="totalTextSummary">Rp45.000</span>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Bar -->
+<div class="fixed bottom-0 left-0 right-0 z-40 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-8px_24px_rgba(46,26,44,0.08)] px-margin py-space-sm flex flex-col gap-1 pb-safe">
+<div class="flex items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Pembayaran</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary" id="totalBarPrice">Rp45.000</span>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface-variant/80">Termasuk pajak &amp; biaya</span>
+</div>
+<button class="flex-1 max-w-[210px] h-12 rounded-full bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg font-bold shadow-md shadow-primary/25 flex items-center justify-center gap-2 transition-all active:scale-95" id="payButton" onclick="triggerPayment()" type="button">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+<span>Bayar Sekarang</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+<div class="flex items-center justify-center gap-1 pt-1 pb-0.5">
+<span class="material-symbols-outlined text-[14px] text-tertiary">verified_user</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Garansi 100% tautan aktif seumur hidup</span>
+</div>
+</div>
+</div>
+<script>
+  let state = {
+    tier: 'premium',
+    tierPrices: { standard: 29000, premium: 44000 },
+    waAddon: true,
+    pdfAddon: false,
+    discount: 5000,
+    fee: 1000
+  };
+
+  function selectTier(type) {
+    state.tier = type;
+    const stdCard = document.getElementById('tierStandard');
+    const prmCard = document.getElementById('tierPremium');
+    const stdRadio = document.getElementById('radioStandard');
+    const prmRadio = document.getElementById('radioPremium');
+    const lbl = document.getElementById('labelPackage');
+    const prc = document.getElementById('pricePackage');
+
+    if (type === 'standard') {
+      stdCard.className = 'relative bg-surface-container-low rounded-2xl p-space-md cursor-pointer transition-all shadow-md flex flex-col gap-space-sm shadow-[0_8px_24px_rgba(168,50,35,0.12)]';
+      prmCard.className = 'relative bg-surface-container-lowest rounded-2xl p-space-md cursor-pointer transition-all shadow-xs hover:shadow-md flex flex-col gap-space-sm';
+      stdRadio.className = 'w-5 h-5 rounded-full bg-primary flex items-center justify-center';
+      stdRadio.innerHTML = '<div class="w-2 h-2 rounded-full bg-on-primary"></div>';
+      prmRadio.className = 'w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center';
+      prmRadio.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>';
+      lbl.innerText = 'Paket Standar';
+      prc.innerText = 'Rp29.000';
+    } else {
+      prmCard.className = 'relative bg-surface-container-low rounded-2xl p-space-md cursor-pointer transition-all shadow-md flex flex-col gap-space-sm shadow-[0_8px_24px_rgba(168,50,35,0.12)]';
+      stdCard.className = 'relative bg-surface-container-lowest rounded-2xl p-space-md cursor-pointer transition-all shadow-xs hover:shadow-md flex flex-col gap-space-sm';
+      prmRadio.className = 'w-5 h-5 rounded-full bg-primary flex items-center justify-center';
+      prmRadio.innerHTML = '<div class="w-2 h-2 rounded-full bg-on-primary"></div>';
+      stdRadio.className = 'w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center';
+      stdRadio.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>';
+      lbl.innerText = 'Paket Lengkap & Eksklusif';
+      prc.innerText = 'Rp44.000';
+    }
+    recalculate();
+  }
+
+  function toggleAddon(button, type) {
+    if (type === 'wa') {
+      state.waAddon = !state.waAddon;
+      updateToggleUI(button, state.waAddon);
+      const row = document.getElementById('rowAddonWA');
+      row.style.display = state.waAddon ? 'flex' : 'none';
+    } else if (type === 'pdf') {
+      state.pdfAddon = !state.pdfAddon;
+      updateToggleUI(button, state.pdfAddon);
+      const row = document.getElementById('rowAddonPDF');
+      row.style.display = state.pdfAddon ? 'flex' : 'none';
+    }
+    recalculate();
+  }
+
+  function updateToggleUI(btn, isActive) {
+    if (isActive) {
+      btn.className = 'w-12 h-7 bg-primary rounded-full p-1 transition-colors flex items-center justify-end shadow-inner';
+      btn.innerHTML = '<div class="w-5 h-5 rounded-full bg-on-primary shadow-xs transition-transform"></div>';
+    } else {
+      btn.className = 'w-12 h-7 bg-surface-container-highest rounded-full p-1 transition-colors flex items-center justify-start shadow-inner';
+      btn.innerHTML = '<div class="w-5 h-5 rounded-full bg-on-secondary shadow-xs transition-transform"></div>';
+    }
+  }
+
+  function recalculate() {
+    let total = state.tierPrices[state.tier];
+    if (state.waAddon) total += 5000;
+    if (state.pdfAddon) total += 10000;
+    total += state.fee;
+    total -= state.discount;
+
+    const formatted = 'Rp' + total.toLocaleString('id-ID');
+    document.getElementById('totalTextSummary').innerText = formatted;
+    document.getElementById('totalBarPrice').innerText = formatted;
+  }
+
+  function triggerPayment() {
+    const valid = document.getElementById('checkValidation').checked;
+    if (!valid) {
+      alert('Mohon centang konfirmasi data kartu terlebih dahulu.');
+      return;
+    }
+    const btn = document.getElementById('payButton');
+    btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span><span>Memproses...</span>';
+    setTimeout(() => {
+      alert('Membuka gateway pembayaran QRIS KartuKita...');
+      btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">lock</span><span>Bayar Sekarang</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span>';
+    }, 1200);
+  }
+</script></main></body></html>

@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --color-primary: 168 50 35;
+        --color-primary-container: 201 74 56;
+        --color-primary-fixed: 255 218 212;
+        --color-primary-fixed-dim: 255 180 168;
+        --color-on-primary-fixed: 65 1 0;
+    }
+
+    html,
+    body {
+        background-color: theme('colors.surface');
+    }
+
+    body {
+        overscroll-behavior: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        font-family: theme('fontFamily.display');
+    }
+}
+
+@layer utilities {
+    .pt-safe {
+        padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .no-scrollbar {
+        scrollbar-width: none;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .icon-fill {
+        font-variation-settings: 'FILL' 1;
+    }
+}
+
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+}

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_tab" name="shell-type"/>
+<title>Kartu Saya - KartuKita</title>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body { width: 100vw; margin: 0; padding: 0; }
+      body { overscroll-behavior: none; min-height: max(884px, 100dvh); }
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+      .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+      main > :first-child { margin-top: 0 !important; }
+      main > :last-child { margin-bottom: 0 !important; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#a83223',
+            'on-tertiary': '#ffffff',
+            'outline': '#8c716c',
+            'on-error': '#ffffff',
+            'surface-dim': '#f1d1e9',
+            'on-primary-fixed-variant': '#8a1c10',
+            'primary-container': '#c94a38',
+            'tertiary-fixed-dim': '#fabc4d',
+            'outline-variant': '#e0bfba',
+            'primary-fixed': '#ffdad4',
+            'inverse-surface': '#3f293c',
+            'secondary-fixed-dim': '#cec5c0',
+            'tertiary-fixed': '#ffdead',
+            'on-surface-variant': '#58413d',
+            'surface-container-highest': '#fad9f2',
+            'on-secondary-fixed': '#1f1b18',
+            'on-secondary-fixed-variant': '#4b4642',
+            'secondary-fixed': '#eae1dc',
+            'on-error-container': '#93000a',
+            'on-primary-fixed': '#410100',
+            'on-tertiary-fixed': '#281900',
+            'tertiary': '#7b5500',
+            'background': '#fff7f9',
+            'primary-fixed-dim': '#ffb4a8',
+            'on-primary': '#ffffff',
+            'on-primary-container': '#fffbff',
+            'error': '#ba1a1a',
+            'on-secondary-container': '#68615e',
+            'on-secondary': '#ffffff',
+            'on-surface': '#281526',
+            'surface-variant': '#fad9f2',
+            'error-container': '#ffdad6',
+            'surface': '#fff7f9',
+            'surface-container': '#ffe7f8',
+            'surface-tint': '#ab3425',
+            'on-background': '#281526',
+            'surface-container-low': '#ffeff8',
+            'on-tertiary-fixed-variant': '#604100',
+            'inverse-primary': '#ffb4a8',
+            'inverse-on-surface': '#ffebf8',
+            'on-tertiary-container': '#fffbff',
+            'secondary-container': '#e7ded9',
+            'secondary': '#635d59',
+            'surface-container-lowest': '#ffffff',
+            'tertiary-container': '#9b6b00',
+            'surface-bright': '#fff7f9',
+            'surface-container-high': '#ffdff7'
+          },
+          borderRadius: {
+            'DEFAULT': '0.25rem',
+            'lg': '0.5rem',
+            'xl': '0.75rem',
+            'full': '9999px'
+          },
+          spacing: {
+            'margin-desktop': '3rem',
+            'space-sm': '0.5rem',
+            'space-md': '1rem',
+            'margin-tablet': '2rem',
+            'space-xs': '0.25rem',
+            'gutter-desktop': '2rem',
+            'gutter': '1rem',
+            'gutter-tablet': '1.5rem',
+            'margin': '1.25rem',
+            'space-lg': '1.5rem',
+            'space-xl': '2.5rem'
+          },
+          fontFamily: {
+            'display-hero': ['Epilogue'],
+            'headline-sm': ['Epilogue'],
+            'body-md': ['Plus Jakarta Sans'],
+            'label-sm': ['Plus Jakarta Sans'],
+            'body-sm': ['Plus Jakarta Sans'],
+            'headline-lg-mobile': ['Epilogue'],
+            'headline-md': ['Epilogue'],
+            'headline-lg': ['Epilogue'],
+            'body-lg': ['Plus Jakarta Sans'],
+            'display-hero-mobile': ['Epilogue'],
+            'label-lg': ['Plus Jakarta Sans'],
+            'label-md': ['Plus Jakarta Sans']
+          },
+          fontSize: {
+            'display-hero': ['40px', {'lineHeight': '48px', 'letterSpacing': '-0.03em', 'fontWeight': '800'}],
+            'headline-sm': ['18px', {'lineHeight': '24px', 'fontWeight': '600'}],
+            'body-md': ['16px', {'lineHeight': '24px', 'fontWeight': '400'}],
+            'label-sm': ['11px', {'lineHeight': '14px', 'letterSpacing': '0.04em', 'fontWeight': '700'}],
+            'body-sm': ['14px', {'lineHeight': '20px', 'fontWeight': '400'}],
+            'headline-lg-mobile': ['24px', {'lineHeight': '32px', 'letterSpacing': '-0.01em', 'fontWeight': '700'}],
+            'headline-md': ['22px', {'lineHeight': '28px', 'letterSpacing': '-0.01em', 'fontWeight': '600'}],
+            'headline-lg': ['30px', {'lineHeight': '38px', 'letterSpacing': '-0.02em', 'fontWeight': '700'}],
+            'body-lg': ['18px', {'lineHeight': '28px', 'fontWeight': '400'}],
+            'display-hero-mobile': ['32px', {'lineHeight': '38px', 'letterSpacing': '-0.02em', 'fontWeight': '800'}],
+            'label-lg': ['15px', {'lineHeight': '20px', 'letterSpacing': '0.01em', 'fontWeight': '600'}],
+            'label-md': ['13px', {'lineHeight': '18px', 'letterSpacing': '0.01em', 'fontWeight': '600'}]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen">
+<!-- Persistent Top Header -->
+<header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_4px_20px_-2px_rgba(40,21,38,0.05),0_2px_6px_-1px_rgba(168,50,35,0.04)]">
+<div class="h-16 px-margin flex items-center justify-between">
+<a class="flex items-center gap-space-sm cursor-pointer" data-path="beranda" href="#">
+<img alt="KartuKita Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Ux5gG-p6wFieuY-2nbnx1v8xWCtBfCiPeNe_NQCQrmfTJFM-uabtlfUX3qUg2Gr0t5Z_9B4tjTMylrX29WIt7ZfRnNOBrZZr8Y67lZbOTjfwCROqNnNcCuGxkuFCQbRn0bpZv50qj1i37VpU9cX8MXZxBY9Ps0FiMVHKbn7sj1DbDW_6qkAYVNroMGCziIYOW7FC0XvaA7FzvAfmQyy-Jk4Lc9a6hShPhyOWClN_5Gm7qKiTkOZ8KfIXo"/>
+<span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">KartuKita</span>
+</a>
+<div class="flex items-center gap-space-sm">
+<button aria-label="Notifikasi" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors relative">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary ring-2 ring-surface"></span>
+</button>
+<a class="w-9 h-9 rounded-full bg-surface-container overflow-hidden ring-2 ring-primary/20 flex items-center justify-center shadow-sm cursor-pointer active:scale-95 transition-transform" data-path="profil" href="#">
+<span class="material-symbols-outlined text-primary text-[20px]">account_circle</span>
+</a>
+</div>
+</div>
+</header>
+<!-- Main Content Slot -->
+<main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen">
+<div class="flex flex-col w-full">
+<!-- Toast Notification Container for Quick Actions -->
+<div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 transform -translate-y-6 opacity-0 pointer-events-none flex items-center gap-space-sm px-space-md py-space-sm bg-inverse-surface text-inverse-on-surface rounded-full shadow-xl" id="toast-notif">
+<span class="material-symbols-outlined text-[18px] text-tertiary-fixed-dim">check_circle</span>
+<span class="font-label-md text-label-md" id="toast-text">Tautan berhasil disalin!</span>
+</div>
+<!-- Warm Header & Stats Section -->
+<section class="px-margin pt-space-md pb-space-lg flex flex-col gap-space-md">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<div class="inline-flex items-center gap-space-xs mb-1">
+<span class="material-symbols-outlined text-[20px] text-tertiary-container animate-bounce">celebration</span>
+<span class="font-label-md text-label-md text-tertiary font-semibold tracking-wide uppercase">Dashboard Momen</span>
+</div>
+<h1 class="font-display-hero-mobile text-display-hero-mobile text-on-surface font-extrabold tracking-tight">Halo, Nadia! ✨</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Kelola dan pantau momen spesial yang telah kamu buat dengan penuh rasa.</p>
+</div>
+</div>
+<!-- Quick Stats Horizon Bento -->
+<div class="grid grid-cols-3 gap-space-xs sm:gap-space-sm">
+<div class="flex flex-col items-center justify-center p-space-sm bg-surface-container-low rounded-2xl shadow-sm text-center">
+<div class="w-7 h-7 rounded-full bg-primary-fixed flex items-center justify-center mb-1 text-primary">
+<span class="material-symbols-outlined text-[16px]">mail</span>
+</div>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">4</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant line-clamp-1">Kartu Dibuat</span>
+</div>
+<div class="flex flex-col items-center justify-center p-space-sm bg-surface-container-low rounded-2xl shadow-sm text-center">
+<div class="w-7 h-7 rounded-full bg-surface-container-highest flex items-center justify-center mb-1 text-primary">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+</div>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">3</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant line-clamp-1">Diterbitkan</span>
+</div>
+<div class="flex flex-col items-center justify-center p-space-sm bg-surface-container-low rounded-2xl shadow-sm text-center">
+<div class="w-7 h-7 rounded-full bg-tertiary-fixed flex items-center justify-center mb-1 text-tertiary">
+<span class="material-symbols-outlined text-[16px]">favorite</span>
+</div>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">2</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant line-clamp-1">Dibuka Penerima</span>
+</div>
+</div>
+</section>
+<!-- Filter Pills Segmented Scroll -->
+<section class="px-margin pb-space-md">
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1" id="filter-container">
+<button class="filter-btn h-9 px-space-md rounded-full bg-on-surface text-surface-container-lowest font-label-md text-label-md flex items-center gap-1.5 shadow-sm active:scale-95 transition-all whitespace-nowrap" onclick="applyFilter('all', this)">
+<span>Semua</span>
+<span class="bg-surface-container-highest/30 px-1.5 py-0.5 rounded-full text-[11px]">4</span>
+</button>
+<button class="filter-btn h-9 px-space-md rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 shadow-sm active:scale-95 transition-all whitespace-nowrap hover:bg-surface-container" onclick="applyFilter('terbit', this)">
+<span>Terbit</span>
+<span class="bg-surface-container-highest/40 text-on-surface-variant px-1.5 py-0.5 rounded-full text-[11px]">2</span>
+</button>
+<button class="filter-btn h-9 px-space-md rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 shadow-sm active:scale-95 transition-all whitespace-nowrap hover:bg-surface-container" onclick="applyFilter('menunggu', this)">
+<span>Menunggu Bayar</span>
+<span class="bg-error-container text-on-error-container px-1.5 py-0.5 rounded-full text-[11px]">1</span>
+</button>
+<button class="filter-btn h-9 px-space-md rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 shadow-sm active:scale-95 transition-all whitespace-nowrap hover:bg-surface-container" onclick="applyFilter('draf', this)">
+<span>Draf</span>
+<span class="bg-secondary-fixed text-on-secondary-fixed px-1.5 py-0.5 rounded-full text-[11px]">1</span>
+</button>
+</div>
+</section>
+<!-- Greeting Cards List -->
+<section class="px-margin flex flex-col gap-space-md pb-space-xl" id="cards-wrapper">
+<!-- Card 1: Terbit & Sudah Dibuka -->
+<article class="card-item relative bg-surface-container-lowest rounded-3xl p-space-md shadow-[0_4px_24px_-2px_rgba(40,21,38,0.06),0_2px_8px_-1px_rgba(168,50,35,0.05)] flex flex-col gap-space-md transition-all duration-200 hover:shadow-md" data-category="terbit">
+<div class="flex items-start gap-space-md">
+<!-- Thumbnail mini polaroid style -->
+<div class="relative w-20 h-24 rounded-2xl overflow-hidden bg-surface-container-high flex-shrink-0 shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Close-up joyful handmade birthday card featuring an artisanal strawberry shortcake with a glowing candle and golden foil confetti sprinkles, warm morning light, cinematic editorial craft photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMVs0unve6PUM1J4Bvmesdw_Gyl0jIWljFrAtqRtal6r5LHK2zjdna_-xU0OVY2ZD3iD3i-4IgngGILc_XdblU3AJkMjM-UkIvhU1qs5_w3nJM-NZYTKHRzAa1BTzAG153YcXlNGRq2B-_CtRwBV_g_F_079y7k0nDu1eO7IN8korfOpq-IPKWFThJ2sbf1nxgrhfDmdfXwBKyfGQrTQ4daG6sXf4reA0HcltNtES3XzIlYt5X-mfW"/>
+<div class="absolute bottom-1 right-1 bg-surface-container-lowest/90 backdrop-blur-sm p-1 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-[13px] text-tertiary-container block">cake</span>
+</div>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-between">
+<div class="flex items-start justify-between gap-1">
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">Sarah Clarissa</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Ulang Tahun ke-24 • Tiup Lilin 3D</span>
+</div>
+<button aria-label="Menu Opsi" class="w-8 h-8 -mr-2 -mt-1 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container active:scale-90 transition-all">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+<!-- Status badge: Active Forever -->
+<div class="mt-2 flex items-center gap-1.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+              Terbit • Aktif Selamanya
+            </span>
+</div>
+</div>
+</div>
+<!-- Interaction Status Banner (Opened) -->
+<div class="flex items-center gap-space-xs px-space-sm py-2 rounded-2xl bg-surface-container-low text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">visibility</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex-1 truncate">
+          Dibuka 18 Mei 2025, 08:32 WIB <strong class="text-on-surface font-semibold">(3x dilihat)</strong>
+</span>
+</div>
+<!-- Quick Action Buttons -->
+<div class="flex items-center gap-space-xs pt-1">
+<button class="flex-1 h-10 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 active:scale-95 transition-all hover:bg-surface-container-high" onclick="triggerCopy('https://kartukita.id/m/sarah-bday-24')">
+<span class="material-symbols-outlined text-[18px] text-primary">content_copy</span>
+<span>Salin Link</span>
+</button>
+<button class="flex-1 h-10 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 active:scale-95 transition-all hover:bg-surface-container-high" onclick="openQrModal('Sarah Clarissa')">
+<span class="material-symbols-outlined text-[18px] text-primary">qr_code_2</span>
+<span>Lihat QR</span>
+</button>
+<a aria-label="Lihat Pratinjau Langsung" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-high active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">open_in_new</span>
+</a>
+</div>
+</article>
+<!-- Card 2: Terbit & Belum Dibuka -->
+<article class="card-item relative bg-surface-container-lowest rounded-3xl p-space-md shadow-[0_4px_24px_-2px_rgba(40,21,38,0.06),0_2px_8px_-1px_rgba(168,50,35,0.05)] flex flex-col gap-space-md transition-all duration-200 hover:shadow-md" data-category="terbit">
+<div class="flex items-start gap-space-md">
+<!-- Thumbnail polaroid -->
+<div class="relative w-20 h-24 rounded-2xl overflow-hidden bg-surface-container-high flex-shrink-0 shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Romantic anniversary digital card mockup with delicate botanical eucalyptus foliage pressed against warm paper and two coffee cups on a wooden table, soft pastel blush tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDabhrnqUzNtTFcMlF0VcO9S1i1VSO_z0myE42CQ2zSKukM85flkANvmxY2FZ07W9vU4k-hPhDlbTNBM8T_FXD7kRSZNMHTTKHDVGaClBPdI8a5es8Nr3HUjK-zLQDYjiWwOWC3q7ng5eTLuiWdhqGkpMO18j2-ePHcdRKCrDEz4ydJhO8RBVt_bFTQVCwfTbZV4PSYSbEvQufMcGRgenz-TG-WcA_TORqbIASGTHiQp7pD-YUYP19g"/>
+<div class="absolute bottom-1 right-1 bg-surface-container-lowest/90 backdrop-blur-sm p-1 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-[13px] text-primary block" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-between">
+<div class="flex items-start justify-between gap-1">
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">Dimas Pratama</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Anniversary 2 Tahun • Galeri Polaroid</span>
+</div>
+<button aria-label="Menu Opsi" class="w-8 h-8 -mr-2 -mt-1 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container active:scale-90 transition-all">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+<!-- Status badge -->
+<div class="mt-2 flex items-center gap-1.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              Terbit • Aktif
+            </span>
+</div>
+</div>
+</div>
+<!-- Interaction Status Banner (Pending open) -->
+<div class="flex items-center gap-space-xs px-space-sm py-2 rounded-2xl bg-secondary-container/40 text-on-secondary-container">
+<span class="material-symbols-outlined text-[18px] text-secondary">schedule</span>
+<span class="font-label-sm text-label-sm flex-1 truncate">
+          Belum dibuka oleh Dimas (Terkirim via WhatsApp)
+        </span>
+</div>
+<!-- Quick Action Buttons -->
+<div class="flex items-center gap-space-xs pt-1">
+<button class="flex-1 h-10 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 active:scale-95 transition-all hover:bg-surface-container-high" onclick="triggerCopy('https://kartukita.id/m/dimas-love-2y')">
+<span class="material-symbols-outlined text-[18px] text-primary">content_copy</span>
+<span>Salin Link</span>
+</button>
+<button class="flex-1 h-10 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 active:scale-95 transition-all hover:bg-surface-container-high" onclick="openQrModal('Dimas Pratama')">
+<span class="material-symbols-outlined text-[18px] text-primary">qr_code_2</span>
+<span>Lihat QR</span>
+</button>
+<a aria-label="Ingatkan Penerima" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-high active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">send</span>
+</a>
+</div>
+</article>
+<!-- Card 3: Menunggu Bayar -->
+<article class="card-item relative bg-surface-container-lowest rounded-3xl p-space-md shadow-[0_4px_24px_-2px_rgba(40,21,38,0.06),0_2px_8px_-1px_rgba(168,50,35,0.05)] flex flex-col gap-space-md transition-all duration-200 hover:shadow-md" data-category="menunggu">
+<div class="flex items-start gap-space-md">
+<!-- Thumbnail graduation -->
+<div class="relative w-20 h-24 rounded-2xl overflow-hidden bg-surface-container-high flex-shrink-0 shadow-inner">
+<img class="w-full h-full object-cover opacity-90" data-alt="Graduation celebration greeting card illustration with celebratory mortarboard cap, golden ribbons, wax seal letter, deep maroon and cream aesthetic with warm light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMz7jgjJ1oUIqJYumaq7Zv5yX4JjMtSoxrQxX_6YqxDPT7fiIss6iZsYknLk3g9r0g6avT6wWXcapFNK9Y7DjEOdRHVMR5BGUzyJwWdSHFXZL3n9WO1wPOC0SD2ZRc5Zbkz9o-FJ6pgyd-g_ehi5BsezbCjfUBa_iX08-98BdNY1o0V-v26Y-rMDj3yZxF0_5gfjh4uT_ORBs5Lx8yfpal_Eo-Pj_qNJFY0VZaIJ8XZvYDdsp0ZW09"/>
+<div class="absolute bottom-1 right-1 bg-surface-container-lowest/90 backdrop-blur-sm p-1 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-[13px] text-tertiary block">school</span>
+</div>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-between">
+<div class="flex items-start justify-between gap-1">
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">Kevin Sanjaya</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Wisuda Sarjana • Kapsul Suara</span>
+</div>
+<button aria-label="Menu Opsi" class="w-8 h-8 -mr-2 -mt-1 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container active:scale-90 transition-all">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+<!-- Status badge -->
+<div class="mt-2 flex items-center gap-1.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[13px]">hourglass_top</span>
+              Menunggu Bayar
+            </span>
+</div>
+</div>
+</div>
+<!-- Payment notice -->
+<div class="flex items-center gap-space-xs px-space-sm py-2 rounded-2xl bg-error-container/40 text-on-error-container">
+<span class="material-symbols-outlined text-[18px] text-error">alarm</span>
+<span class="font-label-sm text-label-sm flex-1 font-medium truncate">
+          Batas pembayaran tersisa <span class="font-bold text-error">2 jam 14 menit</span>
+</span>
+</div>
+<!-- Quick Action Buttons -->
+<div class="flex items-center gap-space-sm pt-1">
+<button class="flex-1 h-11 rounded-full bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-md active:scale-97 transition-all hover:bg-primary-container">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+<span>Bayar Sekarang (Rp29.000)</span>
+</button>
+<button class="h-11 px-4 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center active:scale-95 transition-all hover:bg-surface-container-high">
+<span>Ubah Draf</span>
+</button>
+</div>
+</article>
+<!-- Card 4: Draf -->
+<article class="card-item relative bg-surface-container-lowest rounded-3xl p-space-md shadow-[0_4px_24px_-2px_rgba(40,21,38,0.06),0_2px_8px_-1px_rgba(168,50,35,0.05)] flex flex-col gap-space-md transition-all duration-200 hover:shadow-md" data-category="draf">
+<div class="flex items-start gap-space-md">
+<!-- Thumbnail placeholder draft -->
+<div class="relative w-20 h-24 rounded-2xl overflow-hidden bg-surface-container-low flex-shrink-0 flex items-center justify-center text-outline-variant shadow-inner">
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-[28px] text-outline">draw</span>
+<span class="font-label-sm text-label-sm text-secondary">Sketsa</span>
+</div>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-between">
+<div class="flex items-start justify-between gap-1">
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface truncate italic text-on-surface-variant">Belum ada nama (Draf)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Hari Ibu • Surat Hangat Berbunga</span>
+</div>
+<button aria-label="Menu Opsi" class="w-8 h-8 -mr-2 -mt-1 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container active:scale-90 transition-all">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+<!-- Status badge -->
+<div class="mt-2 flex items-center gap-1.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[13px]">edit_note</span>
+              Draf • 40% Selesai
+            </span>
+</div>
+</div>
+</div>
+<!-- Interaction Status / Save Notice -->
+<div class="flex items-center gap-space-xs px-space-sm py-2 rounded-2xl bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">history</span>
+<span class="font-label-sm text-label-sm flex-1 truncate">
+          Disimpan kemarin pukul 19:40 WIB
+        </span>
+</div>
+<!-- Quick Action Buttons -->
+<div class="flex items-center justify-between gap-space-xs pt-1">
+<button class="flex-1 h-10 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 active:scale-95 transition-all hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px] text-primary">edit</span>
+<span>Lanjut Edit</span>
+</button>
+<button aria-label="Hapus Draf" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-error hover:bg-error-container/40 active:scale-90 transition-all" onclick="confirmDeleteCard(this)">
+<span class="material-symbols-outlined text-[20px]">delete_outline</span>
+</button>
+</div>
+</article>
+</section>
+<!-- Floating Action Button (+ Buat Ucapan) -->
+<div class="fixed bottom-20 right-margin z-40">
+<a class="h-13 px-space-lg rounded-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-label-lg text-label-lg flex items-center gap-space-sm shadow-[0_8px_24px_rgba(168,50,35,0.38)] active:scale-95 transition-all duration-200 group" data-path="buat-kartu" href="#">
+<span class="material-symbols-outlined text-[24px] text-tertiary-fixed-dim transition-transform group-hover:rotate-12">auto_awesome</span>
+<span class="tracking-tight font-bold">+ Buat Ucapan</span>
+</a>
+</div>
+<!-- QR Code Modal (Delight micro-interaction) -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm hidden items-center justify-center p-margin transition-all" id="qr-modal">
+<div class="bg-surface-container-lowest rounded-3xl p-space-lg w-full max-w-sm flex flex-col items-center gap-space-md shadow-2xl relative">
+<button aria-label="Tutup Dialog" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high active:scale-90 transition-all" onclick="closeQrModal()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary mt-2">
+<span class="material-symbols-outlined text-[26px]">qr_code_scanner</span>
+</div>
+<div class="text-center">
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">QR Kartu Ucapan</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1" id="qr-modal-sub">Untuk Sarah Clarissa</p>
+</div>
+<!-- QR Frame styled as an artisanal stamp -->
+<div class="p-space-md bg-surface-container-low rounded-2xl flex flex-col items-center justify-center">
+<div class="w-48 h-48 bg-surface-container-lowest p-3 rounded-xl flex items-center justify-center shadow-sm">
+<!-- Lightweight Stylized Inline SVG QR Illustration -->
+<svg class="w-full h-full text-on-surface" fill="none" viewbox="0 0 100 100">
+<!-- Outer positioning markers -->
+<rect height="26" rx="4" stroke="currentColor" stroke-width="4" width="26" x="5" y="5"></rect>
+<rect fill="currentColor" height="14" rx="2" width="14" x="11" y="11"></rect>
+<rect height="26" rx="4" stroke="currentColor" stroke-width="4" width="26" x="69" y="5"></rect>
+<rect fill="currentColor" height="14" rx="2" width="14" x="75" y="11"></rect>
+<rect height="26" rx="4" stroke="currentColor" stroke-width="4" width="26" x="5" y="69"></rect>
+<rect fill="currentColor" height="14" rx="2" width="14" x="11" y="75"></rect>
+<!-- Center decorative micro pattern -->
+<circle cx="50" cy="50" fill="#a83223" r="10"></circle>
+<rect fill="currentColor" height="8" rx="1.5" width="8" x="44" y="10"></rect>
+<rect fill="currentColor" height="16" rx="1.5" width="6" x="36" y="24"></rect>
+<rect fill="currentColor" height="6" rx="1.5" width="8" x="58" y="24"></rect>
+<rect fill="currentColor" height="8" rx="1.5" width="6" x="36" y="46"></rect>
+<rect fill="currentColor" height="8" rx="1.5" width="8" x="58" y="46"></rect>
+<rect fill="currentColor" height="14" rx="1.5" width="8" x="46" y="66"></rect>
+<rect fill="currentColor" height="6" rx="1.5" width="12" x="68" y="68"></rect>
+<rect fill="currentColor" height="12" rx="1.5" width="6" x="84" y="78"></rect>
+<rect fill="currentColor" height="6" rx="1.5" width="10" x="68" y="86"></rect>
+<!-- Mini heart icon center stamp -->
+<path d="M50 48 C49 46, 46 46, 45 48 C43.5 50, 50 54, 50 54 C50 54, 56.5 50, 55 48 C54 46, 51 46, 50 48 Z" fill="#ffffff"></path>
+</svg>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-2 text-center">Arahkan kamera ponsel untuk membuka kartu</span>
+</div>
+<div class="flex w-full gap-space-xs">
+<button class="flex-1 h-11 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all" onclick="triggerCopy('https://kartukita.id/m/sarah-bday-24'); closeQrModal();">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Unduh QR</span>
+</button>
+<button class="h-11 px-space-md rounded-full bg-surface-container text-on-surface font-label-md text-label-md active:scale-95 transition-all" onclick="closeQrModal()">
+<span>Tutup</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+    function triggerCopy(text) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text);
+      }
+      const toast = document.getElementById('toast-notif');
+      const toastText = document.getElementById('toast-text');
+      toastText.textContent = 'Tautan berhasil disalin ke clipboard!';
+      toast.classList.remove('opacity-0', '-translate-y-6', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', '-translate-y-6', 'pointer-events-none');
+      }, 2500);
+    }
+
+    function openQrModal(recipient) {
+      const modal = document.getElementById('qr-modal');
+      const sub = document.getElementById('qr-modal-sub');
+      sub.textContent = 'Untuk ' + recipient;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeQrModal() {
+      const modal = document.getElementById('qr-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function applyFilter(category, clickedBtn) {
+      // Update filter button styling
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('bg-on-surface', 'text-surface-container-lowest');
+        btn.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+      });
+
+      clickedBtn.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+      clickedBtn.classList.add('bg-on-surface', 'text-surface-container-lowest');
+
+      // Filter list of card items
+      const cards = document.querySelectorAll('.card-item');
+      cards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function confirmDeleteCard(btn) {
+      const card = btn.closest('.card-item');
+      if (card) {
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.92)';
+        setTimeout(() => {
+          card.remove();
+          const toast = document.getElementById('toast-notif');
+          const toastText = document.getElementById('toast-text');
+          toastText.textContent = 'Draf ucapan telah dihapus.';
+          toast.classList.remove('opacity-0', '-translate-y-6', 'pointer-events-none');
+          toast.classList.add('opacity-100', 'translate-y-0');
+          setTimeout(() => {
+            toast.classList.remove('opacity-100', 'translate-y-0');
+            toast.classList.add('opacity-0', '-translate-y-6', 'pointer-events-none');
+          }, 2500);
+        }, 220);
+      }
+    }
+  </script>
+</div>
+</main>
+<!-- Bottom Tab Navigation -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-4px_20px_rgba(40,21,38,0.06)]" data-active-classes="text-primary font-label-md">
+<div class="h-16 px-margin flex items-center justify-around">
+<a class="min-w-[56px] min-h-[44px] flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm gap-space-xs transition-colors" data-path="beranda" href="#">
+<span class="material-symbols-outlined text-[24px]">cottage</span>
+<span>Beranda</span>
+</a>
+<a class="min-w-[56px] min-h-[44px] flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm gap-space-xs transition-colors" data-path="katalog" href="#">
+<span class="material-symbols-outlined text-[24px]">auto_stories</span>
+<span>Katalog</span>
+</a>
+<a aria-current="page" class="min-w-[56px] min-h-[44px] flex flex-col items-center justify-center gap-space-xs transition-colors text-primary font-label-md" data-path="kartu-saya" href="#">
+<span class="material-symbols-outlined text-[24px]">mark_email_read</span>
+<span>Kartu Saya</span>
+</a>
+<a class="min-w-[56px] min-h-[44px] flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm gap-space-xs transition-colors" data-path="profil" href="#">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<span>Profil</span>
+</a>
+</div>
+</nav>
+</body></html>

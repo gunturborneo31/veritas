@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#fff7f9;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container-lowest": "#ffffff", "primary-fixed": "#ffdad4", "inverse-surface": "#3f293c", "on-error-container": "#93000a", "outline": "#8c716c", "tertiary-container": "#9b6b00", "on-primary": "#ffffff", "on-tertiary-fixed-variant": "#604100", "on-surface": "#281526", "tertiary-fixed-dim": "#fabc4d", "on-error": "#ffffff", "tertiary-fixed": "#ffdead", "secondary-fixed-dim": "#cec5c0", "on-secondary-container": "#68615e", "inverse-primary": "#ffb4a8", "error-container": "#ffdad6", "surface-dim": "#f1d1e9", "secondary-fixed": "#eae1dc", "tertiary": "#7b5500", "on-primary-fixed-variant": "#8a1c10", "on-tertiary-container": "#fffbff", "on-tertiary": "#ffffff", "surface-container": "#ffe7f8", "secondary": "#635d59", "secondary-container": "#e7ded9", "outline-variant": "#e0bfba", "on-surface-variant": "#58413d", "on-primary-container": "#fffbff", "on-secondary": "#ffffff", "background": "#fff7f9", "on-background": "#281526", "surface-container-high": "#ffdff7", "surface-container-low": "#ffeff8", "on-secondary-fixed": "#1f1b18", "on-primary-fixed": "#410100", "primary": "#a83223", "primary-container": "#c94a38", "surface-bright": "#fff7f9", "primary-fixed-dim": "#ffb4a8", "on-tertiary-fixed": "#281900", "surface": "#fff7f9", "on-secondary-fixed-variant": "#4b4642", "surface-tint": "#ab3425", "error": "#ba1a1a", "inverse-on-surface": "#ffebf8", "surface-container-highest": "#fad9f2", "surface-variant": "#fad9f2" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-lg": "1.5rem", "margin-tablet": "2rem", "space-md": "1rem", "gutter": "1rem", "margin-desktop": "3rem", "space-xl": "2.5rem", "gutter-desktop": "2rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "gutter-tablet": "1.5rem", "margin": "1.25rem" }, fontFamily: { "label-md": ["Plus Jakarta Sans"], "display-hero": ["Epilogue"], "headline-lg": ["Epilogue"], "body-sm": ["Plus Jakarta Sans"], "headline-sm": ["Epilogue"], "body-lg": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "headline-md": ["Epilogue"], "body-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Epilogue"], "label-lg": ["Plus Jakarta Sans"], "display-hero-mobile": ["Epilogue"] }, fontSize: { "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "display-hero": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "800" }], "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }], "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-lg": ["15px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "display-hero-mobile": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "800" }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen relative"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_12px_rgba(46,26,44,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><button aria-label="Kembali" class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[22px]">arrow_back</span></button><img alt="SVG logo for 'KartuKita', an Indonesian interactive digital greetings platform. A warm, cute and heartfelt symbol combining an envelope unfolding with a warm heart and playful sparkles. Flat modern vector aesthetic, warm coral (#E05A47), deep plum (#2E1A2C), and soft gold (#E5A93C) accents, clean and friendly.. Design context: - Primary color: #e05a47
+- Font: epilogue
+- Mode: light
+- Roundness: rounded-md
+. The logo should be visually consistent with these brand tokens." class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1Ux5gG-p6wFieuY-2nbnx1v8xWCtBfCiPeNe_NQCQrmfTJFM-uabtlfUX3qUg2Gr0t5Z_9B4tjTMylrX29WIt7ZfRnNOBrZZr8Y67lZbOTjfwCROqNnNcCuGxkuFCQbRn0bpZv50qj1i37VpU9cX8MXZxBY9Ps0FiMVHKbn7sj1DbDW_6qkAYVNroMGCziIYOW7FC0XvaA7FzvAfmQyy-Jk4Lc9a6hShPhyOWClN_5Gm7qKiTkOZ8KfIXo"/></div><div class="flex flex-col items-center justify-center text-center flex-1 min-w-0 px-space-xs"><h1 class="font-headline-sm text-headline-sm text-on-surface truncate w-full leading-tight">Kustomisasi Kartu</h1><div class="inline-flex items-center gap-1 mt-0.5 px-2 py-0.5 rounded-full bg-surface-container-low"><span class="w-1.5 h-1.5 rounded-full bg-[#1b873f] animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface-variant">Tersimpan otomatis</span></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><button aria-label="Bantuan Editor" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">help_outline</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-28 bg-surface"><div class="flex flex-col w-full">
+<!-- Progress Stepper Component -->
+<div class="px-margin pt-space-sm pb-space-md">
+<div class="flex items-center justify-between relative">
+<!-- Background Connecting Line -->
+<div class="absolute top-1/2 left-4 right-4 -translate-y-1/2 h-1 bg-surface-container-high rounded-full -z-0"></div>
+<div class="absolute top-1/2 left-4 w-1/2 -translate-y-1/2 h-1 bg-primary rounded-full -z-0"></div>
+<!-- Step 1: Dasar -->
+<div class="flex flex-col items-center gap-1 z-10">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface">1. Dasar</span>
+</div>
+<!-- Step 2: Isi -->
+<div class="flex flex-col items-center gap-1 z-10">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface">2. Isi</span>
+</div>
+<!-- Step 3: Gaya (Active) -->
+<div class="flex flex-col items-center gap-1 z-10">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-md scale-110">
+<span class="font-label-sm text-label-sm">3</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">3. Gaya</span>
+</div>
+<!-- Step 4: Review -->
+<div class="flex flex-col items-center gap-1 z-10">
+<div class="w-8 h-8 rounded-full bg-surface-container text-secondary flex items-center justify-center">
+<span class="font-label-sm text-label-sm">4</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">4. Review</span>
+</div>
+<!-- Step 5: Kirim -->
+<div class="flex flex-col items-center gap-1 z-10">
+<div class="w-8 h-8 rounded-full bg-surface-container text-secondary flex items-center justify-center">
+<span class="font-label-sm text-label-sm">5</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">5. Kirim</span>
+</div>
+</div>
+</div>
+<!-- Live Phone Preview Stage -->
+<div class="px-margin mb-space-lg">
+<div class="bg-surface-container-low rounded-3xl p-space-md shadow-sm">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-surface">Pratinjau Langsung</span>
+</div>
+<span class="bg-surface-container px-2.5 py-1 rounded-full font-label-sm text-label-sm text-primary font-semibold">Pastel Peach Bloom</span>
+</div>
+<!-- Interactive Phone Mockup Shell -->
+<div class="relative w-full max-w-[280px] mx-auto bg-inverse-surface rounded-[2.5rem] p-3 shadow-xl">
+<!-- Dynamic Island / Sensor Notch -->
+<div class="w-20 h-4 bg-inverse-surface rounded-full mx-auto mb-2 relative z-20 flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-secondary opacity-40 ml-auto mr-3"></div>
+</div>
+<!-- Phone Screen Canvas with Birthday Card Preview -->
+<div class="relative overflow-hidden rounded-[2rem] bg-[#fff0ea] p-space-md text-center flex flex-col items-center justify-between aspect-[9/16] transition-colors duration-500" id="phone-screen">
+<!-- Floating Ambient Sparkles/Confetti (SVG) -->
+<div class="absolute inset-0 pointer-events-none opacity-60">
+<svg class="w-full h-full" fill="none" viewbox="0 0 200 350" xmlns="http://www.w3.org/2000/svg">
+<circle cx="24" cy="40" fill="#E5A93C" r="3"></circle>
+<circle cx="170" cy="65" fill="#E05A47" r="4"></circle>
+<rect fill="#7B5500" height="5" rx="1" transform="rotate(25 35 110)" width="5" x="35" y="110"></rect>
+<rect fill="#E05A47" height="6" rx="1" transform="rotate(45 160 190)" width="6" x="160" y="190"></rect>
+<circle cx="180" cy="280" fill="#FAB4A8" r="3.5"></circle>
+<path d="M40 240L43 245L38 248L40 240Z" fill="#E5A93C"></path>
+</svg>
+</div>
+<!-- Card Header inside Mockup -->
+<div class="relative z-10 pt-2">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold mb-1">
+              Mode: Sampul Terpilih
+            </span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Tiup Lilin 3D</h2>
+</div>
+<!-- 3D Cake Visual Frame -->
+<div class="relative z-10 w-full flex flex-col items-center my-auto py-2">
+<div class="relative w-36 h-36 flex items-center justify-center">
+<!-- Glow Aura -->
+<div class="absolute inset-0 rounded-full bg-tertiary-fixed-dim/30 blur-xl"></div>
+<img class="w-32 h-32 object-contain relative z-10 filter drop-shadow-md transition-transform duration-300 hover:scale-105" data-alt="A delicate miniature aesthetic 3D birthday cake with pastel peach cream frosting, gentle swirled piping, strawberry accents, and five lighted candles flickering warmly on an ornate ceramic pedestal, studio lit, soft focus festive celebration, cozy paper craft vibe" id="preview-cake-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCms-j700KurfLaD_qdBCB8e_jJ7-eY1-UgLwbDu64HZBL9cZc2VQU0gC_1SCPKsXKNqbZVfpCUlM-C5UIdxelBEemNXSgSAH6iqIFilzJtpGyL99P4_d31MCZQomYqQ-pwqEc-6n-xnA5JGYsNrp8tih1S3OWtLSBLaIWW1HivtfYfWpDFmIJlOaMF1zYq9Hpt6SLt1jcnKjyTkRTSV9TgW_SwboNWwOBTrkCXHxeTEa0cM6_gv_pC"/>
+</div>
+<div class="bg-surface-container-lowest/80 backdrop-blur-sm px-3 py-1.5 rounded-xl shadow-sm mt-1">
+<p class="font-label-md text-label-md text-on-surface font-bold">Selamat Ulang Tahun Sarah!</p>
+</div>
+</div>
+<!-- Card Greeting Footer inside Mockup -->
+<div class="relative z-10 pb-1 w-full flex flex-col items-center gap-2">
+<p class="font-body-sm text-[11px] leading-tight text-on-surface-variant max-w-[200px]">
+              Semoga harimu penuh kebahagiaan dan kehangatan tulus.
+            </p>
+<div class="flex items-center gap-1.5 px-3 py-1 bg-surface-container-lowest/90 rounded-full shadow-sm text-primary">
+<span class="material-symbols-outlined text-[14px]">mic</span>
+<span class="font-label-sm text-[10px]">Tiup mic untuk padamkan</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Preview Helper Bar -->
+<div class="mt-space-sm flex items-center justify-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-[16px]">touch_app</span>
+<span class="font-label-sm text-label-sm">Sentuh untuk simulasi interaksi langsung</span>
+</div>
+</div>
+</div>
+<!-- Section Title & Narrative -->
+<div class="px-margin mb-space-md">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-snug">
+      Personalisasi Gaya Visual
+    </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+      Pilih estetika kartu yang paling pas dengan kepribadian Sarah.
+    </p>
+</div>
+<!-- Segmented Component Navigation Tabs -->
+<div class="px-margin mb-space-lg overflow-x-auto no-scrollbar flex items-center gap-space-xs">
+<button class="tab-btn px-4 py-2 rounded-full font-label-md text-label-md bg-primary text-on-primary whitespace-nowrap shadow-sm transition-all" onclick="switchCustomizerTab('tab-sampul', this)">
+      Sampul &amp; Tema
+    </button>
+<button class="tab-btn px-4 py-2 rounded-full font-label-md text-label-md bg-surface-container text-on-surface whitespace-nowrap transition-all" onclick="switchCustomizerTab('tab-galeri', this)">
+      Galeri Foto
+    </button>
+<button class="tab-btn px-4 py-2 rounded-full font-label-md text-label-md bg-surface-container text-on-surface whitespace-nowrap transition-all" onclick="switchCustomizerTab('tab-gembok', this)">
+      Gembok Rahasia
+    </button>
+<button class="tab-btn px-4 py-2 rounded-full font-label-md text-label-md bg-surface-container text-on-surface whitespace-nowrap transition-all" onclick="switchCustomizerTab('tab-efek', this)">
+      Efek Musik &amp; Lilin
+    </button>
+</div>
+<!-- Interactive Style Panels -->
+<div class="px-margin flex flex-col gap-space-lg">
+<!-- PANEL 1: Sampul & Tema -->
+<div class="customizer-panel flex flex-col gap-space-md" id="tab-sampul">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Pilihan Sampul &amp; Warna Tema</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">4 Desain</span>
+</div>
+<div class="grid grid-cols-2 gap-space-md">
+<!-- Tile 1: Pastel Peach Bloom (Selected/Free) -->
+<div class="style-card active-card cursor-pointer rounded-2xl p-space-sm bg-surface-container-lowest shadow-md transition-all flex flex-col gap-2 relative ring-2 ring-primary" onclick="selectStyleTheme('peach', this)">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-primary-fixed flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="Soft aesthetic warm pastel peach textured greeting card cover with delicate botanical flowers and warm sunlight glow, romantic editorial style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1urkBF_RoZ-81SXPSTdl4LRrPYgOFBrF9cu-pyqrCWt5EI9qa7MEEajWflc0vuZPcG4zfXzv6mN2eq18-t1ApGXaCa2e_9JWxCjhjaIakh7IkgPExS2j7fxbjlK2hQmtO-GQAiJA04jnPDjmsFzrONE05tvkIXGrzh0mfODoxjSc4jRg1BzAALByOCj90HlNeVQG13dPQRt7yCsuFFgBIdsvvRgp1YXqg5NhBzvMeuQg5WwAmOtVb"/>
+<div class="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center shadow">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Pastel Peach Bloom</span>
+</div>
+<span class="font-label-sm text-[10px] text-tertiary-container font-semibold mt-0.5">Termasuk di Paket Standar</span>
+</div>
+</div>
+<!-- Tile 2: Midnight Starry Glow (Selectable/Free) -->
+<div class="style-card cursor-pointer rounded-2xl p-space-sm bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col gap-2 relative" onclick="selectStyleTheme('midnight', this)">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-inverse-surface flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="Deep indigo night sky with golden constellation stardust and sparkling warm embers, elegant intimate greeting card texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHBUo78x1QuEoDgMcoYFkYWhjmKJpSKchYNvmsCQy9s12fRvwkOxhwudEvSvnoGwXkK1gWz_ls3gRmcu9U75xuADWy_-mZuTLbNZ6jFRj50iPINk4Q1l4HFAaB9HSNTwfLSA4HiEmxqPdQt8sJ509oAfV-T9or2XjzKmvK9115WJWm6m8YZa0V1ZFSinbZi-2bgfjXJdn6b5jbd9kSz_h5l3s-lgxi6A2cVDAc8ZAX992LbirF60Dy"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Midnight Starry Glow</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant mt-0.5">Termasuk di Paket Standar</span>
+</div>
+</div>
+<!-- Tile 3: Retro Vintage Scrapbook (Locked - Paket 2) -->
+<div class="cursor-pointer rounded-2xl p-space-sm bg-surface-container-low shadow-sm transition-all flex flex-col gap-2 relative opacity-90" onclick="showUpgradeModal('Retro Vintage Scrapbook')">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-variant flex items-center justify-center">
+<img class="w-full h-full object-cover grayscale-[30%]" data-alt="Vintage paper collage scrapbook texture with washi tapes, nostalgic stamps and retro polaroid photo frames" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0AVG1Y1Ja5eLRdFzeGFR3L4H7IVIULkJzF3SjowBi1ZPFZKmuPKQNcczw83EhFAMNGdfBgLCPma-yoOQdkajLGkKX_L2H88jLAV2OM-jhS7XZSormsqqbpkgbqHdHQj_ojdpCgFH_jIVKwXM8P9w6Z0vkHbE9f7JwTy2cc_gQhFeeHzIKxAdAZCcFGPRXT22jkoqfFqDFSOvoSrTfBZel6HPg3fJ4QkazJgTpzbvhHzz1TO9l0Suy"/>
+<!-- Lock Overlay -->
+<div class="absolute inset-0 bg-inverse-surface/40 backdrop-blur-[2px] flex items-center justify-center">
+<div class="w-9 h-9 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+</div>
+<span class="absolute bottom-2 left-2 right-2 text-center py-0.5 px-1.5 rounded-full bg-inverse-surface/85 text-surface font-label-sm text-[10px] font-medium">
+              🔒 Tersedia di Paket 2
+            </span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Retro Scrapbook</span>
+<span class="font-label-sm text-[10px] text-primary font-semibold mt-0.5">Paket 2 Eksklusif</span>
+</div>
+</div>
+<!-- Tile 4: 3D Hologram Glitz (Locked - Paket 2) -->
+<div class="cursor-pointer rounded-2xl p-space-sm bg-surface-container-low shadow-sm transition-all flex flex-col gap-2 relative opacity-90" onclick="showUpgradeModal('3D Hologram Glitz')">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-variant flex items-center justify-center">
+<img class="w-full h-full object-cover grayscale-[30%]" data-alt="Modern 3D holographic foil iridescent pastel texture with shimmering metallic reflections and soft pastel pinks and golds" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpdZ4n9HvBQC5H13R6qIROc8YukMuDtoiMogJfxXnfGyL_r_6lqOSahvJ8X3kWLp8urJhobttjcmjdnGwZqc040QB1G6goESsHASxx3GeOkZMnL4_CyYfmDBI8HLXGftOKz9FiWzkskUaIUHymayNr5H-ptwETKK9k-fy0NUFxXp1k2D0oVCkL1mONHtR9iMYKVgkS3inp7uUF0qlQ539BPweLKeQhC6CU34c3LmIGJAq-DwisuDQa"/>
+<!-- Lock Overlay -->
+<div class="absolute inset-0 bg-inverse-surface/40 backdrop-blur-[2px] flex items-center justify-center">
+<div class="w-9 h-9 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+</div>
+<span class="absolute bottom-2 left-2 right-2 text-center py-0.5 px-1.5 rounded-full bg-inverse-surface/85 text-surface font-label-sm text-[10px] font-medium">
+              🔒 Tersedia di Paket 2
+            </span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">3D Hologram Glitz</span>
+<span class="font-label-sm text-[10px] text-primary font-semibold mt-0.5">Paket 2 Eksklusif</span>
+</div>
+</div>
+</div>
+</div>
+<!-- PANEL 2: Galeri Foto -->
+<div class="customizer-panel hidden flex-col gap-space-md" id="tab-galeri">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Tampilan Album Foto Bersama</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 Pilihan Format</span>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- Floating Polaroid (Selected) -->
+<div class="p-space-md rounded-2xl bg-surface-container-lowest shadow-sm flex items-center justify-between ring-2 ring-primary">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[26px]">photo_library</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Floating Polaroid</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Foto miring estetik dengan selotip virtual</span>
+</div>
+</div>
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<!-- Film Strip Roll -->
+<div class="p-space-md rounded-2xl bg-surface-container-lowest shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[26px]">view_carousel</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Film Strip Roll</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Gulungan roll film horizontal halus</span>
+</div>
+</div>
+<div class="w-5 h-5 rounded-full bg-surface-container"></div>
+</div>
+<!-- 3D Memory Cube (Locked) -->
+<div class="p-space-md rounded-2xl bg-surface-container-low shadow-sm flex items-center justify-between opacity-80 cursor-pointer" onclick="showUpgradeModal('3D Memory Cube')">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[26px]">view_in_ar</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">3D Memory Cube</span>
+<span class="px-2 py-0.5 rounded-full bg-inverse-surface text-surface font-label-sm text-[10px]">🔒 Paket 2</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Kubus foto 3D interaktif yang bisa diputar 360°</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px]">lock</span>
+</div>
+</div>
+</div>
+<!-- PANEL 3: Gembok Rahasia -->
+<div class="customizer-panel hidden flex-col gap-space-md" id="tab-gembok">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Mekanisme Buka Kejutan</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Kerahasian Pesan</span>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- PIN Digit Angka (Selected) -->
+<div class="p-space-md rounded-2xl bg-surface-container-lowest shadow-sm flex items-center justify-between ring-2 ring-primary">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[26px]">dialpad</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">PIN 4-Digit Angka</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Sarah memasukkan tanggal jadian/ulang tahun</span>
+</div>
+</div>
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<!-- Gosok Kartu Scratch-off (Locked) -->
+<div class="p-space-md rounded-2xl bg-surface-container-low shadow-sm flex items-center justify-between opacity-80 cursor-pointer" onclick="showUpgradeModal('Gosok Kartu Rahasia')">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-variant flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[26px]">brush</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Gosok Kartu (Scratch-Off)</span>
+<span class="px-2 py-0.5 rounded-full bg-inverse-surface text-surface font-label-sm text-[10px]">🔒 Paket 2</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Efek menggosok lapisan emas dengan koin digital</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px]">lock</span>
+</div>
+<!-- Pertanyaan Trivia Kuis (Locked) -->
+<div class="p-space-md rounded-2xl bg-surface-container-low shadow-sm flex items-center justify-between opacity-80 cursor-pointer" onclick="showUpgradeModal('Pertanyaan Trivia Kuis')">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[26px]">quiz</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Trivia Kuis Spesial</span>
+<span class="px-2 py-0.5 rounded-full bg-inverse-surface text-surface font-label-sm text-[10px]">🔒 Paket 2</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Pilihan ganda seru dengan letupan confetti</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px]">lock</span>
+</div>
+</div>
+</div>
+<!-- PANEL 4: Efek Musik & Lilin -->
+<div class="customizer-panel hidden flex-col gap-space-md" id="tab-efek">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Audio Latar &amp; Lilin Digital</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Interaksi Suara</span>
+</div>
+<div class="p-space-md rounded-2xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[22px]">volume_up</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Lagu Latar: Acoustic Birthday</span>
+</div>
+<button class="text-primary font-label-sm text-label-sm font-semibold">Ganti</button>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-1/3"></div>
+</div>
+</div>
+<div class="p-space-md rounded-2xl bg-surface-container-lowest shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Sensor Tiup Mikrofon</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Lilin otomatis padam saat penerima meniup mic HP</span>
+</div>
+<div class="w-12 h-6 rounded-full bg-primary p-0.5 flex items-center justify-end">
+<div class="w-5 h-5 rounded-full bg-on-primary shadow-sm"></div>
+</div>
+</div>
+</div>
+<!-- Soft Upgrade Callout Card -->
+<div class="rounded-3xl p-space-lg bg-gradient-to-br from-[#ffeff3] via-[#fff7f0] to-[#fff3e0] shadow-sm relative overflow-hidden">
+<!-- Ambient Sparkle Icon Accent -->
+<div class="absolute -right-2 -bottom-2 text-tertiary-fixed opacity-40 select-none pointer-events-none">
+<span class="material-symbols-outlined text-[100px]">auto_awesome</span>
+</div>
+<div class="relative z-10 flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[14px]">stars</span>
+<span>Paket 2 Spesial</span>
+</div>
+<span class="font-label-md text-label-md text-primary font-extrabold bg-surface-container-lowest/80 px-2.5 py-0.5 rounded-full shadow-xs">
+            Hanya +Rp15.000
+          </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-1">
+          Buka Semua Gaya Eksklusif di Paket 2
+        </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Termasuk tema hologram, kubus memori 3D interaktif, efek lilin ultra, dan fitur tebak kuis tanpa batas.
+        </p>
+<div class="pt-space-xs flex items-center justify-between">
+<button class="px-space-md py-2.5 rounded-full bg-tertiary-container hover:bg-tertiary text-on-tertiary font-label-md text-label-md transition-all shadow-sm flex items-center gap-1.5 active:scale-95" onclick="showUpgradeModal('Paket 2 Lengkap')">
+<span>Pelajari Keuntungan Paket 2</span>
+<span class="material-symbols-outlined text-[16px]">arrow_back_ios_new</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Upgrade Modal Dialog / Bottom Sheet Preview -->
+<div class="hidden fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm flex items-end justify-center" id="upgrade-dialog">
+<div class="w-full max-w-lg bg-surface rounded-t-3xl p-space-lg shadow-2xl flex flex-col gap-space-md animate-in slide-in-from-bottom duration-300">
+<div class="w-12 h-1.5 bg-surface-container-high rounded-full mx-auto -mt-2 mb-2"></div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-2xl bg-tertiary-fixed text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">workspace_premium</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Tingkatkan ke Paket 2</h4>
+<span class="font-body-sm text-body-sm text-primary font-semibold" id="modal-feature-title">Fitur Eksklusif</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant" onclick="hideUpgradeModal()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Jadikan momen ultah Sarah semakin tak terlupakan dengan animasi 3D premium, interaksi kuis kustom, dan pilihan lagu favorit tak terbatas.
+      </p>
+<div class="p-space-md rounded-2xl bg-surface-container-low flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Biaya Tambahan</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-extrabold">+Rp15.000</span>
+</div>
+<button class="h-11 px-5 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-md active:scale-95" onclick="hideUpgradeModal()">
+          Pilih Paket 2
+        </button>
+</div>
+</div>
+</div>
+<!-- Embedded Vanilla JS for Micro-Interactions -->
+<script>
+    function switchCustomizerTab(panelId, targetBtn) {
+      document.querySelectorAll('.customizer-panel').forEach(panel => {
+        panel.classList.add('hidden');
+        panel.classList.remove('flex');
+      });
+      const activePanel = document.getElementById(panelId);
+      if (activePanel) {
+        activePanel.classList.remove('hidden');
+        activePanel.classList.add('flex');
+      }
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+        btn.classList.add('bg-surface-container', 'text-on-surface');
+      });
+      targetBtn.classList.remove('bg-surface-container', 'text-on-surface');
+      targetBtn.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+    }
+
+    function selectStyleTheme(themeKey, cardEl) {
+      document.querySelectorAll('.style-card').forEach(el => {
+        el.classList.remove('active-card', 'ring-2', 'ring-primary');
+        const check = el.querySelector('.active-check');
+        if (check) check.remove();
+      });
+
+      cardEl.classList.add('active-card', 'ring-2', 'ring-primary');
+
+      const screen = document.getElementById('phone-screen');
+      if (themeKey === 'midnight') {
+        screen.style.backgroundColor = '#1f162b';
+        screen.classList.add('text-surface');
+      } else {
+        screen.style.backgroundColor = '#fff0ea';
+        screen.classList.remove('text-surface');
+      }
+    }
+
+    function showUpgradeModal(featureName) {
+      const modal = document.getElementById('upgrade-dialog');
+      const titleSpan = document.getElementById('modal-feature-title');
+      if (titleSpan) titleSpan.textContent = featureName;
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function hideUpgradeModal() {
+      const modal = document.getElementById('upgrade-dialog');
+      if (modal) modal.classList.add('hidden');
+    }
+  </script>
+</div></main><aside class="fixed bottom-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_-4px_24px_rgba(46,26,44,0.06)] pb-safe"><div class="h-20 px-margin flex items-center justify-between gap-space-md"><button class="h-12 px-space-lg rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg transition-all flex items-center justify-center active:scale-[0.98]" onclick="history.back()" type="button">Kembali</button><button class="flex-1 h-12 px-space-lg rounded-full bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg transition-all flex items-center justify-center gap-space-xs shadow-[0_4px_16px_rgba(168,50,35,0.25)] active:scale-[0.98]" type="button"><span>Lanjut: Gaya</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span></button></div></aside></body></html>

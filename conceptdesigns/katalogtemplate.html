@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'primary': '#a83223', 'on-tertiary': '#ffffff', 'outline': '#8c716c', 'on-error': '#ffffff', 'surface-dim': '#f1d1e9', 'on-primary-fixed-variant': '#8a1c10', 'primary-container': '#c94a38', 'tertiary-fixed-dim': '#fabc4d', 'outline-variant': '#e0bfba', 'primary-fixed': '#ffdad4', 'inverse-surface': '#3f293c', 'secondary-fixed-dim': '#cec5c0', 'tertiary-fixed': '#ffdead', 'on-surface-variant': '#58413d', 'surface-container-highest': '#fad9f2', 'on-secondary-fixed': '#1f1b18', 'on-secondary-fixed-variant': '#4b4642', 'secondary-fixed': '#eae1dc', 'on-error-container': '#93000a', 'on-primary-fixed': '#410100', 'on-tertiary-fixed': '#281900', 'tertiary': '#7b5500', 'background': '#fff7f9', 'primary-fixed-dim': '#ffb4a8', 'on-primary': '#ffffff', 'on-primary-container': '#fffbff', 'error': '#ba1a1a', 'on-secondary-container': '#68615e', 'on-secondary': '#ffffff', 'on-surface': '#281526', 'surface-variant': '#fad9f2', 'error-container': '#ffdad6', 'surface': '#fff7f9', 'surface-container': '#ffe7f8', 'surface-tint': '#ab3425', 'on-background': '#281526', 'surface-container-low': '#ffeff8', 'on-tertiary-fixed-variant': '#604100', 'inverse-primary': '#ffb4a8', 'inverse-on-surface': '#ffebf8', 'on-tertiary-container': '#fffbff', 'secondary-container': '#e7ded9', 'secondary': '#635d59', 'surface-container-lowest': '#ffffff', 'tertiary-container': '#9b6b00', 'surface-bright': '#fff7f9', 'surface-container-high': '#ffdff7' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-lg': '1.5rem', 'space-xl': '2.5rem', 'margin-desktop': '3rem', 'space-sm': '0.5rem', 'space-md': '1rem', 'margin-tablet': '2rem', 'space-xs': '0.25rem', 'gutter-desktop': '2rem', 'gutter': '1rem', 'gutter-tablet': '1.5rem', 'margin': '1.25rem' }, fontFamily: { 'display-hero': ['Epilogue'], 'headline-sm': ['Epilogue'], 'body-md': ['Plus Jakarta Sans'], 'label-sm': ['Plus Jakarta Sans'], 'body-sm': ['Plus Jakarta Sans'], 'headline-lg-mobile': ['Epilogue'], 'headline-md': ['Epilogue'], 'headline-lg': ['Epilogue'], 'body-lg': ['Plus Jakarta Sans'], 'display-hero-mobile': ['Epilogue'], 'label-lg': ['Plus Jakarta Sans'], 'label-md': ['Plus Jakarta Sans'] }, fontSize: { 'display-hero': ['40px', {'lineHeight': '48px', 'letterSpacing': '-0.03em', 'fontWeight': '800'}], 'headline-sm': ['18px', {'lineHeight': '24px', 'fontWeight': '600'}], 'body-md': ['16px', {'lineHeight': '24px', 'fontWeight': '400'}], 'label-sm': ['11px', {'lineHeight': '14px', 'letterSpacing': '0.04em', 'fontWeight': '700'}], 'body-sm': ['14px', {'lineHeight': '20px', 'fontWeight': '400'}], 'headline-lg-mobile': ['24px', {'lineHeight': '32px', 'letterSpacing': '-0.01em', 'fontWeight': '700'}], 'headline-md': ['22px', {'lineHeight': '28px', 'letterSpacing': '-0.01em', 'fontWeight': '600'}], 'headline-lg': ['30px', {'lineHeight': '38px', 'letterSpacing': '-0.02em', 'fontWeight': '700'}], 'body-lg': ['18px', {'lineHeight': '28px', 'fontWeight': '400'}], 'display-hero-mobile': ['32px', {'lineHeight': '38px', 'letterSpacing': '-0.02em', 'fontWeight': '800'}], 'label-lg': ['15px', {'lineHeight': '20px', 'letterSpacing': '0.01em', 'fontWeight': '600'}], 'label-md': ['13px', {'lineHeight': '18px', 'letterSpacing': '0.01em', 'fontWeight': '600'}] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_4px_20px_-2px_rgba(40,21,38,0.05),0_2px_6px_-1px_rgba(168,50,35,0.04)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="KartuKita Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Ux5gG-p6wFieuY-2nbnx1v8xWCtBfCiPeNe_NQCQrmfTJFM-uabtlfUX3qUg2Gr0t5Z_9B4tjTMylrX29WIt7ZfRnNOBrZZr8Y67lZbOTjfwCROqNnNcCuGxkuFCQbRn0bpZv50qj1i37VpU9cX8MXZxBY9Ps0FiMVHKbn7sj1DbDW_6qkAYVNroMGCziIYOW7FC0XvaA7FzvAfmQyy-Jk4Lc9a6hShPhyOWClN_5Gm7qKiTkOZ8KfIXo"/><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">KartuKita</span><span class="hidden">Katalog Kartu</span></div><div class="flex items-center gap-space-sm"><a class="h-10 px-space-md rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center transition-transform active:scale-95" data-path="login" href="#">Masuk</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Search & Sentiment Filter Section -->
+<section class="px-margin pt-space-sm pb-space-sm flex flex-col gap-space-sm">
+<!-- Search Input Bar -->
+<div class="relative flex items-center w-full">
+<div class="absolute left-3.5 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full h-11 pl-10 pr-10 rounded-full bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/60 font-body-sm text-body-sm focus:outline-none focus:bg-surface-container transition-colors shadow-sm" placeholder="Cari kartu, suasana, atau momen..." type="text"/>
+<button aria-label="Buka Opsi Filter" class="absolute right-3 w-7 h-7 flex items-center justify-center rounded-full text-on-surface-variant active:bg-surface-container transition-colors" title="Filter Cepat">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+</div>
+<!-- Category Chips (Horizontally Scrollable) -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-0.5 -mx-margin px-margin">
+<button class="shrink-0 h-9 px-4 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-sm active:scale-95 transition-transform">
+<span>Semua</span>
+</button>
+<button class="shrink-0 h-9 px-3.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5 active:scale-95 transition-transform">
+<span>🎂</span>
+<span>Ulang Tahun</span>
+</button>
+<button class="shrink-0 h-9 px-3.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5 active:scale-95 transition-transform">
+<span>💌</span>
+<span>Pasangan</span>
+</button>
+<button class="shrink-0 h-9 px-3.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5 active:scale-95 transition-transform">
+<span>🏡</span>
+<span>Keluarga</span>
+</button>
+<button class="shrink-0 h-9 px-3.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5 active:scale-95 transition-transform">
+<span>🌙</span>
+<span>Hari Raya</span>
+</button>
+<button class="shrink-0 h-9 px-3.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5 active:scale-95 transition-transform">
+<span>🎓</span>
+<span>Sekolah</span>
+</button>
+<button class="shrink-0 h-9 px-3.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5 active:scale-95 transition-transform">
+<span>🤗</span>
+<span>Dukungan</span>
+</button>
+</div>
+<!-- Counter & Sort Row -->
+<div class="flex items-center justify-between pt-0.5">
+<p class="font-body-sm text-body-sm text-on-surface-variant font-medium">
+        Menampilkan <span class="font-bold text-on-surface">24</span> template interaktif
+      </p>
+<button class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm active:bg-surface-container transition-colors">
+<span>Terpopuler</span>
+<span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+</button>
+</div>
+</section>
+<!-- Helpful Hint Callout -->
+<section class="px-margin mb-space-sm">
+<div class="w-full p-3 rounded-2xl bg-surface-container-high text-on-surface flex items-center gap-2.5 shadow-sm">
+<div class="w-7 h-7 rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[16px]">lightbulb</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-tight">
+        Semua template bisa kamu ubah teks, foto, suara, dan lagu gratis!
+      </p>
+</div>
+</section>
+<!-- 2-Column Responsive Card Grid -->
+<section class="px-margin grid grid-cols-2 gap-space-sm pb-space-lg">
+<!-- Card 1: Tiup Lilin 3D -->
+<div class="flex flex-col bg-surface-container-lowest rounded-3xl p-2.5 shadow-[0_4px_20px_-2px_rgba(40,21,38,0.06),0_2px_6px_-1px_rgba(168,50,35,0.04)] transition-all">
+<!-- Mock Phone Frame -->
+<div class="relative w-full aspect-[9/13] rounded-2xl bg-surface-container-low overflow-hidden flex flex-col items-center justify-between p-2 shadow-inner">
+<!-- Phone Micro Notch -->
+<div class="w-10 h-1 rounded-full bg-surface-dim/80 self-center z-10"></div>
+<!-- Interactive Preview Illustration / Mock Visual -->
+<div class="relative w-full h-full rounded-xl overflow-hidden my-1">
+<img class="w-full h-full object-cover" data-alt="Delightful warm 3D greeting card illustration showing a colorful birthday cake with glowing interactive candles and floating pastel balloons against a soft blush background. Warm lighting, cheerful festive vibes, tactile paper texture aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3L_tAfR3MLEDchQmQAnyFA7Jknpti5R60_ZfZ6iyMcLVMIkuc8x2n1VXROZ7d9qlXrNPZ-WYZhqQL_O-lfDnit0Hrf033dKa-F8y1yXRATFNxACXOA934o2oR-HLSwf_8RGd3yjvJiK7QHnj7AX9w3cna2el5mL7lceeyeDfu08ft1Kf6AHssAkgH44G-j3PJHdH3YD2hZ-YFJWCzmaDN_DPbhSOB5R08OEXJy2g75KNix26Alod6"/>
+<!-- Interactive Badge Overlay -->
+<div class="absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary shadow-xs">
+<span class="material-symbols-outlined text-[14px]">mic</span>
+<span class="font-label-sm text-label-sm">Tiup Mikrofon</span>
+</div>
+</div>
+<!-- Favorite Button -->
+<button aria-label="Favoritkan Tiup Lilin 3D" class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[16px]">favorite</span>
+</button>
+</div>
+<!-- Card Details & Actions -->
+<div class="flex flex-col gap-1 mt-2.5 px-1">
+<span class="w-max px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">
+          Playful • Audio
+        </span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface line-clamp-1 leading-snug">
+          Tiup Lilin 3D
+        </h2>
+<div class="flex items-center justify-between pt-1">
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-0.5 font-bold hover:underline">
+<span>Coba demo</span>
+<span class="material-symbols-outlined text-[14px]">play_arrow</span>
+</button>
+<a class="h-7 px-2.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center shadow-xs active:scale-95 transition-transform" href="#" title="Gunakan Template Ini">
+            Pilih
+          </a>
+</div>
+</div>
+</div>
+<!-- Card 2: Surat Lipat Hati -->
+<div class="flex flex-col bg-surface-container-lowest rounded-3xl p-2.5 shadow-[0_4px_20px_-2px_rgba(40,21,38,0.06),0_2px_6px_-1px_rgba(168,50,35,0.04)] transition-all">
+<!-- Mock Phone Frame -->
+<div class="relative w-full aspect-[9/13] rounded-2xl bg-surface-container-low overflow-hidden flex flex-col items-center justify-between p-2 shadow-inner">
+<div class="w-10 h-1 rounded-full bg-surface-dim/80 self-center z-10"></div>
+<div class="relative w-full h-full rounded-xl overflow-hidden my-1">
+<img class="w-full h-full object-cover" data-alt="An exquisite folded romantic love letter stationary card with an authentic red wax seal stamp, adorned with soft golden botanical ribbons and rose petals over smooth textured ivory paper. Warm ambient morning sunlight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_M-sHThrxTimuGrOKKQUQbo3YGkY0Rql9dUNDIi2Sr4hIEOxzEct4rm_UCnNaFUCOZvmiPmLlgKUnHF8kKv0G_V7gkQX5rfBlJTJOuw_hYGtquiqvJZALfCKJki9ZGxnSt-9XV2Jaqs5KYO6AMe5xw1qvsywsSmyxw8NXPBjhNdiU9_wVoIhPjgalgm4I5aSARI71JFFIV2S5i5OO4JTdf8LALQk_CDyY8zrznH2giQCAlH7dUvDR"/>
+<div class="absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface shadow-xs">
+<span class="material-symbols-outlined text-[14px]">touch_app</span>
+<span class="font-label-sm text-label-sm">Buka Amplop</span>
+</div>
+</div>
+<button aria-label="Favoritkan Surat Lipat Hati" class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface-variant flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[16px]">favorite_border</span>
+</button>
+</div>
+<!-- Card Details & Actions -->
+<div class="flex flex-col gap-1 mt-2.5 px-1">
+<span class="w-max px-2 py-0.5 rounded-full bg-surface-variant text-on-surface font-label-sm text-label-sm">
+          Romantis • Elegan
+        </span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface line-clamp-1 leading-snug">
+          Surat Lipat Hati
+        </h2>
+<div class="flex items-center justify-between pt-1">
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-0.5 font-bold hover:underline">
+<span>Coba demo</span>
+<span class="material-symbols-outlined text-[14px]">play_arrow</span>
+</button>
+<a class="h-7 px-2.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center shadow-xs active:scale-95 transition-transform" href="#">
+            Pilih
+          </a>
+</div>
+</div>
+</div>
+<!-- Card 3: Ketupat Tabur Emas -->
+<div class="flex flex-col bg-surface-container-lowest rounded-3xl p-2.5 shadow-[0_4px_20px_-2px_rgba(40,21,38,0.06),0_2px_6px_-1px_rgba(168,50,35,0.04)] transition-all">
+<!-- Mock Phone Frame -->
+<div class="relative w-full aspect-[9/13] rounded-2xl bg-surface-container-low overflow-hidden flex flex-col items-center justify-between p-2 shadow-inner">
+<div class="w-10 h-1 rounded-full bg-surface-dim/80 self-center z-10"></div>
+<div class="relative w-full h-full rounded-xl overflow-hidden my-1">
+<img class="w-full h-full object-cover" data-alt="Luminous Eid Mubarak greeting card with glowing golden 3D ketupat weaving ornaments, soft traditional Indonesian bedug drum, crescent moon and warm Islamic starry night backdrop in deep plum and gold tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvZzzUSUlar9nV23IZD5rW3DLBazU4MQJ3ll7h9SExd8nZj6O4hLvHsew3540gleKDZsmogdRHubjQTVM-smd2uZxpIlsl8KDDwg-6m0Cj3clzO64tl3YtlY90ATkiNgaEbxiso87Jfw-xDjtlX-EIToAh7oK8AfASGIP-veQWv7GGrrbgPhy70EZ3Es7eJeCoA_-A7YK0LpLFvJXDgiuRR7zqLTubrjoJkBCG3lYwqESFfReqFCwO"/>
+<div class="absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-tertiary shadow-xs">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+<span class="font-label-sm text-label-sm">Tabur Emas</span>
+</div>
+</div>
+<button aria-label="Favoritkan Ketupat Tabur Emas" class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface-variant flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[16px]">favorite_border</span>
+</button>
+</div>
+<!-- Card Details & Actions -->
+<div class="flex flex-col gap-1 mt-2.5 px-1">
+<span class="w-max px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+          Hari Raya • Berkah
+        </span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface line-clamp-1 leading-snug">
+          Ketupat Emas
+        </h2>
+<div class="flex items-center justify-between pt-1">
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-0.5 font-bold hover:underline">
+<span>Coba demo</span>
+<span class="material-symbols-outlined text-[14px]">play_arrow</span>
+</button>
+<a class="h-7 px-2.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center shadow-xs active:scale-95 transition-transform" href="#">
+            Pilih
+          </a>
+</div>
+</div>
+</div>
+<!-- Card 4: Kado Wisuda Ceria -->
+<div class="flex flex-col bg-surface-container-lowest rounded-3xl p-2.5 shadow-[0_4px_20px_-2px_rgba(40,21,38,0.06),0_2px_6px_-1px_rgba(168,50,35,0.04)] transition-all">
+<!-- Mock Phone Frame -->
+<div class="relative w-full aspect-[9/13] rounded-2xl bg-surface-container-low overflow-hidden flex flex-col items-center justify-between p-2 shadow-inner">
+<div class="w-10 h-1 rounded-full bg-surface-dim/80 self-center z-10"></div>
+<div class="relative w-full h-full rounded-xl overflow-hidden my-1">
+<img class="w-full h-full object-cover" data-alt="Joyful graduation celebration card illustration featuring graduation mortarboard cap, rolled diploma with crimson ribbon, exploding confetti streamers, bright optimistic lighting and celebratory modern Indonesian design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6fGFDRKZ8anFw9tc7Ml8U0UW3wK4gsOZBKkCC026WXln9TjKBeW1pehzi9hAGLU9fy-xwIdY_Rej77cRewV6iQFfm7YQM8h5fLMAmtAVHpImMDu_EWabYzyFnPrPGW8UFW7j-ocxX1cwHQQMSnCOCtBvipcYinmb70D3b_2Zm03YttOzCZ_hgmdvmbmP6X6r1uLHR7-9XeAWXieYgabuTBr9BXjrLaOxdBaHbPgo7w0tssdBYtLy3"/>
+<div class="absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary shadow-xs">
+<span class="material-symbols-outlined text-[14px]">celebration</span>
+<span class="font-label-sm text-label-sm">Konfeti Pop</span>
+</div>
+</div>
+<button aria-label="Favoritkan Kado Wisuda Ceria" class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface-variant flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[16px]">favorite_border</span>
+</button>
+</div>
+<!-- Card Details & Actions -->
+<div class="flex flex-col gap-1 mt-2.5 px-1">
+<span class="w-max px-2 py-0.5 rounded-full bg-surface-variant text-on-surface font-label-sm text-label-sm">
+          Sekolah • Ceria
+        </span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface line-clamp-1 leading-snug">
+          Wisuda Ceria
+        </h2>
+<div class="flex items-center justify-between pt-1">
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-0.5 font-bold hover:underline">
+<span>Coba demo</span>
+<span class="material-symbols-outlined text-[14px]">play_arrow</span>
+</button>
+<a class="h-7 px-2.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center shadow-xs active:scale-95 transition-transform" href="#">
+            Pilih
+          </a>
+</div>
+</div>
+</div>
+<!-- Card 5: Secangkir Semangat -->
+<div class="flex flex-col bg-surface-container-lowest rounded-3xl p-2.5 shadow-[0_4px_20px_-2px_rgba(40,21,38,0.06),0_2px_6px_-1px_rgba(168,50,35,0.04)] transition-all">
+<!-- Mock Phone Frame -->
+<div class="relative w-full aspect-[9/13] rounded-2xl bg-surface-container-low overflow-hidden flex flex-col items-center justify-between p-2 shadow-inner">
+<div class="w-10 h-1 rounded-full bg-surface-dim/80 self-center z-10"></div>
+<div class="relative w-full h-full rounded-xl overflow-hidden my-1">
+<img class="w-full h-full object-cover" data-alt="Soothing and heartwarming digital greeting card featuring a warm steaming ceramic mug of Indonesian coffee with comforting hug illustration, gentle steam hearts, pastel terracotta warm aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDak_11W4W3uBuMZOlnmcbXXoKy4euJnGO3yr7cD36WqA9kXPF0v9DPiUS-LuyxpQMtIZ2ghon31GJzJl1TTSbhz6NaoGQ7bpxxYDYyY4ADq7sMllcJadwCPipzqW5VRDprJ9TsSb6mvNaC3egMvqYO7JRGI6yHKSCqCNflQdpD-oT3LHU-E04ZA12jqwLY7CcAb9R_ro9dj3R6ebs0grdh5zq8W2NPIymfNA4-lsbQKLKLraF7XC4y"/>
+<div class="absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface shadow-xs">
+<span class="material-symbols-outlined text-[14px]">sound_detection_dog_barking</span>
+<span class="font-label-sm text-label-sm">Pesan Suara</span>
+</div>
+</div>
+<button aria-label="Favoritkan Secangkir Semangat" class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface-variant flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[16px]">favorite_border</span>
+</button>
+</div>
+<!-- Card Details & Actions -->
+<div class="flex flex-col gap-1 mt-2.5 px-1">
+<span class="w-max px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm">
+          Dukungan • Hangat
+        </span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface line-clamp-1 leading-snug">
+          Secangkir Tenang
+        </h2>
+<div class="flex items-center justify-between pt-1">
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-0.5 font-bold hover:underline">
+<span>Coba demo</span>
+<span class="material-symbols-outlined text-[14px]">play_arrow</span>
+</button>
+<a class="h-7 px-2.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center shadow-xs active:scale-95 transition-transform" href="#">
+            Pilih
+          </a>
+</div>
+</div>
+</div>
+<!-- Card 6: Foto Memori Klasik -->
+<div class="flex flex-col bg-surface-container-lowest rounded-3xl p-2.5 shadow-[0_4px_20px_-2px_rgba(40,21,38,0.06),0_2px_6px_-1px_rgba(168,50,35,0.04)] transition-all">
+<!-- Mock Phone Frame -->
+<div class="relative w-full aspect-[9/13] rounded-2xl bg-surface-container-low overflow-hidden flex flex-col items-center justify-between p-2 shadow-inner">
+<div class="w-10 h-1 rounded-full bg-surface-dim/80 self-center z-10"></div>
+<div class="relative w-full h-full rounded-xl overflow-hidden my-1">
+<img class="w-full h-full object-cover" data-alt="Interactive polaroid photo cards album layout with soft paper clips, dried wildflowers, handwritten cursive notes, warm sepia and soft coral tones celebrating nostalgic family memories." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC597g2QAxO8nVkgI_aNOM0x7wlXz5t98IenRy9njGYdScbj-25pDsypsDCGPeeUqjCyTFFE0vaLEagBaAb8LhS4KQbdnlPn7hn-PykxLfIErD-v7s8yi3rIlbWLEPz638pYRMEfNaSH8_VoFut7uQRxYywDMv7rpYgzIhKu5728RpuEmQ2lrfBiG3dUf1iKPtpM4axKpufUUfwmt035xnpSntz24swHuLTRX1dS1FIsEr57TNtDmzn"/>
+<div class="absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface shadow-xs">
+<span class="material-symbols-outlined text-[14px]">swipe</span>
+<span class="font-label-sm text-label-sm">Geser Foto</span>
+</div>
+</div>
+<button aria-label="Favoritkan Foto Memori Klasik" class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[16px]">favorite</span>
+</button>
+</div>
+<!-- Card Details & Actions -->
+<div class="flex flex-col gap-1 mt-2.5 px-1">
+<span class="w-max px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm">
+          Keluarga • Kenangan
+        </span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface line-clamp-1 leading-snug">
+          Memori Klasik
+        </h2>
+<div class="flex items-center justify-between pt-1">
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-0.5 font-bold hover:underline">
+<span>Coba demo</span>
+<span class="material-symbols-outlined text-[14px]">play_arrow</span>
+</button>
+<a class="h-7 px-2.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center shadow-xs active:scale-95 transition-transform" href="#">
+            Pilih
+          </a>
+</div>
+</div>
+</div>
+<!-- Card 7: Pohon Harapan Bunga -->
+<div class="flex flex-col bg-surface-container-lowest rounded-3xl p-2.5 shadow-[0_4px_20px_-2px_rgba(40,21,38,0.06),0_2px_6px_-1px_rgba(168,50,35,0.04)] transition-all">
+<!-- Mock Phone Frame -->
+<div class="relative w-full aspect-[9/13] rounded-2xl bg-surface-container-low overflow-hidden flex flex-col items-center justify-between p-2 shadow-inner">
+<div class="w-10 h-1 rounded-full bg-surface-dim/80 self-center z-10"></div>
+<div class="relative w-full h-full rounded-xl overflow-hidden my-1">
+<img class="w-full h-full object-cover" data-alt="Romantic wedding invitation card with falling jasmine petals, delicate golden foliage branches, luxury artisanal stationery cardstock, soft sunset glow and heartfelt Indonesian wedding congratulations." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBai0iDZ-8JDcNra-fBVJhl7DxMy9ltDcVbrAaGjC-Z9pyYnwXveFGVXS5kHZ1Elg1z4RYpBG5-u64tq_QkXMaxuTiXp7UyX2roJf_3fmlBE3Uawuik4FzkLLyC21slAJeXBpaSEi2Hr501FNnVD3uatdKX1gWqGclVbTX-h8CwIrsTE3P33CytPpjjIz1oE0ivjxDzVUo31dgqJ8HgfKcR-qXVqkF7lw3rzVla9HrVmg-ELO-GAyMs"/>
+<div class="absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-tertiary shadow-xs">
+<span class="material-symbols-outlined text-[14px]">filter_vintage</span>
+<span class="font-label-sm text-label-sm">Bunga Gugur</span>
+</div>
+</div>
+<button aria-label="Favoritkan Pohon Harapan Bunga" class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface-variant flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[16px]">favorite_border</span>
+</button>
+</div>
+<!-- Card Details & Actions -->
+<div class="flex flex-col gap-1 mt-2.5 px-1">
+<span class="w-max px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">
+          Pernikahan • Doa
+        </span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface line-clamp-1 leading-snug">
+          Bunga Restu
+        </h2>
+<div class="flex items-center justify-between pt-1">
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-0.5 font-bold hover:underline">
+<span>Coba demo</span>
+<span class="material-symbols-outlined text-[14px]">play_arrow</span>
+</button>
+<a class="h-7 px-2.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center shadow-xs active:scale-95 transition-transform" href="#">
+            Pilih
+          </a>
+</div>
+</div>
+</div>
+<!-- Card 8: Kartu Gosok Rahasia -->
+<div class="flex flex-col bg-surface-container-lowest rounded-3xl p-2.5 shadow-[0_4px_20px_-2px_rgba(40,21,38,0.06),0_2px_6px_-1px_rgba(168,50,35,0.04)] transition-all">
+<!-- Mock Phone Frame -->
+<div class="relative w-full aspect-[9/13] rounded-2xl bg-surface-container-low overflow-hidden flex flex-col items-center justify-between p-2 shadow-inner">
+<div class="w-10 h-1 rounded-full bg-surface-dim/80 self-center z-10"></div>
+<div class="relative w-full h-full rounded-xl overflow-hidden my-1">
+<img class="w-full h-full object-cover" data-alt="Interactive metallic scratch card with shimmering golden foil layer partially scratched revealing a hidden surprise love message, confetti sparkles, playful tactile gift gamification texture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv4AALoI0eny6N7xOYOjYjy3QuI-CkO1fJyk07EYelcqVaakSDr4sxUEL9NN5s1JDlVpyi1MMaEu7STlyQ1yShC0z-b5CEQ4tT9aRk1bUioJQh2WWORxUuZRd7XOIzRCEUXboQKekdE7a9IKvvMLyL_3_8bsXKrBVuJpbCMDcmkSpsISAFHxxzT0wraaBcNbH9s-ZakEUsnRNFYMok7yFK8judwhxyAJwdKAUN5tKvkjL0iqKQLpJn"/>
+<div class="absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary shadow-xs">
+<span class="material-symbols-outlined text-[14px]">ink_eraser</span>
+<span class="font-label-sm text-label-sm">Gosok Koin</span>
+</div>
+</div>
+<button aria-label="Favoritkan Kartu Gosok Rahasia" class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface-variant flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[16px]">favorite_border</span>
+</button>
+</div>
+<!-- Card Details & Actions -->
+<div class="flex flex-col gap-1 mt-2.5 px-1">
+<span class="w-max px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+          Kejutan • Game
+        </span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface line-clamp-1 leading-snug">
+          Gosok Rahasia
+        </h2>
+<div class="flex items-center justify-between pt-1">
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-0.5 font-bold hover:underline">
+<span>Coba demo</span>
+<span class="material-symbols-outlined text-[14px]">play_arrow</span>
+</button>
+<a class="h-7 px-2.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center shadow-xs active:scale-95 transition-transform" href="#">
+            Pilih
+          </a>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Demo Preview Modal/Drawer (Client Micro-Interaction) -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm hidden flex items-end justify-center" id="demoModal">
+<div class="w-full max-w-md bg-surface-container-lowest rounded-t-3xl p-margin flex flex-col gap-space-sm transform transition-transform duration-300">
+<div class="w-12 h-1.5 rounded-full bg-surface-variant self-center"></div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[24px]">arrow_back_ios_new</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface" id="modalTitle">Pratinjau Interaktif</h3>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface active:scale-90 transition-transform" id="closeModal">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="relative w-full aspect-[9/12] rounded-2xl bg-surface-container-low flex flex-col items-center justify-center p-4 text-center overflow-hidden">
+<div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-3 animate-pulse">
+<span class="material-symbols-outlined text-[32px]">play_circle</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface mb-1">Sentuh Layar untuk Interaksi</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-[220px]">
+          Uji animasi buka kartu, musik pengiring, dan efek partikel secara nyata.
+        </p>
+</div>
+<div class="flex items-center gap-space-sm pt-2">
+<button class="flex-1 h-12 rounded-full bg-surface-container text-on-surface font-label-lg text-label-lg active:scale-95 transition-transform" id="closeModalBtn">
+          Tutup
+        </button>
+<a class="flex-1 h-12 rounded-full bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-transform" href="#">
+<span>Pakai Kartu Ini</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Micro-interactions Script -->
+<script>
+    (function() {
+      const demoBtns = document.querySelectorAll('button:has(> span.material-symbols-outlined)');
+      const modal = document.getElementById('demoModal');
+      const closeModal = document.getElementById('closeModal');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const modalTitle = document.getElementById('modalTitle');
+
+      document.querySelectorAll('button').forEach(btn => {
+        if (btn.textContent.includes('Coba demo')) {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const card = btn.closest('.flex.flex-col');
+            const title = card ? card.querySelector('h2').textContent.trim() : 'Kartu Ucapan';
+            modalTitle.textContent = title;
+            modal.classList.remove('hidden');
+          });
+        }
+      });
+
+      const hideModal = () => modal.classList.add('hidden');
+      if (closeModal) closeModal.addEventListener('click', hideModal);
+      if (closeModalBtn) closeModalBtn.addEventListener('click', hideModal);
+
+      // Favorite toggle micro-feedback
+      document.querySelectorAll('button[aria-label^="Favoritkan"]').forEach(favBtn => {
+        favBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const icon = favBtn.querySelector('.material-symbols-outlined');
+          if (icon.textContent === 'favorite_border') {
+            icon.textContent = 'favorite';
+            favBtn.classList.remove('text-on-surface-variant');
+            favBtn.classList.add('text-primary');
+          } else {
+            icon.textContent = 'favorite_border';
+            favBtn.classList.add('text-on-surface-variant');
+            favBtn.classList.remove('text-primary');
+          }
+        });
+      });
+    })();
+  </script>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-4px_20px_rgba(40,21,38,0.06)]" data-active-classes="text-primary font-label-md"><div class="h-16 px-margin flex items-center justify-around"><a class="min-w-[44px] min-h-[44px] flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm gap-space-xs transition-colors" data-path="jelajah" href="#"><span class="material-symbols-outlined text-[22px]">explore</span><span>Jelajah</span></a><a aria-current="page" class="min-w-[44px] min-h-[44px] flex flex-col items-center justify-center gap-space-xs transition-colors text-primary font-label-md" data-path="katalog-kartu" href="#"><span class="material-symbols-outlined text-[22px]">style</span><span>Katalog</span></a><a class="min-w-[44px] min-h-[44px] flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm gap-space-xs transition-colors" data-path="buat-kartu" href="#"><span class="material-symbols-outlined text-[22px]">add_circle</span><span>Buat</span></a><a class="min-w-[44px] min-h-[44px] flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm gap-space-xs transition-colors" data-path="kotak-masuk" href="#"><span class="material-symbols-outlined text-[22px]">mark_email_read</span><span>Terima</span></a><a class="min-w-[44px] min-h-[44px] flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm gap-space-xs transition-colors" data-path="profil-saya" href="#"><span class="material-symbols-outlined text-[22px]">face</span><span>Profil</span></a></div></nav></body></html>
