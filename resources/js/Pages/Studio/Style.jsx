@@ -109,7 +109,8 @@ export default function Style({ greeting, template, templateTheme, style: savedS
                         type="button"
                         disabled={isSubmitting || saveState.tone === 'saving'}
                         onClick={goToPreview}
-                        className="flex h-12 flex-1 items-center justify-center gap-space-xs rounded-full bg-primary px-space-lg text-label-lg text-on-primary shadow-[0_4px_16px_rgba(168,50,35,0.25)] hover:bg-primary-container disabled:opacity-60"
+                        className="flex h-12 flex-1 items-center justify-center gap-space-xs rounded-full px-space-lg text-label-lg text-on-primary shadow-md transition-colors hover:brightness-110 disabled:opacity-60"
+                        style={{ backgroundColor: theme.accent }}
                     >
                         <span>Lanjut: Pratinjau</span>
                         <Icon name="arrow_forward" size={18} />

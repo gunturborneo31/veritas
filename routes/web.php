@@ -144,6 +144,8 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->name('ad
         ->parameters(['promo' => 'promoCode'])
         ->names('promos');
 
+    Route::post('template/{template}/duplikat', [Admin\TemplateController::class, 'duplicate'])->name('templates.duplicate');
+
     Route::resource('template', Admin\TemplateController::class)
         ->except(['show', 'destroy'])
         ->names('templates');

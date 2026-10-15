@@ -41,7 +41,6 @@ export const PALETTES = [
     { key: 'madu', name: 'Madu', accent: '#8a5a12', soft: '#ffe8c2', gradient: ['#fdf7ec', '#f6e6c8', '#ecd2a6'] },
     { key: 'navy', name: 'Navy Emas', accent: '#24386b', soft: '#dde4f6', gradient: ['#f5f7fc', '#e3e9f7', '#f6e7c1'] },
     { key: 'malam', name: 'Langit Malam', accent: '#3b3486', soft: '#e0ddf7', gradient: ['#eeedfb', '#dcd8f5', '#cfd9f2'] },
-    { key: 'abu', name: 'Monokrom', accent: '#3f3f46', soft: '#e4e4e7', gradient: ['#fafafa', '#f0f0f1', '#e4e4e7'] },
 ];
 
 function toRgb(hex) {

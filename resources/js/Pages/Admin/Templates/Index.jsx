@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { rupiah } from '@/lib/format';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 
 export default function Index({ templates }) {
     return (
@@ -14,7 +14,7 @@ export default function Index({ templates }) {
                     <table className="min-w-full text-left text-body-sm">
                         <thead className="bg-surface-container-low text-label-md text-on-surface-variant">
                             <tr>
-                                {['Nama', 'Kategori', 'Kelas', 'Harga', 'Komponen', 'Status', ''].map((heading) => (
+                                {['Seri / Desain', 'Kategori', 'Kelas', 'Harga', 'Komponen', 'Status', ''].map((heading) => (
                                     <th key={heading} className="px-4 py-3">
                                         {heading}
                                     </th>
@@ -24,16 +24,27 @@ export default function Index({ templates }) {
                         <tbody>
                             {templates.map((template) => (
                                 <tr key={template.id} className="border-t border-surface-container">
-                                    <td className="px-4 py-3 font-semibold">{template.name}</td>
-                                    <td className="px-4 py-3">{template.category.name}</td>
+                                    <td className="px-4 py-3">
+                                        <span className="flex items-center gap-2">
+                                            <span className="h-4 w-4 shrink-0 rounded-full" style={{ background: `linear-gradient(135deg, ${template.theme.accent}, ${template.theme.gradient[2]})` }} />
+                                            <span>
+                                                <span className="block text-label-sm text-on-surface-variant">{template.series ?? 'Tanpa seri'}</span>
+                                                <span className="font-semibold">{template.design_name ?? template.name}</span>
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td className="px-4 py-3">{template.category}</td>
                                     <td className="px-4 py-3">{template.tier}</td>
                                     <td className="px-4 py-3">{rupiah(template.price)}</td>
                                     <td className="px-4 py-3">{template.components_count}</td>
                                     <td className="px-4 py-3">{template.is_published ? 'Terbit' : 'Draf'}</td>
-                                    <td className="px-4 py-3">
+                                    <td className="space-x-3 whitespace-nowrap px-4 py-3">
                                         <Link href={route('admin.templates.edit', template.slug)} className="text-primary underline">
                                             Ubah
                                         </Link>
+                                        <button type="button" onClick={() => router.post(route('admin.templates.duplicate', template.slug))} className="text-on-surface-variant underline">
+                                            Duplikat
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
