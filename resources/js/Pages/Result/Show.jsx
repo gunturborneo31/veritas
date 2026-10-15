@@ -121,7 +121,7 @@ export default function Show({ greeting, template, orderCode }) {
                         QR Code Kenangan
                     </div>
                     <div className="rounded-2xl bg-surface-container-lowest p-3 shadow-sm">
-                        <QrCode value={greeting.url} />
+                        <QrCode svg={greeting.qr_svg} downloadUrl={greeting.qr_download_url} />
                     </div>
                     <p className="max-w-xs text-body-sm text-on-surface-variant">Pindai dengan kamera ponsel untuk membuka kartu. Cocok dicetak pada kado fisik!</p>
                 </section>

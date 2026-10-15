@@ -11,6 +11,7 @@ use App\Models\PromoCode;
 use App\Models\Reaction;
 use App\Models\Reminder;
 use App\Models\Reply;
+use App\Support\Greetings\QrCodeGenerator;
 use App\Support\Pricing\PromoCodes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class DashboardController extends Controller
     /**
      * Daftar ucapan, aktivitas terbaru (dibuka/reaksi/balasan), dan pengingat momen.
      */
-    public function index(Request $request, PromoCodes $promoCodes): Response
+    public function index(Request $request, PromoCodes $promoCodes, QrCodeGenerator $qr): Response
     {
         $user = $request->user();
         $referral = $promoCodes->referralFor($user);
@@ -45,6 +46,8 @@ class DashboardController extends Controller
                 'occasion' => $greeting->occasion,
                 'template' => $greeting->template->toCardArray(),
                 'url' => $greeting->slug ? route('recipient.show', $greeting->slug) : null,
+                'qr_svg' => $greeting->slug ? $qr->svg(route('recipient.show', $greeting->slug), $greeting->template->resolvedTheme()['accent']) : null,
+                'qr_download_url' => $greeting->slug ? route('result.qr', $greeting) : null,
                 'opens_at' => $greeting->opens_at?->toIso8601String(),
                 'order' => $greeting->latestOrder === null ? null : [
                     'code' => $greeting->latestOrder->code,

@@ -309,7 +309,7 @@ export default function Dashboard({ greetings, activities, reminders, referral }
                 <p className="text-body-sm text-on-surface-variant">Untuk {qrGreeting?.recipient_name}</p>
                 <div className="flex flex-col items-center rounded-2xl bg-surface-container-low p-space-md">
                     <div className="rounded-xl bg-surface-container-lowest p-3 shadow-sm">
-                        <QrCode value={qrGreeting?.url} size={192} />
+                        <QrCode svg={qrGreeting?.qr_svg} downloadUrl={qrGreeting?.qr_download_url} size={192} />
                     </div>
                     <span className="mt-2 text-center text-label-sm text-on-surface-variant">Arahkan kamera ponsel untuk membuka kartu</span>
                 </div>

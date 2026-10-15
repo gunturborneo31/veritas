@@ -6,7 +6,9 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContributionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GreetingMediaController;
+use App\Http\Controllers\GreetingQrController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentProofController;
@@ -32,6 +34,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('kebijakan-privasi', [LegalController::class, 'privacy'])->name('legal.privacy');
+Route::get('syarat-ketentuan', [LegalController::class, 'terms'])->name('legal.terms');
 Route::get('katalog', [CatalogController::class, 'index'])->name('catalog.index');
 Route::get('katalog/{template}', [CatalogController::class, 'show'])->name('catalog.show');
 Route::get('katalog/{template}/demo', TemplateDemoController::class)->name('catalog.demo');
@@ -81,6 +85,7 @@ Route::middleware('auth')->group(function () {
         ->name('orders.proof.store');
 
     Route::get('hasil/{greeting}', [ResultController::class, 'show'])->name('result.show');
+    Route::get('hasil/{greeting}/qr.png', GreetingQrController::class)->name('result.qr');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::delete('dashboard/ucapan/{greeting}', [DashboardController::class, 'destroy'])->name('dashboard.greetings.destroy');

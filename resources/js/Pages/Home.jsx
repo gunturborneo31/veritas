@@ -184,9 +184,8 @@ export default function Home({ categories, featured }) {
                     </div>
                     <div className="flex flex-col gap-2">
                         <p className="text-label-sm font-bold uppercase tracking-wider text-primary">Dukungan</p>
-                        {/* TODO: halaman Syarat & Ketentuan dan Kebijakan Privasi (wajib mencakup foto & data penerima). */}
-                        <span>Syarat & Ketentuan</span>
-                        <span>Kebijakan Privasi</span>
+                        <Link href={route('legal.terms')}>Syarat & Ketentuan</Link>
+                        <Link href={route('legal.privacy')}>Kebijakan Privasi</Link>
                     </div>
                 </div>
                 <p className="border-t border-outline-variant/30 pt-space-md text-center text-label-sm text-on-surface-variant">

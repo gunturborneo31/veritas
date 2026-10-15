@@ -115,7 +115,10 @@ export default function ReactionRecorder({ slug, senderName, alreadySent }) {
                         <div>
                             <p className="font-display text-label-lg">Rekam reaksimu untuk {senderName || 'pengirim'}?</p>
                             <p className="text-label-sm opacity-80">
-                                Kamera depan merekam selama kamu membuka kartu (maks. 90 detik). Videonya hanya terkirim kalau di akhir kamu tonton dan pilih “Kirim”.
+                                Kamera depan merekam selama kamu membuka kartu (maks. 90 detik). Videonya hanya terkirim kalau di akhir kamu tonton dan pilih “Kirim”.{' '}
+                                <a href={`${route('legal.privacy')}#video`} target="_blank" rel="noopener noreferrer" className="underline">
+                                    Selengkapnya
+                                </a>
                             </p>
                         </div>
                     </div>

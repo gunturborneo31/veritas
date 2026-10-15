@@ -1,21 +1,29 @@
 import Icon from '@/Components/Icon';
 
 /**
- * Titik integrasi QR Code.
- *
- * TODO: render QR asli. Butuh dependensi pembuat QR (mis. paket npm `qrcode`
- * atau `chillerlan/php-qrcode` di server) yang belum disetujui untuk dipasang.
- * Sampai saat itu komponen ini menampilkan placeholder berisi tautan.
+ * QR Code link ucapan. SVG dibuat di server (chillerlan/php-qrcode) dengan warna tema template;
+ * tombol unduh memberikan PNG resolusi tinggi untuk dicetak.
  */
-export default function QrCode({ value, size = 176 }) {
+export default function QrCode({ svg, downloadUrl = null, size = 176 }) {
     return (
-        <div
-            className="relative flex flex-col items-center justify-center gap-2 rounded-xl bg-surface-container-high/40 p-3 text-center"
-            style={{ width: size, height: size }}
-            data-qr-value={value}
-        >
-            <Icon name="qr_code_2" size={size * 0.45} className="text-primary/70" />
-            <span className="text-[10px] leading-tight text-on-surface-variant">QR segera hadir</span>
+        <div className="flex flex-col items-center gap-3">
+            <div
+                className="rounded-xl bg-white p-2 [&>svg]:h-full [&>svg]:w-full"
+                style={{ width: size, height: size }}
+                role="img"
+                aria-label="QR Code tautan ucapan"
+                dangerouslySetInnerHTML={{ __html: svg ?? '' }}
+            />
+            {downloadUrl && (
+                <a
+                    href={downloadUrl}
+                    download
+                    className="inline-flex items-center gap-1.5 rounded-full bg-surface-container px-4 py-2 text-label-md text-on-surface shadow-sm active:scale-95"
+                >
+                    <Icon name="download" size={18} className="text-primary" />
+                    Unduh QR (PNG HD)
+                </a>
+            )}
         </div>
     );
 }

@@ -102,6 +102,18 @@ export default function Register() {
                     />
                 </div>
 
+                <p className="mt-4 text-xs text-on-surface-variant">
+                    Dengan mendaftar, kamu menyetujui{' '}
+                    <Link href={route('legal.terms')} className="text-primary underline">
+                        Syarat & Ketentuan
+                    </Link>{' '}
+                    dan{' '}
+                    <Link href={route('legal.privacy')} className="text-primary underline">
+                        Kebijakan Privasi
+                    </Link>
+                    .
+                </p>
+
                 <div className="mt-4 flex items-center justify-end">
                     <Link
                         href={route('login')}

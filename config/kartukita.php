@@ -12,6 +12,14 @@ return [
 
     'support_whatsapp' => env('KARTUKITA_SUPPORT_WHATSAPP'),
 
+    'support_email' => env('KARTUKITA_SUPPORT_EMAIL', env('MAIL_FROM_ADDRESS')),
+
+    /*
+    | Tanggal terakhir Kebijakan Privasi / Syarat & Ketentuan diperbarui (YYYY-MM-DD).
+    */
+
+    'legal_updated_at' => env('KARTUKITA_LEGAL_UPDATED_AT', '2026-10-15'),
+
     /*
     |--------------------------------------------------------------------------
     | Draf & Pratinjau

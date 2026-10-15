@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\GreetingStatus;
 use App\Models\Greeting;
+use App\Support\Greetings\QrCodeGenerator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,7 +15,7 @@ class ResultController extends Controller
     /**
      * Hasil setelah lunas: link unik, QR Code, dan tombol bagikan WhatsApp.
      */
-    public function show(Request $request, Greeting $greeting): Response|RedirectResponse
+    public function show(Request $request, Greeting $greeting, QrCodeGenerator $qr): Response|RedirectResponse
     {
         abort_unless($greeting->user_id === $request->user()->id, 404);
 
@@ -33,6 +34,8 @@ class ResultController extends Controller
                 'published_at' => $greeting->published_at->toIso8601String(),
                 'opens_at' => $greeting->opens_at?->toIso8601String(),
                 'url' => $url,
+                'qr_svg' => $qr->svg($url, $greeting->template->resolvedTheme()['accent']),
+                'qr_download_url' => route('result.qr', $greeting),
                 'whatsapp_text' => "Hai {$greeting->recipient_name}! Ada ucapan spesial buat kamu, buka di sini ya: {$url}",
             ],
             'template' => $greeting->template->toCardArray(),

@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -50,6 +51,12 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+
+        if ($user->orders()->exists()) {
+            throw ValidationException::withMessages([
+                'password' => 'Akun dengan riwayat pesanan dihapus lewat tim kami karena ada data pembukuan. Hubungi dukungan, ya.',
+            ]);
+        }
 
         Auth::logout();
 
