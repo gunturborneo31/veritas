@@ -31,6 +31,14 @@ function Motif({ motif, accent }) {
             [50, 6, 'circle', 3],
             [64, 82, 'star', 5],
         ],
+        petals: [
+            [10, 12, 'petal', 12, 20],
+            [82, 10, 'petal', 10, -30],
+            [88, 52, 'petal', 13, 60],
+            [14, 70, 'petal', 9, -50],
+            [66, 84, 'petal', 11, 15],
+            [48, 6, 'circle', 4],
+        ],
         rain: [
             [12, 8, 'drop', 10],
             [30, 30, 'drop', 8],
@@ -70,6 +78,10 @@ function Motif({ motif, accent }) {
                             d="M0 4C-2-2-10-1-10 5c0 5 7 9 10 12 3-3 10-7 10-12 0-6-8-7-10-1z"
                         />
                     );
+                }
+
+                if (shape === 'petal') {
+                    return <ellipse key={index} {...props} cx={x} cy={y} rx={size / 4} ry={size / 2} transform={`rotate(${rotate} ${x} ${y})`} />;
                 }
 
                 if (shape === 'drop') {

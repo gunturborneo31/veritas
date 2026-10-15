@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3e9f7"/><stop offset="1" stop-color="#f6e7c1"/></linearGradient></defs>
+<rect width="600" height="600" fill="url(#g)"/>
+<g fill="#c9a227" opacity=".8"><rect x="70" y="80" width="10" height="22" rx="2" transform="rotate(25 75 91)"/><rect x="500" y="110" width="10" height="22" rx="2" transform="rotate(-30 505 121)"/><circle cx="160" cy="190" r="6"/><circle cx="450" cy="230" r="5"/><rect x="380" y="60" width="9" height="20" rx="2" transform="rotate(60 384 70)"/><circle cx="250" cy="70" r="4"/></g>
+<g transform="translate(180 170) rotate(-14)"><polygon points="0,30 90,0 180,30 90,60" fill="#24386b"/><rect x="55" y="40" width="70" height="38" rx="6" fill="#1b2a52"/><path d="M180 30 v40" stroke="#c9a227" stroke-width="5"/><circle cx="180" cy="74" r="7" fill="#c9a227"/></g>
+<g transform="translate(360 120) rotate(18) scale(.65)"><polygon points="0,30 90,0 180,30 90,60" fill="#24386b"/><rect x="55" y="40" width="70" height="38" rx="6" fill="#1b2a52"/><path d="M180 30 v40" stroke="#c9a227" stroke-width="5"/></g>
+<g transform="translate(300 420)"><circle r="30" cy="-110" fill="#5b3a35"/><path d="M-60 40 q0 -110 60 -110 q60 0 60 110z" fill="#24386b"/><path d="M-12 -70 l12 40 12 -40" fill="#fff" opacity=".9"/><rect x="40" y="-40" width="70" height="22" rx="11" fill="#fffdf8" transform="rotate(-20 40 -40)"/><rect x="88" y="-58" width="10" height="26" rx="3" fill="#c94a38" transform="rotate(-20 88 -58)"/><path d="M-30 -112 l30 -14 30 14 -30 14z" fill="#1b2a52"/></g>
+<ellipse cx="300" cy="470" rx="150" ry="16" fill="#24386b" opacity=".15"/>
+</svg>

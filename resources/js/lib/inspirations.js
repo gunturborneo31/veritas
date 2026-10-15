@@ -76,6 +76,34 @@ const LIBRARY = {
             '✨ Lucu & Hangat': ['{nama}, cepat pulang ya. Stok cerita random-ku sudah numpuk dan cuma kamu yang mau dengar 😆'],
         },
     },
+    wisuda: {
+        keywords: ['wisuda', 'lulus', 'sidang', 'sarjana', 'kelulusan'],
+        tones: {
+            '🎓 Bangga': [
+                'Selamat wisuda, {nama}! Semua begadang, revisi, dan air mata itu akhirnya terbayar. Kami bangga sekali sama kamu.',
+                '{nama}, hari ini toga itu bukti bahwa pelan-pelan pun tetap sampai. Selamat memulai babak baru!',
+            ],
+            '✨ Lucu & Hangat': [
+                'Selamat {nama}! Akhirnya kamu bebas dari kata "revisi"… sampai ketemu atasan di kantor 😆',
+                'Gelar sudah di tangan, {nama}. Sekarang tinggal satu tugas lagi: traktir kami 🎓🍜',
+            ],
+            '🕊️ Doa Tulus': ['Semoga ilmu yang kamu dapat jadi berkah, langkahmu dimudahkan, dan cita-citamu tercapai satu per satu, {nama}.'],
+        },
+    },
+    terimaKasih: {
+        keywords: ['terima kasih', 'guru', 'mentor', 'apresiasi', 'perpisahan', 'makasih'],
+        tones: {
+            '🌷 Tulus': [
+                'Terima kasih sudah percaya padaku waktu aku sendiri ragu, {nama}.',
+                '{nama}, banyak hal baik dalam hidupku dimulai dari bantuanmu. Terima kasih, sungguh.',
+            ],
+            '✨ Lucu & Hangat': [
+                'Terima kasih sudah sabar menghadapi pertanyaanku yang itu-itu saja, {nama} 🙏',
+                '{nama}, utang budiku sudah setinggi gunung. Ini cicilan pertamanya: seikat terima kasih 🌷',
+            ],
+            '🕊️ Doa Tulus': ['Semoga semua kebaikanmu kembali berlipat ganda, {nama}. Sehat dan bahagia selalu.'],
+        },
+    },
     nembak: {
         keywords: ['nembak', 'confess', 'kencan'],
         tones: {
