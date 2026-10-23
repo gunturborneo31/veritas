@@ -9,7 +9,7 @@ import { Link, router } from '@inertiajs/react';
 /**
  * Langkah 4 — Pratinjau berwatermark. Interaksi bisa dicoba, tapi bukan link final.
  */
-export default function Show({ greeting, template, missing, quote, isOwner }) {
+export default function Show({ greeting, template, missing, quote, isOwner, canPublishFree = false }) {
     const isComplete = missing.length === 0;
     const photoCount = greeting.components
         .filter((slot) => slot.schema.some((field) => field.type === 'images' || field.type === 'image'))
@@ -39,7 +39,7 @@ export default function Show({ greeting, template, missing, quote, isOwner }) {
                                 href={route('checkout.show', greeting.id)}
                                 className="flex h-12 flex-1 items-center justify-center gap-space-xs rounded-full bg-primary px-space-lg text-label-lg text-on-primary shadow-[0_4px_16px_rgba(168,50,35,0.25)] hover:bg-primary-container"
                             >
-                                <span>Lanjut Bayar</span>
+                                <span>{canPublishFree ? 'Lanjut Terbitkan' : 'Lanjut Bayar'}</span>
                                 <Icon name="send" size={18} />
                             </Link>
                         ) : (

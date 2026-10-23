@@ -79,7 +79,7 @@ export default function Show({ greeting, template, quote, missing, referralHint,
 
     return (
         <StudioLayout
-            title="Ringkasan & Bayar"
+            title={canPublishFree ? 'Ringkasan & Terbitkan' : 'Ringkasan & Bayar'}
             greetingId={greeting.id}
             step={4}
             onBack={() => router.visit(route('preview.show', greeting.id))}
@@ -167,6 +167,18 @@ export default function Show({ greeting, template, quote, missing, referralHint,
 
                 {needsAccount && <AccountFields form={form} />}
 
+                {canPublishFree ? (
+                    <section className="flex gap-3 rounded-2xl bg-primary-fixed/40 p-space-md">
+                        <Icon name="shield_person" size={22} className="mt-0.5 shrink-0 text-primary" />
+                        <div>
+                            <h4 className="mb-1 text-label-lg font-bold text-on-primary-fixed">Mode Admin — Tanpa Pembayaran</h4>
+                            <p className="text-body-sm leading-relaxed text-on-surface-variant">
+                                Undangan langsung terbit begitu kamu menekan Terbitkan Gratis. Isinya tetap bisa kamu revisi kapan saja dari halaman Kelola Undangan.
+                            </p>
+                        </div>
+                    </section>
+                ) : (
+                    <>
                 <section className="flex gap-3 rounded-2xl bg-primary-fixed/40 p-space-md">
                     <Icon name="info" size={22} className="mt-0.5 shrink-0 text-primary" />
                     <div>
@@ -222,6 +234,8 @@ export default function Show({ greeting, template, quote, missing, referralHint,
                         <span className="text-headline-sm text-primary">{rupiah(quote.total)}</span>
                     </div>
                 </section>
+                    </>
+                )}
             </div>
         </StudioLayout>
     );
