@@ -17,9 +17,16 @@ class PriceCalculator
     {
         $greeting->loadMissing('template');
 
+        $originalPrice = $greeting->template->price;
         $lines = [
-            ['label' => "Paket 1 • {$greeting->template->name}", 'amount' => $greeting->template->price],
+            ['label' => "Paket 1 • {$greeting->template->name}", 'amount' => $originalPrice],
         ];
+
+        $promoPrice = PromoPrice::apply($originalPrice);
+
+        if ($promoPrice < $originalPrice) {
+            $lines[] = ['label' => PromoPrice::label(), 'amount' => $promoPrice - $originalPrice];
+        }
 
         $serviceFee = (int) config('kartukita.payment.service_fee');
 

@@ -1,8 +1,8 @@
 import Icon from '@/Components/Icon';
+import Price from '@/Components/Price';
 import TemplateCard, { FlowPeek, cardTitle, visibleFlow } from '@/Components/TemplateCard';
 import TemplateCover from '@/Components/TemplateCover';
 import PublicLayout from '@/Layouts/PublicLayout';
-import { rupiah } from '@/lib/format';
 import { readableAccent } from '@/lib/theme';
 import { Link, router } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
@@ -111,8 +111,11 @@ function Spotlight({ template }) {
                                 Paket 1 • {template.scene_count} halaman • ~{template.duration_minutes} menit
                             </p>
                             <p className="font-display text-headline-md" style={{ color: accent }}>
-                                {rupiah(template.price)}
+                                <Price price={template.price} originalPrice={template.original_price} />
                             </p>
+                            {template.promo_label && (
+                                <span className="inline-block rounded-full bg-error-container px-2 py-0.5 text-[11px] font-bold uppercase text-on-error-container">{template.promo_label}</span>
+                            )}
                         </div>
                         <button type="button" onClick={() => setIsPeeking(true)} className="text-label-sm font-bold underline-offset-2 hover:underline sm:hidden" style={{ color: accent }}>
                             Intip alur

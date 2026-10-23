@@ -117,6 +117,15 @@ return [
     |
     */
 
+    /*
+    | Harga promo untuk semua template (ucapan & undangan). Harga asli tiap template tetap
+    | tersimpan dan tampil dicoret; kosongkan KARTUKITA_PROMO_PRICE untuk mengakhiri promo.
+    */
+    'promo' => [
+        'price' => filled(env('KARTUKITA_PROMO_PRICE')) ? (int) env('KARTUKITA_PROMO_PRICE') : null,
+        'label' => env('KARTUKITA_PROMO_LABEL', 'Harga Promo'),
+    ],
+
     'payment' => [
         'service_fee' => (int) env('KARTUKITA_SERVICE_FEE', 0),
         'minimum_payable' => 1000,

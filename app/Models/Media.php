@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 /**
  * File foto/audio milik satu ucapan. Disimpan privat dan diakses lewat URL bertanda tangan.
@@ -48,9 +48,13 @@ class Media extends Model
         return $this->belongsTo(Greeting::class);
     }
 
+    /**
+     * URL bertanda tangan berbasis ID media (bukan path), agar tetap berlaku setelah file
+     * dikompres dan berganti nama di latar belakang.
+     */
     public function temporaryUrl(int $minutes = 120): string
     {
-        return Storage::disk($this->disk)->temporaryUrl($this->path, now()->addMinutes($minutes));
+        return URL::temporarySignedRoute('media.file', now()->addMinutes($minutes), ['media' => $this->public_id]);
     }
 
     /**

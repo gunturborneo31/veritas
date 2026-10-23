@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\GreetingType;
 use App\Enums\TemplateTier;
+use App\Support\Pricing\PromoPrice;
 use Database\Factories\TemplateFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -168,7 +169,10 @@ class Template extends Model
             'tagline' => $this->tagline,
             'story' => $this->story,
             'tier' => $this->tier->label(),
-            'price' => $this->price,
+            // Harga yang dibayar (sudah termasuk harga promo bila aktif); harga asli untuk ditampilkan dicoret.
+            'price' => PromoPrice::apply($this->price),
+            'original_price' => $this->price,
+            'promo_label' => PromoPrice::apply($this->price) < $this->price ? PromoPrice::label() : null,
             'duration_minutes' => $this->duration_minutes,
             'theme' => $this->resolvedTheme(),
             'flow' => $flow,
@@ -196,7 +200,7 @@ class Template extends Model
     /**
      * Ringkasan satu desain di dalam seri untuk pemilih desain di katalog.
      *
-     * @return array{slug: string, name: string, design_name: ?string, price: int, duration_minutes: int, scene_count: int, theme: array<string, mixed>, tier: string}
+     * @return array{slug: string, name: string, design_name: ?string, price: int, original_price: int, duration_minutes: int, scene_count: int, theme: array<string, mixed>, tier: string}
      */
     public function toDesignArray(): array
     {
@@ -207,6 +211,7 @@ class Template extends Model
             'name' => $card['name'],
             'design_name' => $card['design_name'],
             'price' => $card['price'],
+            'original_price' => $card['original_price'],
             'duration_minutes' => $card['duration_minutes'],
             'scene_count' => $card['scene_count'],
             'theme' => $card['theme'],

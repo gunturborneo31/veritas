@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon';
+import Price from '@/Components/Price';
 import TemplateCover from '@/Components/TemplateCover';
-import { rupiah } from '@/lib/format';
 import { readableAccent } from '@/lib/theme';
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
@@ -131,7 +131,10 @@ export default function TemplateCard({ template, wide = false }) {
                 <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5 pt-1.5">
                     <span className="font-display text-label-lg" style={{ color: accent }}>
                         {(template.designs?.length ?? 0) > 1 && <span className="text-xs font-semibold text-on-surface-variant">mulai </span>}
-                        {rupiah(Math.min(template.price, ...(template.designs ?? []).map((design) => design.price)))}
+                        <Price
+                            price={Math.min(template.price, ...(template.designs ?? []).map((design) => design.price))}
+                            originalPrice={Math.min(template.original_price ?? template.price, ...(template.designs ?? []).map((design) => design.original_price ?? design.price))}
+                        />
                     </span>
                     <Link
                         href={route('catalog.demo', template.slug)}

@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon';
+import Price from '@/Components/Price';
 import TemplateCover from '@/Components/TemplateCover';
 import PublicLayout from '@/Layouts/PublicLayout';
-import { rupiah } from '@/lib/format';
 import { themeVars } from '@/lib/theme';
 import { Link, router } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
@@ -55,9 +55,7 @@ function DesignPicker({ designs, current }) {
                             <div className="flex flex-col gap-0.5 p-2.5">
                                 <span className="truncate text-label-md text-on-surface">{design.design_name ?? design.name}</span>
                                 <span className="text-xs text-on-surface-variant">{design.scene_count} halaman</span>
-                                <span className="text-label-sm" style={{ color: design.theme.accent }}>
-                                    {rupiah(design.price)}
-                                </span>
+                                <Price price={design.price} originalPrice={design.original_price} className="text-label-sm" style={{ color: design.theme.accent }} />
                             </div>
                         </button>
                     );
@@ -143,8 +141,13 @@ export default function Show({ template }) {
                 <section className="mt-space-md flex flex-col gap-space-xs px-margin">
                     <div className="flex flex-wrap items-center gap-space-xs">
                         <span className="inline-flex items-center gap-1 rounded-full bg-tertiary-fixed px-2.5 py-0.5 text-label-sm text-on-tertiary-fixed">
-                            <Icon name="sell" size={14} /> {rupiah(template.price)} • Paket 1
+                            <Icon name="sell" size={14} /> <Price price={template.price} originalPrice={template.original_price} /> • Paket 1
                         </span>
+                        {template.promo_label && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-error-container px-2.5 py-0.5 text-label-sm text-on-error-container">
+                                <Icon name="local_offer" size={14} /> {template.promo_label}
+                            </span>
+                        )}
                         <span className="inline-flex items-center gap-1 rounded-full bg-primary-fixed px-2.5 py-0.5 text-label-sm text-on-primary-fixed">{template.tier}</span>
                         <span className="inline-flex items-center gap-1 rounded-full bg-surface-container px-2.5 py-0.5 text-label-sm text-on-surface">
                             <Icon name="auto_stories" size={14} /> {template.scene_count} halaman • ~{template.duration_minutes} menit

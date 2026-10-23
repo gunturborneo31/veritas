@@ -47,6 +47,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Kembali ke halaman yang meminta login (mis. checkout), bukan selalu ke dashboard.
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 }

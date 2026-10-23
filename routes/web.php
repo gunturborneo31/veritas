@@ -19,6 +19,7 @@ use App\Http\Controllers\InvitationWishController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ManualPaymentController;
+use App\Http\Controllers\MediaFileController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PreviewController;
@@ -91,6 +92,9 @@ Route::prefix('studio/{greeting}')->name('studio.')->group(function () {
 });
 
 Route::get('pratinjau/{greeting}', [PreviewController::class, 'show'])->name('preview.show');
+
+// Foto/audio ucapan: URL bertanda tangan & kedaluwarsa, tetap berlaku setelah file dikompres.
+Route::get('media/{media}', MediaFileController::class)->middleware('signed')->name('media.file');
 
 /*
 | Kelola undangan. Tanpa middleware auth karena acara & rekening sudah bisa diisi saat draf anonim;

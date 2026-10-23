@@ -56,6 +56,23 @@ class CheckoutTest extends TestCase
         $this->assertSame($user->id, $order->user_id);
     }
 
+    public function test_registering_from_the_sign_up_page_returns_the_buyer_to_checkout(): void
+    {
+        $greeting = Greeting::factory()->for($this->createTemplate())->anonymous(DraftToken::hash('perangkat-saya'))->create(['content' => $this->completeContent()]);
+        $this->withCookie('kk_draft', 'perangkat-saya')->get(route('checkout.show', $greeting));
+
+        $this->withCookie('kk_draft', 'perangkat-saya')
+            ->post(route('register'), [
+                'name' => 'Sari',
+                'email' => 'sari@example.com',
+                'password' => 'rahasia-123',
+                'password_confirmation' => 'rahasia-123',
+            ])
+            ->assertRedirect(route('checkout.show', $greeting));
+
+        $this->assertSame(User::query()->where('email', 'sari@example.com')->value('id'), $greeting->refresh()->user_id);
+    }
+
     public function test_guest_checkout_with_a_registered_email_asks_to_log_in_first(): void
     {
         User::factory()->create(['email' => 'sari@example.com']);

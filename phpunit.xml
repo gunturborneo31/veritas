@@ -36,6 +36,8 @@
         <env name="KARTUKITA_PAYMENT_MODE" value="qris"/>
         <env name="KARTUKITA_MANUAL_PROOF_CHANNEL" value="upload"/>
         <env name="KARTUKITA_SUPPORT_WHATSAPP" value=""/>
+        <env name="KARTUKITA_PROMO_PRICE" value=""/>
+        <env name="GOOGLE_ANALYTICS_ID" value=""/>
         <env name="TELEGRAM_BOT_TOKEN" value=""/>
         <env name="TELEGRAM_ADMIN_CHAT_ID" value=""/>
     </php>

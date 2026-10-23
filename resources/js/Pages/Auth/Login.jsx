@@ -95,6 +95,17 @@ export default function Login({ status, canResetPassword }) {
                     </PrimaryButton>
                 </div>
             </form>
+
+            <div className="mt-6 flex flex-col items-center gap-2 border-t border-outline-variant/40 pt-5 text-center">
+                <p className="text-sm text-on-surface-variant">Belum punya akun?</p>
+                <Link
+                    href={route('register')}
+                    className="inline-flex h-11 w-full items-center justify-center rounded-full bg-surface-container text-label-lg text-on-surface transition-colors hover:bg-surface-container-high"
+                >
+                    Buat Akun Baru
+                </Link>
+                <p className="text-xs text-on-surface-variant">Gratis, kurang dari 1 menit. Kamu langsung kembali ke halaman sebelumnya.</p>
+            </div>
         </GuestLayout>
     );
 }
