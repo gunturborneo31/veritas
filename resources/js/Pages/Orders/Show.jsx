@@ -41,7 +41,22 @@ function NoticeCard({ icon, iconClass = 'text-primary', title, children }) {
 }
 
 /**
- * Unggah bukti bayar: screenshot/foto wajib (dengan pratinjau), nama pengirim opsional.
+ * Satu langkah bernomor pada alur bayar QRIS statis.
+ */
+function Step({ number, title, children }) {
+    return (
+        <section className="flex flex-col gap-3 rounded-3xl bg-surface-container-lowest p-space-md shadow-card">
+            <div className="flex items-center gap-2">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-label-md text-on-primary">{number}</span>
+                <h2 className="font-display text-headline-sm text-on-surface">{title}</h2>
+            </div>
+            {children}
+        </section>
+    );
+}
+
+/**
+ * Langkah 3 & 4: unggah screenshot/foto bukti bayar (wajib, dengan pratinjau) lalu kirim.
  * Bukti diteruskan ke admin lewat Telegram agar konfirmasi cepat.
  */
 function ProofForm({ orderCode, amount }) {
@@ -61,60 +76,69 @@ function ProofForm({ orderCode, amount }) {
     };
 
     return (
-        <form onSubmit={submit} className="flex w-full flex-col gap-3 rounded-2xl bg-surface-container-low p-space-sm">
-            <p className="text-label-lg text-on-surface">Sudah bayar {rupiah(amount)}? Kirim buktinya</p>
+        <form onSubmit={submit} className="flex flex-col gap-space-md">
+            <Step number={3} title="Upload bukti pembayaran">
+                <p className="text-body-sm text-on-surface-variant">Ambil screenshot layar “Pembayaran berhasil” dari aplikasimu, lalu pilih di sini.</p>
 
-            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-outline-variant bg-surface-container-lowest p-3 text-center hover:border-primary">
-                {preview ? (
-                    <img src={preview} alt="Pratinjau bukti pembayaran" className="max-h-64 rounded-xl object-contain" />
-                ) : (
-                    <>
-                        <Icon name="add_photo_alternate" size={32} className="text-primary" />
-                        <span className="text-label-md text-on-surface">Pilih screenshot / foto bukti bayar</span>
-                        <span className="text-label-sm font-normal text-on-surface-variant">JPG, PNG, atau WEBP • maks. 5 MB</span>
-                    </>
+                <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-outline-variant bg-surface-container-low p-3 text-center hover:border-primary">
+                    {preview ? (
+                        <img src={preview} alt="Pratinjau bukti pembayaran" className="max-h-64 rounded-xl object-contain" />
+                    ) : (
+                        <>
+                            <Icon name="add_photo_alternate" size={32} className="text-primary" />
+                            <span className="text-label-md text-on-surface">Pilih screenshot / foto bukti bayar</span>
+                            <span className="text-label-sm font-normal text-on-surface-variant">JPG, PNG, atau WEBP • maks. 5 MB</span>
+                        </>
+                    )}
+                    <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={(event) => pick(event.target.files?.[0])} />
+                </label>
+                {preview && (
+                    <button type="button" onClick={() => pick(null)} className="-mt-1 self-center text-label-sm text-primary underline underline-offset-2">
+                        Ganti gambar
+                    </button>
                 )}
-                <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={(event) => pick(event.target.files?.[0])} />
-            </label>
-            {preview && (
-                <button type="button" onClick={() => pick(null)} className="-mt-1 self-center text-label-sm text-primary underline underline-offset-2">
-                    Ganti gambar
+                {errors.proof && <p className="text-label-sm text-error">{errors.proof}</p>}
+
+                <input
+                    value={data.sender_account_name}
+                    onChange={(event) => setData('sender_account_name', event.target.value)}
+                    maxLength={80}
+                    placeholder="Nama akun pengirim (opsional), mis. Budi S."
+                    className="w-full rounded-xl border-0 bg-surface-container-low px-3 py-2.5 text-body-md focus:ring-2 focus:ring-primary/40"
+                />
+            </Step>
+
+            <Step number={4} title="Kirim bukti">
+                <p className="text-body-sm text-on-surface-variant">
+                    Pastikan kamu sudah membayar <strong className="text-on-surface">{rupiah(amount)}</strong>. Setelah dikirim, admin mencocokkan pembayaranmu dan kartu
+                    langsung terbit begitu dikonfirmasi.
+                </p>
+                {errors.order && <p className="text-label-sm text-error">{errors.order}</p>}
+
+                <button
+                    type="submit"
+                    disabled={processing || !data.proof}
+                    className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary text-label-lg text-on-primary shadow-md active:scale-95 disabled:opacity-50"
+                >
+                    <Icon name={processing ? 'progress_activity' : 'send'} size={20} className={processing ? 'animate-spin' : ''} />
+                    {processing && progress ? `Mengunggah ${progress.percentage}%` : 'Kirim Bukti Pembayaran'}
                 </button>
-            )}
-            {errors.proof && <p className="text-label-sm text-error">{errors.proof}</p>}
-
-            <input
-                value={data.sender_account_name}
-                onChange={(event) => setData('sender_account_name', event.target.value)}
-                maxLength={80}
-                placeholder="Nama akun pengirim (opsional), mis. Budi S."
-                className="w-full rounded-xl border-0 bg-surface-container-lowest px-3 py-2.5 text-body-md focus:ring-2 focus:ring-primary/40"
-            />
-            {errors.order && <p className="text-label-sm text-error">{errors.order}</p>}
-
-            <button
-                type="submit"
-                disabled={processing || !data.proof}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary text-label-lg text-on-primary shadow-md active:scale-95 disabled:opacity-50"
-            >
-                <Icon name={processing ? 'progress_activity' : 'send'} size={20} className={processing ? 'animate-spin' : ''} />
-                {processing && progress ? `Mengunggah ${progress.percentage}%` : 'Kirim Bukti Pembayaran'}
-            </button>
+                {!data.proof && <p className="text-center text-label-sm font-normal text-on-surface-variant">Pilih gambar bukti di langkah 3 dulu.</p>}
+            </Step>
         </form>
     );
 }
 
 /**
- * Mode sementara: bukti dikirim lewat WhatsApp admin. Tombol membuka chat dengan pesan yang sudah
+ * Mode alternatif: bukti dikirim lewat WhatsApp admin. Tombol membuka chat dengan pesan yang sudah
  * berisi kode pesanan & nominal, sekaligus menandai pesanan "sedang dicek" agar admin mendapat notifikasi.
  */
-function WhatsAppProof({ orderCode, amount, whatsappUrl }) {
+function WhatsAppProof({ orderCode, whatsappUrl }) {
     const claim = () => router.post(route('orders.manual.claim', orderCode), {}, { preserveScroll: true });
 
     return (
-        <div className="flex w-full flex-col gap-2 rounded-2xl bg-surface-container-low p-space-sm text-center">
-            <p className="text-label-lg text-on-surface">Sudah bayar {rupiah(amount)}?</p>
-            <p className="text-body-sm text-on-surface-variant">Kirim screenshot bukti pembayaranmu ke admin lewat WhatsApp.</p>
+        <Step number={3} title="Kirim bukti pembayaran">
+            <p className="text-body-sm text-on-surface-variant">Kirim screenshot bukti pembayaranmu ke admin lewat WhatsApp. Pesan berisi kode pesanan sudah disiapkan.</p>
             <a
                 href={whatsappUrl}
                 target="_blank"
@@ -125,14 +149,13 @@ function WhatsAppProof({ orderCode, amount, whatsappUrl }) {
                 <Icon name="chat" size={20} />
                 Kirim Bukti via WhatsApp
             </a>
-            <p className="text-label-sm font-normal text-on-surface-variant">Pesan berisi kode pesanan sudah disiapkan — tinggal lampirkan screenshot-nya.</p>
-        </div>
+        </Step>
     );
 }
 
 /**
- * QRIS statis milik merchant: nominal harus diketik pembeli, jadi nominal unik ditonjolkan dan bisa disalin.
- * Setelah pembeli mengirim bukti, admin mencocokkan mutasi lalu menekan Konfirmasi.
+ * QRIS statis milik merchant, dipandu langkah demi langkah: scan → bayar nominal tepat → upload bukti → kirim.
+ * Nominal unik ditonjolkan dan bisa disalin karena harus diketik pembeli. Admin lalu mencocokkan mutasi dan menekan Konfirmasi.
  */
 function ManualPayment({ manual, orderCode }) {
     const [copied, setCopied] = useState(false);
@@ -145,21 +168,28 @@ function ManualPayment({ manual, orderCode }) {
 
     return (
         <>
-            <section className="flex flex-col items-center gap-3 rounded-3xl bg-surface-container-lowest p-space-md shadow-card">
-                <span className="flex items-center gap-1.5 self-start font-display text-headline-sm text-on-surface">
-                    <Icon name="qr_code_2" size={22} className="text-primary" />
-                    QRIS {manual.merchant_name}
-                </span>
-
-                <img src={manual.image_url} alt={`QRIS ${manual.merchant_name}`} className="w-full max-w-[280px] rounded-2xl bg-white p-2 shadow-inner" />
-
-                <a href={manual.image_url} download className="flex h-10 items-center gap-1.5 rounded-full bg-primary-fixed px-4 text-label-md text-on-primary-fixed active:scale-95">
+            <Step number={1} title="Scan QRIS">
+                <p className="text-body-sm text-on-surface-variant">
+                    Buka aplikasi e-wallet / m-banking ({APPS.join(', ')}), pilih <strong className="text-on-surface">Scan / Bayar</strong>, lalu arahkan ke QR ini. Kalau
+                    membuka dari HP yang sama, simpan gambarnya lalu pilih dari galeri.
+                </p>
+                <img src={manual.image_url} alt={`QRIS ${manual.merchant_name}`} className="w-full max-w-[280px] self-center rounded-2xl bg-white p-2 shadow-inner" />
+                <p className="text-center text-label-sm font-normal text-on-surface-variant">
+                    Pastikan nama merchant: <strong className="text-on-surface">{manual.merchant_name}</strong>
+                </p>
+                <a
+                    href={manual.image_url}
+                    download
+                    className="flex h-10 items-center gap-1.5 self-center rounded-full bg-primary-fixed px-4 text-label-md text-on-primary-fixed active:scale-95"
+                >
                     <Icon name="download" size={18} />
                     Simpan gambar QR
                 </a>
+            </Step>
 
+            <Step number={2} title="Bayar dengan nominal tepat">
                 <div className="flex w-full flex-col items-center gap-1 rounded-2xl bg-tertiary-fixed/60 p-space-sm text-center">
-                    <span className="text-label-sm text-on-tertiary-fixed">Bayar tepat sebesar</span>
+                    <span className="text-label-sm text-on-tertiary-fixed">Ketik nominal tepat sebesar</span>
                     <button type="button" onClick={copyAmount} className="flex items-center gap-2 font-display text-headline-lg-mobile text-on-surface active:scale-95">
                         {rupiah(manual.amount)}
                         <Icon name={copied ? 'check' : 'content_copy'} size={20} className="text-primary" />
@@ -168,38 +198,14 @@ function ManualPayment({ manual, orderCode }) {
                         {copied ? 'Nominal disalin!' : `Termasuk kode unik Rp${manual.unique_code} agar pembayaranmu langsung kami kenali. Jangan dibulatkan, ya.`}
                     </span>
                 </div>
+                <p className="text-body-sm text-on-surface-variant">QRIS ini tidak mengisi nominal otomatis. Selesaikan pembayaran di aplikasimu sampai muncul tanda berhasil.</p>
+            </Step>
 
-                {manual.proof_channel === 'whatsapp' ? (
-                    <WhatsAppProof orderCode={orderCode} amount={manual.amount} whatsappUrl={manual.whatsapp_url} />
-                ) : (
-                    <ProofForm orderCode={orderCode} amount={manual.amount} />
-                )}
-            </section>
-
-            <section className="flex flex-col gap-2 rounded-3xl bg-surface-container-low p-space-md">
-                <p className="text-label-lg text-on-surface">Cara bayar</p>
-                <ol className="flex flex-col gap-2 text-body-sm text-on-surface-variant">
-                    {[
-                        ['Scan QR di atas', ' dari HP lain, atau simpan gambarnya lalu pilih dari galeri di aplikasi e-wallet / m-banking.'],
-                        [`Ketik nominal tepat ${rupiah(manual.amount)}`, ' — QRIS ini tidak mengisi nominal otomatis.'],
-                        [
-                            manual.proof_channel === 'whatsapp' ? 'Kirim screenshot bukti bayar lewat WhatsApp' : 'Kirim screenshot bukti bayar',
-                            '. Kami cek pembayaranmu, dan halaman ini otomatis berpindah ke kartumu begitu dikonfirmasi.',
-                        ],
-                    ].map(([title, body], index) => (
-                        <li key={title} className="flex gap-2">
-                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-label-sm text-on-primary">{index + 1}</span>
-                            <span>
-                                <strong className="text-on-surface">{title}</strong>
-                                {body}
-                            </span>
-                        </li>
-                    ))}
-                </ol>
-            </section>
+            {manual.proof_channel === 'whatsapp' ? <WhatsAppProof orderCode={orderCode} whatsappUrl={manual.whatsapp_url} /> : <ProofForm orderCode={orderCode} amount={manual.amount} />}
         </>
     );
 }
+
 
 /**
  * Bayar dengan QRIS dinamis. Pembayaran terdeteksi otomatis (webhook + cek berkala di server);
@@ -231,7 +237,7 @@ export default function Show({ order, greeting, isQrisReady, canSimulate }) {
             <div className="flex flex-col gap-space-md px-margin py-space-md">
                 <section className="flex flex-col items-center gap-1 text-center">
                     <span className="rounded-full bg-surface-container px-3 py-1 text-label-sm text-on-surface-variant">
-                        {order.status_label} • {order.code}
+                        {manual && isWaiting ? 'Selesaikan pembayaran' : order.status_label} • {order.code}
                     </span>
                     <h1 className="mt-1 font-display text-display-hero-mobile text-on-surface">{rupiah(manual ? manual.amount : order.amount)}</h1>
                     <p className="max-w-sm text-body-sm text-on-surface-variant">
@@ -257,13 +263,14 @@ export default function Show({ order, greeting, isQrisReady, canSimulate }) {
                         </Link>
                     </NoticeCard>
                 ) : order.is_awaiting_review ? (
-                    <NoticeCard icon="hourglass_top" iconClass="text-tertiary" title="Pembayaranmu sedang dicek">
+                    <NoticeCard icon="hourglass_top" iconClass="text-tertiary" title="Menunggu konfirmasi pembayaran admin">
                         <p className="text-body-sm text-on-surface-variant">
-                            Kami sedang mencocokkan pembayaranmu. Biarkan halaman ini terbuka — begitu dikonfirmasi, kamu langsung diarahkan ke link & QR kartumu.
+                            Bukti pembayaranmu sudah kami terima dan sedang dicocokkan admin. Biarkan halaman ini terbuka — begitu dikonfirmasi, kamu langsung diarahkan ke link &
+                            QR kartumu.
                         </p>
                         <p className="flex items-center gap-1.5 text-label-sm font-normal text-on-surface-variant">
                             <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-                            Menunggu konfirmasi
+                            Menunggu konfirmasi admin
                         </p>
                         {order.review_whatsapp_url && (
                             <a
