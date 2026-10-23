@@ -1,6 +1,7 @@
 import Icon from '@/Components/Icon';
 import PhoneFrame from '@/Components/Greeting/PhoneFrame';
 import Player from '@/Components/Greeting/Player';
+import MissingChecklist, { missingHref } from '@/Components/Studio/MissingChecklist';
 import StudioLayout from '@/Layouts/StudioLayout';
 import { dateTime, rupiah } from '@/lib/format';
 import { Link, router } from '@inertiajs/react';
@@ -43,7 +44,7 @@ export default function Show({ greeting, template, missing, quote, isOwner }) {
                             </Link>
                         ) : (
                             <Link
-                                href={route('studio.edit', greeting.id)}
+                                href={missingHref(greeting.id, missing[0])}
                                 className="flex h-12 flex-1 items-center justify-center gap-space-xs rounded-full bg-tertiary-container px-space-lg text-label-lg text-on-tertiary"
                             >
                                 Lengkapi {missing.length} isian
@@ -73,12 +74,9 @@ export default function Show({ greeting, template, missing, quote, isOwner }) {
                 </PhoneFrame>
             </section>
 
-            {!isComplete && (
+            {!isComplete && isOwner && (
                 <section className="mb-4 px-margin">
-                    <div className="rounded-2xl bg-error-container/50 p-space-md text-on-error-container">
-                        <p className="text-label-md font-bold">Belum lengkap:</p>
-                        <p className="text-body-sm">{missing.map((item) => item.label).join(', ')}</p>
-                    </div>
+                    <MissingChecklist missing={missing} greetingId={greeting.id} compact />
                 </section>
             )}
 

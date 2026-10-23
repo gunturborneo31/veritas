@@ -4,6 +4,7 @@ import { toPresentedValues, toRawValues } from '@/Components/Greeting/fields/upl
 import PhoneFrame from '@/Components/Greeting/PhoneFrame';
 import Player from '@/Components/Greeting/Player';
 import CollaborationPanel from '@/Components/Studio/CollaborationPanel';
+import MissingChecklist from '@/Components/Studio/MissingChecklist';
 import StudioLayout from '@/Layouts/StudioLayout';
 import { dateTime, time } from '@/lib/format';
 import { router, usePage } from '@inertiajs/react';
@@ -34,11 +35,38 @@ const tomorrowAt = (hour) => {
 const inputClass =
     'w-full rounded-2xl border-0 bg-surface-container-low px-4 py-3 text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40';
 
-function SectionCard({ number, icon, title, isComplete, children, defaultOpen = true }) {
-    const [isOpen, setIsOpen] = useState(defaultOpen);
+/**
+ * Kelas bingkai merah untuk kolom wajib yang masih kosong (sama dengan FieldInput).
+ */
+const missingFrame = (isMissing) => `scroll-mt-28 rounded-2xl transition-shadow ${isMissing ? '-mx-2 bg-error-container/20 p-2 ring-2 ring-error/40' : ''}`;
+
+function MissingBadge() {
+    return (
+        <span className="ml-1.5 inline-flex items-center gap-0.5 rounded-full bg-error px-2 py-0.5 align-middle text-[11px] font-bold text-on-error">
+            <Icon name="priority_high" size={12} />
+            Wajib diisi
+        </span>
+    );
+}
+
+/**
+ * Satu bagian form. Bagian dengan isian wajib yang kosong menampilkan jumlahnya dan dibuka
+ * otomatis; `openSignal` yang berubah membuka bagian ini dari daftar periksa.
+ */
+function SectionCard({ id, number, icon, title, isComplete, missingCount = 0, openSignal = 0, children, defaultOpen = true }) {
+    const [isOpen, setIsOpen] = useState(defaultOpen || missingCount > 0);
+
+    useEffect(() => {
+        if (openSignal > 0) {
+            setIsOpen(true);
+        }
+    }, [openSignal]);
 
     return (
-        <section className="space-y-space-md rounded-3xl bg-surface-container-lowest p-space-lg shadow-[0_4px_24px_rgba(46,26,44,0.05)]">
+        <section
+            id={id}
+            className={`scroll-mt-24 space-y-space-md rounded-3xl bg-surface-container-lowest p-space-lg shadow-[0_4px_24px_rgba(46,26,44,0.05)] ${missingCount > 0 ? 'ring-1 ring-error/30' : ''}`}
+        >
             <button type="button" onClick={() => setIsOpen((open) => !open)} className="flex w-full items-center justify-between text-left">
                 <div className="flex items-center gap-2.5">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-container-low text-primary">
@@ -49,10 +77,14 @@ function SectionCard({ number, icon, title, isComplete, children, defaultOpen = 
                     </h3>
                 </div>
                 <div className="flex items-center gap-2">
-                    {isComplete && (
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed-variant">
-                            <Icon name="check" size={14} />
-                        </span>
+                    {missingCount > 0 ? (
+                        <span className="whitespace-nowrap rounded-full bg-error-container px-2 py-0.5 text-label-sm text-on-error-container">{missingCount} belum diisi</span>
+                    ) : (
+                        isComplete && (
+                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed-variant">
+                                <Icon name="check" size={14} />
+                            </span>
+                        )
                     )}
                     <Icon name={isOpen ? 'expand_less' : 'expand_more'} size={20} className="text-on-surface-variant" />
                 </div>
@@ -161,6 +193,30 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
     const addMedia = (media) => setMediaCache((cache) => ({ ...cache, [media.id]: media }));
 
     const missingKeys = new Set(missing.map((item) => `${item.slot}.${item.field}`));
+    const missingInSlot = (slotKey) => missing.filter((item) => item.slot === slotKey).length;
+    const isBaseMissing = (field) => missingKeys.has(`dasar.${field}`);
+
+    // Daftar periksa → buka bagiannya, gulir ke kolom yang kosong, lalu fokuskan isiannya.
+    const [openSignals, setOpenSignals] = useState({});
+    const jumpTo = useCallback((item) => {
+        setOpenSignals((signals) => ({ ...signals, [item.slot]: (signals[item.slot] ?? 0) + 1 }));
+
+        setTimeout(() => {
+            const target = document.getElementById(`field-${item.slot}-${item.field}`) ?? document.getElementById(`isian-${item.slot}`);
+            target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target?.querySelector('input:not([type=hidden]), textarea, select, button')?.focus({ preventScroll: true });
+        }, 80);
+    }, []);
+
+    // Tautan dari pratinjau/checkout (…#isian-<bagian>) langsung membuka bagian yang dimaksud.
+    useEffect(() => {
+        const slotKey = window.location.hash.match(/^#isian-(.+)$/)?.[1];
+        const firstMissing = slotKey && missing.find((item) => item.slot === slotKey);
+
+        if (slotKey) {
+            jumpTo(firstMissing ?? { slot: slotKey, field: '' });
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
     // Nama & momen (+ minimal satu acara untuk undangan) selalu wajib di luar skema komponen.
     const requiredCount = greeting.components.reduce((count, slot) => count + slot.schema.filter((field) => field.required).length, isInvitation ? 3 : 2);
     const completeCount = Math.max(0, requiredCount - missing.length);
@@ -248,16 +304,22 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
                         </div>
                     )}
 
+                    {!isRevising && <MissingChecklist missing={missing} greetingId={greeting.id} onJump={jumpTo} />}
+
                     <SectionCard
+                        id="isian-dasar"
                         number={1}
                         icon="badge"
                         title={isInvitation ? 'Tuan Rumah & Acara' : 'Nama & Momen Spesial'}
                         isComplete={Boolean((isInvitation ? base.sender_name : base.recipient_name) && base.occasion)}
+                        missingCount={missingInSlot('dasar')}
+                        openSignal={openSignals.dasar ?? 0}
                     >
                         {isInvitation ? (
-                            <div>
+                            <div id="field-dasar-sender_name" className={missingFrame(isBaseMissing('sender_name'))}>
                                 <label className="mb-1 block text-label-md font-semibold text-on-surface">
                                     Nama Mempelai / Tuan Rumah <span className="text-primary">*</span>
+                                    {isBaseMissing('sender_name') && <MissingBadge />}
                                 </label>
                                 <input
                                     type="text"
@@ -271,9 +333,10 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
                             </div>
                         ) : (
                             <>
-                        <div>
+                        <div id="field-dasar-recipient_name" className={missingFrame(isBaseMissing('recipient_name'))}>
                             <label className="mb-1 block text-label-md font-semibold text-on-surface">
                                 Nama Panggilan Penerima <span className="text-primary">*</span>
+                                {isBaseMissing('recipient_name') && <MissingBadge />}
                             </label>
                             <input
                                 type="text"
@@ -298,9 +361,10 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
                         </div>
                             </>
                         )}
-                        <div>
+                        <div id="field-dasar-occasion" className={missingFrame(isBaseMissing('occasion'))}>
                             <label className="mb-2 block text-label-md font-semibold text-on-surface">
                                 {isInvitation ? 'Jenis Acara' : 'Pilih Momen Ucapan'} <span className="text-primary">*</span>
+                                {isBaseMissing('occasion') && <MissingBadge />}
                             </label>
                             <div className="flex flex-wrap gap-2">
                                 {occasions.map((occasion) => (
@@ -364,13 +428,14 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
 
                     {isInvitation && greeting.invitation && (
                         <button
+                            id="isian-acara"
                             type="button"
                             onClick={() => {
                                 const url = `${route('invitations.show', greeting.id)}#${greeting.invitation.events.length === 0 ? 'acara' : 'tamu'}`;
                                 isRevising ? leaveRevision(() => router.visit(url)) : save({ onSuccess: () => router.visit(url) });
                             }}
-                            className={`flex items-center gap-3 rounded-3xl px-4 py-3.5 text-left shadow-sm active:scale-[0.99] ${
-                                greeting.invitation.events.length === 0 ? 'bg-tertiary-fixed text-on-tertiary-fixed' : 'bg-primary-fixed text-on-primary-fixed'
+                            className={`flex scroll-mt-28 items-center gap-3 rounded-3xl px-4 py-3.5 text-left shadow-sm active:scale-[0.99] ${
+                                greeting.invitation.events.length === 0 ? 'bg-tertiary-fixed text-on-tertiary-fixed ring-2 ring-error/40' : 'bg-primary-fixed text-on-primary-fixed'
                             }`}
                         >
                             <Icon name="event_note" size={24} className="shrink-0" />
@@ -395,10 +460,13 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
                         return (
                             <SectionCard
                                 key={slot.key}
+                                id={`isian-${slot.key}`}
                                 number={index + 2}
                                 icon={slot.icon}
                                 title={slot.title ?? slot.name}
                                 isComplete={isComplete && isEnabled}
+                                missingCount={missingInSlot(slot.key)}
+                                openSignal={openSignals[slot.key] ?? 0}
                                 defaultOpen={index < 3}
                             >
                                 {!slot.required && <p className="text-label-sm text-on-surface-variant">Opsional — kosongkan jika tidak dipakai.</p>}
@@ -411,6 +479,8 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
                                             value={slotValues[field.name]}
                                             onChange={(value) => setField(slot.key, field.name, value)}
                                             error={errors[`content.components.${slot.key}.${field.name}`]}
+                                            isMissing={missingKeys.has(`${slot.key}.${field.name}`)}
+                                            fieldId={`field-${slot.key}-${field.name}`}
                                             context={{
                                                 greetingId: greeting.id,
                                                 mediaCache,

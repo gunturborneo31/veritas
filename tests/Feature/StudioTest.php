@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Enums\GreetingStatus;
+use App\Models\Component;
 use App\Models\Greeting;
+use App\Models\Template;
 use App\Support\Greetings\DraftToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -110,6 +112,39 @@ class StudioTest extends TestCase
             ->assertSessionHas('error');
 
         $this->assertSame('Sarah', $greeting->refresh()->recipient_name);
+    }
+
+    public function test_studio_lists_each_missing_required_field_with_its_section(): void
+    {
+        $template = $this->createTemplate();
+        $template->components()->where('key', 'surat')->update(['title' => 'Surat dari Hati']);
+        $greeting = Greeting::factory()->for($template)->create(['recipient_name' => null, 'content' => ['components' => ['sampul' => ['title' => 'Halo']]]]);
+
+        $this->actingAs($greeting->user)
+            ->get(route('studio.edit', $greeting))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('missing', [
+                    ['slot' => 'dasar', 'field' => 'recipient_name', 'label' => 'Nama penerima', 'section' => 'Nama & Momen Spesial', 'hint' => null],
+                    ['slot' => 'surat', 'field' => 'body', 'label' => 'Isi surat', 'section' => 'Surat dari Hati', 'hint' => null],
+                ]));
+    }
+
+    public function test_missing_photo_album_explains_the_minimum_count(): void
+    {
+        $template = Template::factory()
+            ->withComponents(['galeri' => Component::factory()->create([
+                'key' => 'galeri_geser',
+                'name' => 'Galeri Geser',
+                'schema' => [['name' => 'photos', 'type' => 'images', 'label' => 'Foto kenangan', 'min' => 3, 'required' => true]],
+            ])])
+            ->create();
+        $greeting = Greeting::factory()->for($template)->create();
+
+        $this->actingAs($greeting->user)
+            ->get(route('studio.edit', $greeting))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('missing.0.section', 'Galeri Geser')
+                ->where('missing.0.hint', 'minimal 3 foto'));
     }
 
     private function anonymousDraft(): Greeting

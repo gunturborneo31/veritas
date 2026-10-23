@@ -1,6 +1,7 @@
 import LinkPicker from '@/Components/Checkout/LinkPicker';
 import PromoCodeField from '@/Components/Checkout/PromoCodeField';
 import Icon from '@/Components/Icon';
+import MissingChecklist from '@/Components/Studio/MissingChecklist';
 import TemplateCover from '@/Components/TemplateCover';
 import StudioLayout from '@/Layouts/StudioLayout';
 import { dateTime, rupiah } from '@/lib/format';
@@ -159,7 +160,7 @@ export default function Show({ greeting, template, quote, missing, referralHint,
                     </label>
                     {form.errors.confirm_data && <p className="text-label-sm text-error">{form.errors.confirm_data}</p>}
                     {form.errors.greeting && <p className="text-label-sm text-error">{form.errors.greeting}</p>}
-                    {!isComplete && <p className="text-label-sm text-error">Belum lengkap: {missing.map((item) => item.label).join(', ')}</p>}
+                    {!isComplete && <MissingChecklist missing={missing} greetingId={greeting.id} compact />}
                 </section>
 
                 {link && <LinkPicker greetingId={greeting.id} link={link} value={form.data.slug} onChange={(slug) => form.setData('slug', slug)} error={form.errors.slug} />}

@@ -118,10 +118,11 @@ class ContentSchema
     }
 
     /**
-     * Daftar field wajib yang belum diisi.
+     * Daftar field wajib yang belum diisi, lengkap dengan nama bagian (untuk daftar periksa di
+     * Studio, pratinjau, dan checkout) dan keterangan singkat bila ada jumlah minimal.
      *
      * @param  list<array<string, mixed>>  $manifest
-     * @return list<array{slot: string, field: string, label: string}>
+     * @return list<array{slot: string, field: string, label: string, section: string, hint: ?string}>
      */
     public function missingFields(array $manifest, Greeting $greeting): array
     {
@@ -129,17 +130,18 @@ class ContentSchema
 
         // Undangan ditujukan ke banyak tamu, jadi yang wajib adalah nama tuan rumah dan minimal satu acara.
         $baseFields = $greeting->isInvitation()
-            ? ['sender_name' => 'Nama mempelai / tuan rumah', 'occasion' => 'Momen']
+            ? ['sender_name' => 'Nama mempelai / tuan rumah', 'occasion' => 'Jenis acara']
             : ['recipient_name' => 'Nama penerima', 'occasion' => 'Momen'];
+        $baseSection = $greeting->isInvitation() ? 'Tuan Rumah & Acara' : 'Nama & Momen Spesial';
 
         foreach ($baseFields as $attribute => $label) {
             if (blank($greeting->{$attribute})) {
-                $missing[] = ['slot' => 'dasar', 'field' => $attribute, 'label' => $label];
+                $missing[] = ['slot' => 'dasar', 'field' => $attribute, 'label' => $label, 'section' => $baseSection, 'hint' => null];
             }
         }
 
         if ($greeting->isInvitation() && ! $greeting->invitationEvents()->exists()) {
-            $missing[] = ['slot' => 'acara', 'field' => 'events', 'label' => 'Detail acara'];
+            $missing[] = ['slot' => 'acara', 'field' => 'events', 'label' => 'Detail acara', 'section' => 'Acara, Amplop & Daftar Tamu', 'hint' => 'minimal 1 acara (akad, resepsi, …)'];
         }
 
         $content = $greeting->content['components'] ?? [];
@@ -166,12 +168,36 @@ class ContentSchema
                 };
 
                 if (! $isFilled) {
-                    $missing[] = ['slot' => $slot['key'], 'field' => $field['name'], 'label' => $field['label'] ?? $field['name']];
+                    $missing[] = [
+                        'slot' => $slot['key'],
+                        'field' => $field['name'],
+                        'label' => $field['label'] ?? $field['name'],
+                        'section' => $slot['title'] ?? $slot['name'],
+                        'hint' => $this->minimumHint($field),
+                    ];
                 }
             }
         }
 
         return $missing;
+    }
+
+    /**
+     * Keterangan jumlah minimal untuk field berisi banyak item (foto, daftar, kuis, titik peta).
+     *
+     * @param  array<string, mixed>  $field
+     */
+    private function minimumHint(array $field): ?string
+    {
+        $unit = match ($field['type']) {
+            self::TYPE_IMAGES => 'foto',
+            self::TYPE_LIST => 'isian',
+            self::TYPE_QUIZ => 'pertanyaan',
+            self::TYPE_LOCATIONS => 'titik lengkap (nama, lokasi, dan teks/foto)',
+            default => null,
+        };
+
+        return $unit === null ? null : 'minimal '.($field['min'] ?? 1).' '.$unit;
     }
 
     /**

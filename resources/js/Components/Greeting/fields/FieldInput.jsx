@@ -1,3 +1,4 @@
+import Icon from '@/Components/Icon';
 import Toggle from '@/Components/Toggle';
 import Inspiration from './Inspiration';
 import { QuizField, ListField } from './ListFields';
@@ -11,9 +12,10 @@ const inputClass =
     'w-full rounded-2xl border-0 bg-surface-container-low px-4 py-3 text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40';
 
 /**
- * Field form Studio yang dibangkitkan dari skema komponen.
+ * Field form Studio yang dibangkitkan dari skema komponen. `isMissing` menandai field wajib
+ * yang masih kosong (bingkai & label merah); `fieldId` menjadi tujuan gulir dari daftar periksa.
  */
-export default function FieldInput({ field, value, onChange, error, context }) {
+export default function FieldInput({ field, value, onChange, error, context, isMissing = false, fieldId = undefined }) {
     const control = (() => {
         switch (field.type) {
             case 'textarea':
@@ -92,10 +94,21 @@ export default function FieldInput({ field, value, onChange, error, context }) {
     }
 
     return (
-        <div className="flex flex-col gap-1">
-            <label className="text-label-md font-semibold text-on-surface">
-                {field.label}
-                {field.required && <span className="text-primary"> *</span>}
+        <div
+            id={fieldId}
+            className={`flex scroll-mt-28 flex-col gap-1 rounded-2xl transition-shadow ${isMissing ? '-mx-2 bg-error-container/20 p-2 ring-2 ring-error/40' : ''}`}
+        >
+            <label className="flex flex-wrap items-center gap-x-1.5 text-label-md font-semibold text-on-surface">
+                <span>
+                    {field.label}
+                    {field.required && <span className="text-primary"> *</span>}
+                </span>
+                {isMissing && (
+                    <span className="inline-flex items-center gap-0.5 rounded-full bg-error px-2 py-0.5 text-[11px] font-bold text-on-error">
+                        <Icon name="priority_high" size={12} />
+                        Wajib diisi
+                    </span>
+                )}
             </label>
             {control}
             {field.help && <span className="text-label-sm text-on-surface-variant">{field.help}</span>}
