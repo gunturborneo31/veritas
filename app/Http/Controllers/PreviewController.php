@@ -55,6 +55,7 @@ class PreviewController extends Controller
             'missing' => $schema->missingFields($greeting->template->manifest(), $greeting),
             'quote' => $prices->quote($greeting)->toArray(),
             'isOwner' => $ownership->owns($request, $greeting),
+            'canPublishFree' => (bool) $request->user()?->is_admin && $greeting->isInvitation(),
         ]);
     }
 }
