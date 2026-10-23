@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Component;
 use App\Models\Gate;
 use App\Models\Greeting;
+use App\Models\MusicTrack;
+use App\Models\Template;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Concerns\CreatesGreetingTemplates;
@@ -25,6 +28,7 @@ class RecipientTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Recipient/Gate')
                 ->where('gate', ['type' => 'pin', 'question' => 'Tanggal kita pertama bertemu?', 'hint' => 'Formatnya DDMM', 'length' => 4])
+                ->where('music', null)
                 ->missing('greeting'));
 
         $this->assertDatabaseCount('open_events', 0);
@@ -96,6 +100,32 @@ class RecipientTest extends TestCase
         $greeting = Greeting::factory()->for($this->createTemplate())->create(['slug' => 'belumterbit']);
 
         $this->get(route('recipient.show', $greeting->slug))->assertNotFound();
+    }
+
+    public function test_gate_screen_includes_background_music_so_it_can_start_before_the_card_is_opened(): void
+    {
+        $track = MusicTrack::factory()->create(['path' => 'music/kotak-musik-ajaib.mp3']);
+        $template = Template::factory()
+            ->withComponents([
+                'sampul' => Component::factory()->create([
+                    'key' => 'sampul',
+                    'schema' => [['name' => 'title', 'type' => 'text', 'label' => 'Judul', 'required' => true]],
+                ]),
+                'musik' => Component::factory()->create([
+                    'key' => 'musik_latar',
+                    'schema' => [['name' => 'track', 'type' => 'music', 'label' => 'Pilih lagu']],
+                ]),
+            ])
+            ->create();
+        $greeting = Greeting::factory()->for($template)->published()->create([
+            'content' => ['components' => ['sampul' => ['title' => 'Selamat!'], 'musik' => ['track' => $track->id]]],
+        ]);
+
+        $this->get(route('recipient.show', $greeting->slug))
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Recipient/Gate')
+                ->where('music.id', $track->id)
+                ->where('music.url', $track->url()));
     }
 
     private function publishedGreetingWithGate(): Greeting

@@ -1,5 +1,6 @@
 import Icon from '@/Components/Icon';
 import { Motif } from '@/Components/TemplateCover';
+import { backsound, playBacksound, stopBacksound } from '@/lib/backsound';
 import { resolveTheme, themeVars } from '@/lib/theme';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import GateBadge from './blocks/GateBadge';
@@ -91,9 +92,19 @@ export default function Player({
     const gateSlot = components.find((slot) => slot.component === 'gembok_pin');
     const track = musicSlot ? values[musicSlot.key]?.track : null;
 
+    // Elemen audio bersama (lib/backsound): musik yang sudah mulai di halaman gerbang berlanjut tanpa putus.
     useEffect(() => {
-        if (autoplayMusic && audioRef.current) {
-            audioRef.current.play().catch(() => setIsMuted(true));
+        audioRef.current = backsound(track?.url);
+
+        return () => {
+            stopBacksound();
+            audioRef.current = null;
+        };
+    }, [track?.url]);
+
+    useEffect(() => {
+        if (autoplayMusic && track?.url) {
+            playBacksound(track.url).catch(() => setIsMuted(true));
         }
     }, [autoplayMusic, track?.url]);
 
@@ -124,7 +135,7 @@ export default function Player({
             pausedForSongRef.current = true;
         } else if (!isSongScene && pausedForSongRef.current) {
             pausedForSongRef.current = false;
-            audio.play().catch(() => {});
+            playBacksound(track?.url).catch(() => {});
         }
     }, [isSongScene]);
 
@@ -134,7 +145,7 @@ export default function Player({
         }
 
         if (audioRef.current.paused) {
-            audioRef.current.play().catch(() => {});
+            playBacksound(track?.url).catch(() => {});
             setIsMuted(false);
         } else {
             setIsMuted((muted) => !muted);
@@ -150,8 +161,6 @@ export default function Player({
             {watermark && <Watermark recipientName={base.recipient_name} />}
             <div className="pointer-events-none absolute -right-20 -top-32 h-80 w-80 rounded-full blur-3xl" style={{ backgroundColor: theme.soft, opacity: 0.6 }} />
             <div className="pointer-events-none absolute -left-28 top-1/3 h-72 w-72 rounded-full blur-3xl" style={{ backgroundColor: theme.accent, opacity: 0.08 }} />
-
-            {track?.url && <audio ref={audioRef} src={track.url} loop preload="none" />}
 
             <div className="relative z-30 flex flex-col gap-3 px-5 pb-2 pt-8">
                 <div className="grid w-full items-center gap-1.5" style={{ gridTemplateColumns: `repeat(${Math.max(scenes.length, 1)}, minmax(0, 1fr))` }}>

@@ -3,6 +3,7 @@ import Icon from '@/Components/Icon';
 import Illustration from '@/Components/Illustration';
 import { resolveTheme, themeVars } from '@/lib/theme';
 import { CountdownDigits, useRemaining } from '@/Components/Greeting/blocks/Countdown';
+import { startBacksoundOnFirstGesture } from '@/lib/backsound';
 import { dateTime } from '@/lib/format';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
@@ -57,8 +58,11 @@ function ScheduledScreen({ recipient_name, sender_name, occasion, opens_at, them
     );
 }
 
-function UnlockScreen({ slug, type, recipient_name, sender_name, occasion, gate, theme: rawTheme }) {
+function UnlockScreen({ slug, type, recipient_name, sender_name, occasion, gate, theme: rawTheme, music = null }) {
     const { brand } = usePage().props;
+
+    // Musik latar mulai sejak halaman ini (atau pada sentuhan pertama) dan berlanjut saat kartu dibuka.
+    useEffect(() => startBacksoundOnFirstGesture(music?.url), [music?.url]);
     const isInvitation = type === 'undangan';
     const theme = resolveTheme(rawTheme);
     const form = useForm({ answer: '' });

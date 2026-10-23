@@ -46,6 +46,7 @@ class RecipientController extends Controller
                 'gate' => $greeting->gate?->toPublicArray(),
                 'theme' => $greeting->template->resolvedTheme(),
                 'opens_at' => $greeting->isScheduledForLater() ? $greeting->opens_at->toIso8601String() : null,
+                'music' => $presenter->backgroundMusic($greeting->snapshot),
             ]);
         }
 

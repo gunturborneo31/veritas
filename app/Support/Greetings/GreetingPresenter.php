@@ -83,6 +83,26 @@ class GreetingPresenter
     }
 
     /**
+     * Lagu latar dari snapshot, agar halaman gerbang bisa mulai memutarnya sebelum kartu dibuka.
+     *
+     * @return array{id: int, title: string, artist: ?string, mood: ?string, duration: int, url: string}|null
+     */
+    public function backgroundMusic(GreetingSnapshot $snapshot): ?array
+    {
+        foreach ($snapshot->components as $slot) {
+            if ($slot['component'] !== 'musik_latar') {
+                continue;
+            }
+
+            $trackId = $snapshot->content['components'][$slot['key']]['track'] ?? null;
+
+            return $trackId === null ? null : MusicTrack::find($trackId)?->toPlayerArray();
+        }
+
+        return null;
+    }
+
+    /**
      * Tulisan patungan yang sudah dibekukan di snapshot (foto disimpan sebagai ULID media).
      *
      * @param  list<array{name: string, message: string, photo: ?string}>  $items
