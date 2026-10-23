@@ -121,7 +121,7 @@ class InvitationPresenter
             'template_name' => $greeting->template->name,
             'url' => $greeting->slug === null ? null : route('recipient.show', $greeting->slug),
             'is_revisable' => $greeting->isRevisable(),
-            'revisable_until' => $greeting->revisableUntil()?->toIso8601String(),
+            'revisable_until' => $greeting->isOwnedByAdmin() ? null : $greeting->revisableUntil()?->toIso8601String(),
             'active_until' => $greeting->activeUntil()?->toIso8601String(),
             'settings' => [
                 'rsvp_enabled' => $invitation->rsvp_enabled,

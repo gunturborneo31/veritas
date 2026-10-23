@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Enums\GreetingStatus;
 use App\Enums\GreetingType;
+use App\Enums\OrderStatus;
 use App\Exceptions\GreetingLockedException;
 use App\Models\Greeting;
 use App\Models\InvitationEvent;
 use App\Models\Template;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -234,6 +237,50 @@ class InvitationLifecycleTest extends TestCase
         $this->actingAs($greeting->user)
             ->get(route('studio.edit', $greeting))
             ->assertInertia(fn (Assert $page) => $page->where('greeting.invitation', null));
+    }
+
+    public function test_admin_publishes_own_invitation_without_payment(): void
+    {
+        $greeting = Greeting::factory()->invitation()->for($this->createInvitationTemplate())->for(User::factory()->admin())->create(['content' => $this->completeContent()]);
+        InvitationEvent::factory()->for($greeting)->create();
+
+        $this->actingAs($greeting->user)
+            ->post(route('checkout.complimentary', $greeting), ['confirm_data' => true])
+            ->assertRedirect(route('result.show', $greeting));
+
+        $order = $greeting->orders()->sole();
+        $this->assertSame(OrderStatus::Lunas, $order->status);
+        $this->assertSame(0, $order->amount);
+        $this->assertSame(GreetingStatus::Terbit, $greeting->refresh()->status);
+        $this->assertNotNull($greeting->snapshot);
+    }
+
+    public function test_non_admin_cannot_publish_invitation_without_payment(): void
+    {
+        $greeting = Greeting::factory()->invitation()->for($this->createInvitationTemplate())->create(['content' => $this->completeContent()]);
+        InvitationEvent::factory()->for($greeting)->create();
+
+        $this->actingAs($greeting->user)
+            ->post(route('checkout.complimentary', $greeting), ['confirm_data' => true])
+            ->assertForbidden();
+
+        $this->assertDatabaseCount('orders', 0);
+    }
+
+    public function test_admin_invitation_stays_revisable_after_revision_period(): void
+    {
+        $greeting = $this->publishedInvitation(eventFinishedDaysAgo: config('kartukita.invitation.revision_grace_days') + 1);
+        $greeting->user->forceFill(['is_admin' => true])->save();
+
+        $this->actingAs($greeting->user)
+            ->get(route('studio.edit', $greeting))
+            ->assertInertia(fn (Assert $page) => $page->component('Studio/Edit')->where('revision.revisable_until', null));
+
+        $this->actingAs($greeting->user)
+            ->put(route('invitations.revise', $greeting), ['sender_name' => 'Nama Baru'])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('Nama Baru', $greeting->refresh()->snapshot->sender_name);
     }
 
     private function publishedInvitation(?int $eventFinishedDaysAgo = null, ?Template $template = null): Greeting

@@ -79,7 +79,9 @@ class StudioController extends Controller
             ],
             'musicTracks' => MusicTrack::query()->active()->orderBy('title')->get()
                 ->map(fn (MusicTrack $track): array => $track->toPlayerArray()),
-            'revision' => $isRevision ? ['revisable_until' => $greeting->revisableUntil()->toIso8601String()] : null,
+            'revision' => $isRevision ? [
+                'revisable_until' => $greeting->isOwnedByAdmin() ? null : $greeting->revisableUntil()?->toIso8601String(),
+            ] : null,
         ]);
     }
 

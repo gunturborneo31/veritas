@@ -70,12 +70,12 @@ function AccountFields({ form }) {
 /**
  * Langkah 5 — Ringkasan & Bayar. Harga ditampilkan dari server; browser tidak mengirim harga.
  */
-export default function Show({ greeting, template, quote, missing, referralHint, link, needsAccount = false, isManualPayment = false }) {
+export default function Show({ greeting, template, quote, missing, referralHint, link, needsAccount = false, isManualPayment = false, canPublishFree = false }) {
     const form = useForm({ confirm_data: false, slug: link?.slug ?? '', name: '', email: '', phone: '', password: '' });
     const isComplete = missing.length === 0;
     const hasAccountData = !needsAccount || (form.data.name && form.data.email && form.data.phone && form.data.password);
 
-    const submit = () => form.post(route('checkout.store', greeting.id), { preserveScroll: true });
+    const submit = () => form.post(route(canPublishFree ? 'checkout.complimentary' : 'checkout.store', greeting.id), { preserveScroll: true });
 
     return (
         <StudioLayout
@@ -86,8 +86,8 @@ export default function Show({ greeting, template, quote, missing, referralHint,
             actions={
                 <div className="flex w-full items-center justify-between gap-space-md">
                     <div className="flex flex-col">
-                        <span className="text-label-sm text-on-surface-variant">Total Pembayaran</span>
-                        <span className="text-headline-lg-mobile font-bold text-primary">{rupiah(quote.total)}</span>
+                        <span className="text-label-sm text-on-surface-variant">{canPublishFree ? 'Admin • tanpa bayar' : 'Total Pembayaran'}</span>
+                        <span className="text-headline-lg-mobile font-bold text-primary">{rupiah(canPublishFree ? 0 : quote.total)}</span>
                     </div>
                     <button
                         type="button"
@@ -95,8 +95,8 @@ export default function Show({ greeting, template, quote, missing, referralHint,
                         disabled={!form.data.confirm_data || !isComplete || !hasAccountData || form.processing}
                         className="flex h-12 max-w-[220px] flex-1 items-center justify-center gap-2 rounded-full bg-primary text-label-lg font-bold text-on-primary shadow-md shadow-primary/25 transition-all hover:bg-primary-container active:scale-95 disabled:opacity-50"
                     >
-                        <Icon name={form.processing ? 'progress_activity' : 'lock'} size={18} className={form.processing ? 'animate-spin' : ''} />
-                        <span>Bayar dengan QRIS</span>
+                        <Icon name={form.processing ? 'progress_activity' : canPublishFree ? 'rocket_launch' : 'lock'} size={18} className={form.processing ? 'animate-spin' : ''} />
+                        <span>{canPublishFree ? 'Terbitkan Gratis' : 'Bayar dengan QRIS'}</span>
                     </button>
                 </div>
             }

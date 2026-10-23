@@ -85,7 +85,7 @@ function StatusBanner({ invitation, onCopy }) {
                     <Icon name="edit_note" size={18} className="shrink-0 text-primary" />
                     <span className="min-w-0 flex-1 text-label-md">
                         Revisi isi undangan
-                        <span className="block text-label-sm font-normal text-on-surface-variant">Nama, foto & cerita — sampai {dateTime(invitation.revisable_until)}</span>
+                        <span className="block text-label-sm font-normal text-on-surface-variant">Nama, foto & cerita — {invitation.revisable_until ? `sampai ${dateTime(invitation.revisable_until)}` : 'kapan saja'}</span>
                     </span>
                     <Icon name="arrow_forward" size={18} className="shrink-0 text-primary" />
                 </Link>

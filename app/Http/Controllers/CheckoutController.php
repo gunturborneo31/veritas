@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Orders\PlaceComplimentaryOrder;
 use App\Actions\Orders\PlaceOrder;
 use App\Actions\Orders\StartManualPayment;
 use App\Actions\Orders\StartQrisPayment;
@@ -75,7 +76,25 @@ class CheckoutController extends Controller
                 'suggestion' => CustomSlug::normalize($greeting->isInvitation() ? $greeting->sender_name : "untuk-{$greeting->recipient_name}"),
             ],
             'isManualPayment' => $manualQris->isEnabled(),
+            'canPublishFree' => (bool) $request->user()?->is_admin && $greeting->isInvitation(),
         ]);
+    }
+
+    /**
+     * Admin menerbitkan undangan buatannya sendiri tanpa pembayaran.
+     */
+    public function storeComplimentary(PlaceOrderRequest $request, Greeting $greeting, PlaceComplimentaryOrder $placeComplimentaryOrder): RedirectResponse
+    {
+        $this->ownership->authorize($request, $greeting);
+
+        if ($request->filled('slug')) {
+            $greeting->forceFill(['slug' => $request->validated('slug')])->save();
+        }
+
+        $placeComplimentaryOrder->handle($greeting, $request->user());
+        $request->session()->forget($this->promoSessionKey($greeting));
+
+        return to_route('result.show', $greeting)->with('success', 'Undangan terbit tanpa pembayaran. 🎉');
     }
 
     /**

@@ -159,6 +159,7 @@ Route::get('checkout/{greeting}/cek-link', [GreetingSlugController::class, 'chec
 Route::middleware('auth')->group(function () {
     Route::post('checkout/{greeting}/promo', [CheckoutController::class, 'applyPromo'])->middleware('throttle:15,1')->name('checkout.promo.apply');
     Route::delete('checkout/{greeting}/promo', [CheckoutController::class, 'removePromo'])->name('checkout.promo.remove');
+    Route::post('checkout/{greeting}/gratis', [CheckoutController::class, 'storeComplimentary'])->middleware(EnsureUserIsAdmin::class)->name('checkout.complimentary');
 
     Route::get('pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('pesanan/{order}/qris', [QrisPaymentController::class, 'refresh'])->middleware('throttle:10,1')->name('orders.qris.refresh');

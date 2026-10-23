@@ -298,7 +298,10 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
                             <Icon name="history_edu" size={22} className="shrink-0" />
                             <div className="text-body-sm">
                                 <p className="text-label-md">Mode revisi — tanpa biaya tambahan</p>
-                                <p className="opacity-80">Bisa direvisi sampai {dateTime(revision.revisable_until)}. Template dan gaya tidak bisa diganti.</p>
+                                <p className="opacity-80">
+                                    {revision.revisable_until ? `Bisa direvisi sampai ${dateTime(revision.revisable_until)}.` : 'Bisa direvisi kapan saja (undangan admin).'} Template dan gaya
+                                    tidak bisa diganti.
+                                </p>
                                 {errors.greeting && <p className="mt-1 font-semibold text-error">{errors.greeting}</p>}
                             </div>
                         </div>

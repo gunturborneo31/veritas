@@ -317,12 +317,25 @@ class Greeting extends Model
     }
 
     /**
-     * Undangan terbit masih boleh direvisi (tanpa bayar ulang) sampai batas revisi lewat.
+     * Undangan yang dibuat admin untuk dirinya sendiri: terbit tanpa bayar dan bisa direvisi kapan saja.
+     */
+    public function isOwnedByAdmin(): bool
+    {
+        return $this->isInvitation() && (bool) $this->user?->is_admin;
+    }
+
+    /**
+     * Undangan terbit masih boleh direvisi (tanpa bayar ulang) sampai batas revisi lewat;
+     * undangan milik admin tidak punya batas revisi.
      */
     public function isRevisable(): bool
     {
         if (! $this->isInvitation() || GreetingStatus::from($this->getRawOriginal('status') ?? $this->status->value) !== GreetingStatus::Terbit) {
             return false;
+        }
+
+        if ($this->isOwnedByAdmin()) {
+            return true;
         }
 
         return $this->revisableUntil()?->isFuture() ?? false;
