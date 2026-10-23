@@ -66,8 +66,10 @@ function UnlockScreen({ slug, type, recipient_name, sender_name, occasion, gate,
     const [shake, setShake] = useState(false);
     const length = gate?.length ?? 4;
 
-    const submit = (answer) =>
-        form.transform(() => ({ answer })).post(route('recipient.open', slug), {
+    // `transform()` di Inertia v2 tidak mengembalikan form, jadi tidak bisa dirangkai dengan `.post()`.
+    const submit = (answer) => {
+        form.transform(() => ({ answer }));
+        form.post(route('recipient.open', slug), {
             onError: () => {
                 navigator.vibrate?.([40, 60, 40]);
                 setShake(true);
@@ -77,6 +79,7 @@ function UnlockScreen({ slug, type, recipient_name, sender_name, occasion, gate,
                 }, 450);
             },
         });
+    };
 
     const press = (digit) => {
         if (form.processing || form.data.answer.length >= length) {
