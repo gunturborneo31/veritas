@@ -54,6 +54,9 @@
 
 .material-symbols-outlined {
     font-family: 'Material Symbols Outlined';
+    /* Kunci lebar ke ukuran ikon agar teks ligatur tidak mendorong tata letak sebelum font termuat. */
+    width: 1em;
+    overflow: hidden;
     font-weight: normal;
     font-style: normal;
     line-height: 1;

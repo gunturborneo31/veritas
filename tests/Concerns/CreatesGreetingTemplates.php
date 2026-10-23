@@ -2,6 +2,7 @@
 
 namespace Tests\Concerns;
 
+use App\Enums\GreetingType;
 use App\Models\Component;
 use App\Models\Template;
 
@@ -25,6 +26,14 @@ trait CreatesGreetingTemplates
                 ]),
             ])
             ->create(['price' => $price]);
+    }
+
+    /**
+     * Template yang sama, tetapi menghasilkan undangan.
+     */
+    protected function createInvitationTemplate(): Template
+    {
+        return tap($this->createTemplate())->update(['type' => GreetingType::Undangan]);
     }
 
     /**

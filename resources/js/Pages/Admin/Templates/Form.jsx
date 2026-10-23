@@ -1,7 +1,8 @@
 import TemplateCover from '@/Components/TemplateCover';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { FONTS, MOTIFS, paletteFromAccent } from '@/lib/theme';
+import { FONTS, MOTIFS, loadFont, paletteFromAccent } from '@/lib/theme';
 import { Head, router, useForm } from '@inertiajs/react';
+import { useEffect } from 'react';
 
 function ColorInput({ label, value, onChange, error }) {
     return (
@@ -19,7 +20,9 @@ function ColorInput({ label, value, onChange, error }) {
 /**
  * Template = daftar komponen berurutan. Urutan baris di sini = urutan adegan untuk penerima.
  */
-export default function Form({ template, categories, series, availableComponents, tiers, defaultTheme }) {
+export default function Form({ template, categories, series, availableComponents, types, tiers, defaultTheme }) {
+    useEffect(() => Object.keys(FONTS).forEach(loadFont), []);
+
     const form = useForm({
         category_id: template?.category_id ?? categories[0]?.id ?? '',
         series_id: template?.series_id ?? series[0]?.id ?? '',
@@ -30,6 +33,7 @@ export default function Form({ template, categories, series, availableComponents
         tagline: template?.tagline ?? '',
         story: template?.story ?? '',
         description: template?.description ?? '',
+        type: template?.type ?? 'ucapan',
         tier: template?.tier ?? 'interaktif',
         price: template?.price ?? 29000,
         duration_minutes: template?.duration_minutes ?? 3,
@@ -119,6 +123,22 @@ export default function Form({ template, categories, series, availableComponents
                                 </option>
                             ))}
                         </select>
+                    </label>
+                    <label className="flex flex-col gap-1">
+                        <span className="text-label-md">Jenis produk</span>
+                        <select value={form.data.type} onChange={(event) => form.setData('type', event.target.value)} className="rounded-xl border-surface-container">
+                            {types.map((type) => (
+                                <option key={type.value} value={type.value}>
+                                    {type.label}
+                                </option>
+                            ))}
+                        </select>
+                        <span className="text-label-sm text-on-surface-variant">
+                            {form.data.type === 'undangan'
+                                ? 'Undangan: banyak tamu, RSVP & amplop digital, tampil di katalog Undangan. Pakai komponen acara_undangan, rsvp, amplop_digital, ucapan_doa.'
+                                : 'Ucapan: satu penerima, isi dibekukan setelah bayar.'}
+                        </span>
+                        {form.errors.type && <span className="text-label-sm text-error">{form.errors.type}</span>}
                     </label>
                     <label className="flex flex-col gap-1">
                         <span className="text-label-md">Kelas</span>

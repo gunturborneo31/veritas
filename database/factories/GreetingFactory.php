@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\GreetingStatus;
+use App\Enums\GreetingType;
 use App\Models\Greeting;
 use App\Models\Template;
 use App\Models\User;
@@ -42,6 +43,23 @@ class GreetingFactory extends Factory
             'user_id' => null,
             'draft_token_hash' => $draftTokenHash,
         ]);
+    }
+
+    /**
+     * Undangan beserta pengaturan bawaannya (acara ditambahkan terpisah lewat InvitationEvent).
+     */
+    public function invitation(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            // Template dari for() tetap dipakai; hanya template bawaan definisi yang diganti template undangan.
+            'template_id' => $attributes['template_id'] instanceof Factory ? Template::factory()->invitation() : $attributes['template_id'],
+            'type' => GreetingType::Undangan,
+            'recipient_name' => Greeting::INVITATION_RECIPIENT_PLACEHOLDER,
+            'sender_name' => 'Raka & Dinda',
+            'occasion' => 'Pernikahan',
+        ])->afterCreating(function (Greeting $greeting): void {
+            $greeting->invitation()->create();
+        });
     }
 
     public function status(GreetingStatus $status): static

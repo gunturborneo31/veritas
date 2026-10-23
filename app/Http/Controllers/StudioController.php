@@ -39,13 +39,15 @@ class StudioController extends Controller
     }
 
     /**
-     * Langkah 1 & 2: data dasar dan isi per komponen.
+     * Langkah 1 & 2: data dasar dan isi per komponen. Undangan terbit yang masih dalam masa
+     * revisi dibuka dalam mode revisi: tanpa autosave, disimpan sekaligus sebagai snapshot baru.
      */
     public function edit(Request $request, Greeting $greeting, GreetingPresenter $presenter, ContentSchema $schema): Response|RedirectResponse
     {
         $this->ownership->authorize($request, $greeting);
+        $isRevision = $greeting->isRevisable();
 
-        if (! $greeting->isEditable()) {
+        if (! $greeting->isEditable() && ! $isRevision) {
             return $greeting->status === GreetingStatus::Terbit
                 ? to_route('result.show', $greeting)
                 : to_route('dashboard');
@@ -77,6 +79,7 @@ class StudioController extends Controller
             ],
             'musicTracks' => MusicTrack::query()->active()->orderBy('title')->get()
                 ->map(fn (MusicTrack $track): array => $track->toPlayerArray()),
+            'revision' => $isRevision ? ['revisable_until' => $greeting->revisableUntil()->toIso8601String()] : null,
         ]);
     }
 

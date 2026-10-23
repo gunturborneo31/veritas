@@ -47,16 +47,16 @@ export default function UpdatePasswordForm({ className = '' }) {
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">
+                <h2 className="text-headline-sm text-on-surface">
                     Ubah Kata Sandi
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="mt-1 text-body-sm text-on-surface-variant">
                     Gunakan kata sandi yang panjang dan unik agar akunmu tetap aman.
                 </p>
             </header>
 
-            <form onSubmit={updatePassword} className="mt-6 space-y-6">
+            <form onSubmit={updatePassword} className="mt-space-md space-y-space-md">
                 <div>
                     <InputLabel
                         htmlFor="current_password"
@@ -130,7 +130,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600">
+                        <p className="text-label-md text-success">
                             Tersimpan.
                         </p>
                     </Transition>

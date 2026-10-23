@@ -18,7 +18,7 @@ export default function Coupons({ slot, values, base }) {
                 >
                     <div className="flex w-16 shrink-0 flex-col items-center justify-center gap-0.5 bg-primary text-on-primary">
                         <Icon name="local_activity" size={22} />
-                        <span className="text-[10px] font-bold tracking-wider">#{index + 1}</span>
+                        <span className="text-[11px] font-bold tracking-wider">#{index + 1}</span>
                     </div>
                     <div className="relative flex-1 border-l-2 border-dashed border-primary/30 px-4 py-3">
                         <p className="text-label-sm uppercase tracking-wider text-primary">Berlaku selamanya</p>

@@ -1,5 +1,6 @@
 import FlashToast from '@/Components/FlashToast';
 import Icon from '@/Components/Icon';
+import Illustration from '@/Components/Illustration';
 import { resolveTheme, themeVars } from '@/lib/theme';
 import { Head, useForm } from '@inertiajs/react';
 import { useState } from 'react';
@@ -38,7 +39,7 @@ export default function Show({ token, isOpen, greeting, template }) {
 
             <div className="flex w-full max-w-md flex-col gap-space-md">
                 <div className="flex flex-col items-center gap-2 text-center">
-                    <span className="text-5xl">{theme.emoji}</span>
+                    <Illustration theme={theme} className="h-28 w-28" />
                     <span className="rounded-full bg-white/70 px-3 py-1 text-label-sm uppercase tracking-[0.2em] text-primary shadow-sm">Kartu Patungan</span>
                     <h1 className="font-display text-headline-lg-mobile leading-tight text-on-surface">
                         {greeting.sender_name || 'Temanmu'} sedang menyiapkan kejutan {greeting.occasion?.toLowerCase()} untuk {greeting.recipient_name || 'seseorang'}

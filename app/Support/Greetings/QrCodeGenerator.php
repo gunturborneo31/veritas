@@ -43,6 +43,36 @@ class QrCodeGenerator
         return (new QRCode($options))->render($url);
     }
 
+    /**
+     * QR pembayaran: modul kotak hitam-putih standar agar terbaca semua aplikasi bank/e-wallet.
+     */
+    public function paymentSvg(string $content): string
+    {
+        return (new QRCode(new QROptions([
+            'outputInterface' => QRMarkupSVG::class,
+            'outputBase64' => false,
+            'svgAddXmlHeader' => false,
+            'eccLevel' => EccLevel::M,
+            'quietzoneSize' => 4,
+            'drawLightModules' => false,
+            'connectPaths' => true,
+            'moduleValues' => array_fill_keys(self::DARK_MODULES, '#000000'),
+        ])))->render($content);
+    }
+
+    public function paymentPng(string $content): string
+    {
+        return (new QRCode(new QROptions([
+            'outputInterface' => QRGdImagePNG::class,
+            'outputBase64' => false,
+            'eccLevel' => EccLevel::M,
+            'scale' => 12,
+            'quietzoneSize' => 4,
+            'bgColor' => [255, 255, 255],
+            'moduleValues' => array_fill_keys(self::DARK_MODULES, [0, 0, 0]),
+        ])))->render($content);
+    }
+
     public function png(string $url, int $scale = 16): string
     {
         $options = new QROptions([

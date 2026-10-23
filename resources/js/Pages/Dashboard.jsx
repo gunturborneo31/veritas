@@ -23,6 +23,8 @@ const filterOf = (greeting) =>
 
 function GreetingCard({ greeting, onCopy, onShowQr }) {
     const [showReplies, setShowReplies] = useState(false);
+    const isInvitation = greeting.type === 'undangan';
+    const title = isInvitation ? greeting.sender_name : greeting.recipient_name;
 
     const deleteDraft = () => {
         if (confirm('Hapus draf ucapan ini?')) {
@@ -37,10 +39,11 @@ function GreetingCard({ greeting, onCopy, onShowQr }) {
                     <TemplateCover template={greeting.template} />
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-between">
-                    <span className={`truncate text-headline-sm font-bold ${greeting.recipient_name ? 'text-on-surface' : 'italic text-on-surface-variant'}`}>
-                        {greeting.recipient_name || 'Belum ada nama (Draf)'}
+                    <span className={`truncate text-headline-sm font-bold ${title ? 'text-on-surface' : 'italic text-on-surface-variant'}`}>
+                        {title || 'Belum ada nama (Draf)'}
                     </span>
                     <span className="truncate text-body-sm text-on-surface-variant">
+                        {isInvitation && 'Undangan '}
                         {greeting.occasion || '—'} • {greeting.template.name}
                     </span>
                     <div className="mt-2">
@@ -60,7 +63,18 @@ function GreetingCard({ greeting, onCopy, onShowQr }) {
                 </div>
             </div>
 
-            {greeting.status === 'terbit' ? (
+            {greeting.manage_url && (
+                <Link
+                    href={greeting.manage_url}
+                    className="flex items-center gap-space-xs rounded-2xl bg-primary-fixed px-space-sm py-2.5 text-on-primary-fixed active:scale-[0.99]"
+                >
+                    <Icon name="groups" size={18} className="text-primary" />
+                    <span className="flex-1 text-label-md">Kelola tamu, RSVP & acara</span>
+                    <Icon name="arrow_forward" size={18} className="text-primary" />
+                </Link>
+            )}
+
+            {greeting.status === 'terbit' && !isInvitation ? (
                 <div className="flex items-center gap-space-xs rounded-2xl bg-surface-container-low px-space-sm py-2">
                     <Icon name={greeting.open_count ? 'visibility' : 'schedule'} filled={greeting.open_count > 0} size={18} className="text-primary" />
                     <span className="flex-1 truncate text-label-sm text-on-surface-variant">
@@ -74,7 +88,7 @@ function GreetingCard({ greeting, onCopy, onShowQr }) {
                         </button>
                     )}
                 </div>
-            ) : (
+            ) : greeting.status !== 'terbit' && (
                 <div className="flex items-center gap-space-xs rounded-2xl bg-surface-container-low px-space-sm py-2 text-on-surface-variant">
                     <Icon name="history" size={18} />
                     <span className="flex-1 truncate text-label-sm">Disimpan {dateTime(greeting.last_edited_at)}</span>
@@ -252,7 +266,7 @@ export default function Dashboard({ greetings, activities, reminders, referral }
                                 <Icon name={icon} size={16} />
                             </div>
                             <span className="text-headline-sm font-bold text-on-surface">{value}</span>
-                            <span className="line-clamp-1 text-label-sm text-on-surface-variant">{label}</span>
+                            <span className="text-label-sm leading-tight text-on-surface-variant">{label}</span>
                         </div>
                     ))}
                 </div>
@@ -277,13 +291,13 @@ export default function Dashboard({ greetings, activities, reminders, referral }
                             }`}
                         >
                             {label}
-                            <span className="rounded-full bg-surface-container-highest/40 px-1.5 py-0.5 text-[11px]">{counts[key] ?? 0}</span>
+                            <span className="rounded-full bg-surface-container-highest/40 px-1.5 py-0.5 text-xs">{counts[key] ?? 0}</span>
                         </button>
                     ))}
                 </div>
             </section>
 
-            <section className="flex flex-col gap-space-md px-margin pb-space-xl">
+            <section className="flex flex-col gap-space-md px-margin pb-24">
                 {visible.length === 0 && (
                     <div className="flex flex-col items-center gap-2 py-space-xl text-center text-on-surface-variant">
                         <Icon name="drafts" size={40} />
@@ -295,7 +309,7 @@ export default function Dashboard({ greetings, activities, reminders, referral }
                 ))}
             </section>
 
-            <div className="fixed bottom-20 right-margin z-40">
+            <div className="fixed bottom-[calc(env(safe-area-inset-bottom)_+_5rem)] right-margin z-40 md:bottom-8">
                 <Link
                     href={route('catalog.index')}
                     className="group flex h-13 items-center gap-space-sm rounded-full bg-gradient-to-r from-primary to-primary-container px-space-lg py-3 text-label-lg text-on-primary shadow-[0_8px_24px_rgba(168,50,35,0.38)] active:scale-95"

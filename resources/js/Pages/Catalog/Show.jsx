@@ -54,7 +54,7 @@ function DesignPicker({ designs, current }) {
                             </div>
                             <div className="flex flex-col gap-0.5 p-2.5">
                                 <span className="truncate text-label-md text-on-surface">{design.design_name ?? design.name}</span>
-                                <span className="text-[11px] text-on-surface-variant">{design.scene_count} halaman</span>
+                                <span className="text-xs text-on-surface-variant">{design.scene_count} halaman</span>
                                 <span className="text-label-sm" style={{ color: design.theme.accent }}>
                                     {rupiah(design.price)}
                                 </span>
@@ -82,22 +82,32 @@ export default function Show({ template }) {
     return (
         <PublicLayout
             title={title}
-            hideBottomNav
-            header={
-                <div className="flex min-w-0 items-center gap-space-sm">
-                    <button
-                        type="button"
-                        aria-label="Kembali"
-                        onClick={() => window.history.back()}
-                        className="-ml-2 flex h-11 w-11 items-center justify-center rounded-full text-on-surface hover:bg-surface-container-high/60"
-                    >
-                        <Icon name="arrow_back" size={24} />
-                    </button>
-                    <h1 className="truncate text-headline-sm text-on-surface">Detail Template</h1>
+            back={{ href: route('catalog.index', template.type === 'undangan' ? { jenis: 'undangan' } : {}), label: template.type === 'undangan' ? 'Katalog Undangan' : 'Katalog' }}
+            actionBar={
+                <div style={pageVars}>
+                    <div className="flex items-center gap-space-sm">
+                        <Link
+                            href={route('catalog.demo', template.slug)}
+                            className="flex h-12 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-primary-fixed px-space-md text-label-lg text-on-primary-fixed active:scale-95"
+                        >
+                            <Icon name="play_circle" size={20} />
+                            Coba demo
+                        </Link>
+                        <button
+                            type="button"
+                            onClick={create}
+                            disabled={isCreating}
+                            className="flex h-12 min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-primary px-space-md text-label-lg text-on-primary shadow-lg shadow-primary/30 active:scale-95 disabled:opacity-60"
+                        >
+                            <Icon name="auto_awesome" size={20} />
+                            Buat sekarang
+                        </button>
+                    </div>
+                    <p className="mt-1.5 hidden text-center text-label-sm text-on-surface-variant sm:block">⚡ Tanpa aplikasi • Tanpa daftar • Kirim via WhatsApp</p>
                 </div>
             }
         >
-            <div className="flex w-full flex-col pb-40" style={pageVars}>
+            <div className="flex w-full flex-col" style={pageVars}>
                 <section className="relative flex w-full flex-col items-center px-margin pt-space-md">
                     <div className="pointer-events-none absolute top-12 -z-10 h-64 w-64 rounded-full bg-primary-fixed-dim/40 blur-3xl" />
                     {template.highlight_label && (
@@ -183,28 +193,6 @@ export default function Show({ template }) {
                     </div>
                 </section>
             </div>
-
-            <footer className="pb-safe fixed inset-x-0 bottom-0 z-40 bg-surface/95 px-margin py-3 shadow-bar backdrop-blur-xl" style={pageVars}>
-                <div className="mx-auto flex max-w-lg items-center gap-space-sm">
-                    <Link
-                        href={route('catalog.demo', template.slug)}
-                        className="flex h-12 items-center justify-center gap-1.5 rounded-full bg-secondary-container px-space-md text-label-lg text-on-secondary-container active:scale-95"
-                    >
-                        <Icon name="play_circle" size={20} />
-                        Coba demo
-                    </Link>
-                    <button
-                        type="button"
-                        onClick={create}
-                        disabled={isCreating}
-                        className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-primary px-space-lg text-label-lg text-on-primary shadow-lg shadow-primary/30 active:scale-95 disabled:opacity-60"
-                    >
-                        <Icon name="auto_awesome" size={20} />
-                        Buat sekarang
-                    </button>
-                </div>
-                <p className="mt-2 text-center text-label-sm text-on-surface-variant">⚡ Tanpa aplikasi • Tanpa daftar dulu • Kirim via WhatsApp</p>
-            </footer>
         </PublicLayout>
     );
 }

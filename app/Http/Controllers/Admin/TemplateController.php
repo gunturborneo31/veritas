@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\GreetingType;
 use App\Enums\TemplateTier;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\TemplateRequest;
@@ -168,6 +169,7 @@ class TemplateController extends Controller
             'categories' => Category::query()->orderBy('sort_order')->get(['id', 'name']),
             'series' => Series::query()->orderBy('sort_order')->get(['id', 'name']),
             'availableComponents' => Component::query()->where('is_active', true)->orderBy('name')->get(['id', 'key', 'name']),
+            'types' => collect(GreetingType::cases())->map(fn (GreetingType $type): array => ['value' => $type->value, 'label' => $type->label()]),
             'tiers' => collect(TemplateTier::cases())->map(fn (TemplateTier $tier): array => ['value' => $tier->value, 'label' => $tier->label()]),
             'defaultTheme' => Template::DEFAULT_THEME,
         ];

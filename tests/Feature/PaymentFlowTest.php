@@ -11,33 +11,15 @@ use App\Models\Payment;
 use App\Models\User;
 use App\Support\Greetings\GreetingPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Tests\Concerns\CreatesGreetingTemplates;
 use Tests\TestCase;
 
+/**
+ * Verifikasi manual admin untuk pesanan transfer lama (sebelum QRIS otomatis) yang masih menunggu konfirmasi.
+ */
 class PaymentFlowTest extends TestCase
 {
     use CreatesGreetingTemplates, RefreshDatabase;
-
-    public function test_submitting_proof_locks_the_greeting_content(): void
-    {
-        Storage::fake('local');
-        $order = $this->pendingOrder();
-
-        $this->actingAs($order->user)
-            ->post(route('orders.proof.store', $order), ['method' => 'transfer', 'proof' => UploadedFile::fake()->image('bukti.jpg')])
-            ->assertRedirect(route('orders.show', $order));
-
-        $this->assertSame(OrderStatus::MenungguKonfirmasi, $order->refresh()->status);
-        $this->assertSame(GreetingStatus::Terkunci, $order->greeting->status);
-        Storage::disk('local')->assertExists($order->latestPayment->proof_path);
-
-        $this->actingAs($order->user)
-            ->put(route('studio.update', $order->greeting), ['recipient_name' => 'Diubah'])
-            ->assertSessionHas('error');
-        $this->assertNotSame('Diubah', $order->greeting->refresh()->recipient_name);
-    }
 
     public function test_admin_confirmation_publishes_greeting_with_permanent_snapshot(): void
     {

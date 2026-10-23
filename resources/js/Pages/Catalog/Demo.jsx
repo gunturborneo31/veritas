@@ -33,7 +33,7 @@ export default function Demo({ template, greeting }) {
                 </span>
             </div>
 
-            <PhoneFrame className="relative">
+            <PhoneFrame className="relative" bare>
                 <Player greeting={greeting} mode="demo" watermark initialScene={initialScene} />
             </PhoneFrame>
 

@@ -3,13 +3,39 @@ import TemplateCard, { FlowPeek, cardTitle, visibleFlow } from '@/Components/Tem
 import TemplateCover from '@/Components/TemplateCover';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { rupiah } from '@/lib/format';
+import { readableAccent } from '@/lib/theme';
 import { Link, router } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 
-const PROMISES = [
-    ['visibility', 'Coba dulu, bayar belakangan', 'Pratinjau penuh tanpa daftar'],
-    ['lock', 'Bisa dikunci PIN', 'Hanya dia yang bisa membuka'],
-    ['smartphone', 'Tanpa aplikasi', 'Cukup link & QR via WhatsApp'],
+/**
+ * Teks yang berbeda antara katalog ucapan dan katalog undangan.
+ */
+const COPY = {
+    ucapan: {
+        heading: <>Pilih cara kamu bilang <span className="text-primary">“aku peduli”</span></>,
+        body: 'Setiap template adalah cerita kecil yang dibuka penerima langkah demi langkah — kamu tinggal isi nama, foto, dan pesanmu.',
+        search: 'Cari momen: ulang tahun, kangen, lebaran…',
+        promises: [
+            ['visibility', 'Coba dulu, bayar belakangan', 'Pratinjau penuh tanpa daftar'],
+            ['lock', 'Bisa dikunci PIN', 'Hanya dia yang bisa membuka'],
+            ['smartphone', 'Tanpa aplikasi', 'Cukup link & QR via WhatsApp'],
+        ],
+    },
+    undangan: {
+        heading: <>Undangan digital dengan <span className="text-primary">nama setiap tamu</span></>,
+        body: 'Satu kali bayar untuk tamu tanpa batas: link pribadi per tamu, RSVP, amplop digital, ucapan & doa, dan check-in QR di lokasi.',
+        search: 'Cari: pernikahan, akad, tasyakuran…',
+        promises: [
+            ['group', 'Tamu tanpa batas', 'Impor dari Excel, kirim via WhatsApp'],
+            ['event_available', 'RSVP & check-in', 'Rekap kehadiran otomatis'],
+            ['edit_calendar', 'Bisa diubah setelah disebar', 'Jadwal & lokasi selalu terbaru'],
+        ],
+    },
+};
+
+const TYPES = [
+    ['ucapan', 'Kartu Ucapan', 'mail'],
+    ['undangan', 'Undangan', 'celebration'],
 ];
 
 /**
@@ -17,7 +43,7 @@ const PROMISES = [
  */
 function Spotlight({ template }) {
     const [isPeeking, setIsPeeking] = useState(false);
-    const accent = template.theme.accent;
+    const accent = readableAccent(template.theme.accent);
     const flow = visibleFlow(template);
 
     return (
@@ -25,7 +51,7 @@ function Spotlight({ template }) {
             className="relative overflow-hidden rounded-[2rem] p-1 shadow-[0_24px_48px_-20px_rgba(40,21,38,0.35)]"
             style={{ background: `linear-gradient(135deg, ${accent}, ${template.theme.gradient[2]})` }}
         >
-            <div className="grid overflow-hidden rounded-[1.75rem] bg-surface-container-lowest sm:grid-cols-[1fr_1.1fr]">
+            <div className="grid grid-cols-[minmax(0,1fr)] overflow-hidden rounded-[1.75rem] bg-surface-container-lowest sm:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
                 <div className="group relative aspect-[16/10] sm:aspect-auto">
                     <TemplateCover template={template} size="lg" />
                     <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/85 px-2.5 py-1 text-label-sm shadow-sm backdrop-blur" style={{ color: accent }}>
@@ -34,7 +60,7 @@ function Spotlight({ template }) {
                     </span>
                     {isPeeking && <FlowPeek template={template} onClose={() => setIsPeeking(false)} />}
                 </div>
-                <div className="flex flex-col gap-3 p-5">
+                <div className="flex min-w-0 flex-col gap-3 p-5">
                     <div className="flex flex-wrap items-center gap-1.5">
                         <span className="rounded-full px-2.5 py-0.5 text-label-sm" style={{ backgroundColor: template.theme.soft, color: accent }}>
                             {template.category?.emoji} {template.category?.name}
@@ -53,7 +79,7 @@ function Spotlight({ template }) {
                                 <Link
                                     key={design.slug}
                                     href={route('catalog.show', design.slug)}
-                                    className="flex shrink-0 items-center gap-1.5 rounded-full bg-surface-container-low py-1 pl-1 pr-2.5 text-[11px] font-semibold text-on-surface"
+                                    className="flex shrink-0 items-center gap-1.5 rounded-full bg-surface-container-low py-1 pl-1 pr-2.5 text-xs font-semibold text-on-surface"
                                 >
                                     <span className="h-4 w-4 rounded-full" style={{ background: `linear-gradient(135deg, ${design.theme.accent}, ${design.theme.gradient[2]})` }} />
                                     {design.design_name ?? design.name}
@@ -62,7 +88,7 @@ function Spotlight({ template }) {
                         </div>
                     )}
 
-                    <ol className="flex flex-wrap items-center gap-1 text-[11px] text-on-surface">
+                    <ol className="flex flex-wrap items-center gap-1 text-xs text-on-surface">
                         {flow.map((step, index) => (
                             <li key={`${step.key}-${index}`} className="inline-flex items-center gap-1">
                                 <span
@@ -123,8 +149,21 @@ export default function Index({ categories, templates, filters }) {
     const [search, setSearch] = useState(filters.cari ?? '');
     const isFirstRender = useRef(true);
 
+    const type = filters.jenis ?? 'ucapan';
+    const copy = COPY[type];
+    const typeParam = type === 'ucapan' ? undefined : type;
+
     const visit = (params) =>
-        router.get(route('catalog.index'), { kategori: filters.kategori, cari: search || undefined, ...params }, { preserveState: true, preserveScroll: true, replace: true });
+        router.get(
+            route('catalog.index'),
+            { jenis: typeParam, kategori: filters.kategori, cari: search || undefined, ...params },
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+
+    const switchType = (nextType) => {
+        setSearch('');
+        router.get(route('catalog.index'), { jenis: nextType === 'ucapan' ? undefined : nextType }, { preserveScroll: true });
+    };
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -152,21 +191,34 @@ export default function Index({ categories, templates, filters }) {
         }`;
 
     return (
-        <PublicLayout title="Katalog Template">
+        <PublicLayout title={type === 'undangan' ? 'Katalog Undangan' : 'Katalog Template'} wide>
             <section className="relative overflow-hidden px-margin pb-space-md pt-space-lg">
                 <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-primary-fixed/50 blur-3xl" />
                 <div className="pointer-events-none absolute -left-24 top-10 h-56 w-56 rounded-full bg-tertiary-fixed/40 blur-3xl" />
                 <div className="relative">
+                    <div role="tablist" aria-label="Jenis produk" className="mb-space-md flex w-fit rounded-full bg-surface-container-lowest p-1 shadow-sm">
+                        {TYPES.map(([key, label, icon]) => (
+                            <button
+                                key={key}
+                                type="button"
+                                role="tab"
+                                aria-selected={type === key}
+                                onClick={() => type !== key && switchType(key)}
+                                className={`flex h-9 items-center gap-1.5 rounded-full px-4 text-label-md transition-colors ${
+                                    type === key ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'
+                                }`}
+                            >
+                                <Icon name={icon} size={16} />
+                                {label}
+                            </button>
+                        ))}
+                    </div>
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-container-lowest px-3 py-1 text-label-sm text-primary shadow-sm">
                         <Icon name="auto_awesome" filled size={14} className="text-tertiary" />
                         {isFiltered ? 'Katalog terkurasi' : `${totalSeries} cerita interaktif`} • {totalTemplates} desain
                     </span>
-                    <h1 className="mt-3 max-w-md font-display text-headline-lg-mobile leading-tight text-on-surface sm:text-headline-lg">
-                        Pilih cara kamu bilang <span className="text-primary">“aku peduli”</span>
-                    </h1>
-                    <p className="mt-1.5 max-w-md text-body-sm text-on-surface-variant">
-                        Setiap template adalah cerita kecil yang dibuka penerima langkah demi langkah — kamu tinggal isi nama, foto, dan pesanmu.
-                    </p>
+                    <h1 className="mt-3 max-w-md font-display text-headline-lg-mobile leading-tight text-on-surface sm:text-headline-lg">{copy.heading}</h1>
+                    <p className="mt-1.5 max-w-md text-body-sm text-on-surface-variant">{copy.body}</p>
 
                     <div className="relative mt-space-md flex w-full items-center">
                         <Icon name="search" size={20} className="pointer-events-none absolute left-4 text-on-surface-variant" />
@@ -174,7 +226,7 @@ export default function Index({ categories, templates, filters }) {
                             type="search"
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
-                            placeholder="Cari momen: ulang tahun, kangen, lebaran…"
+                            placeholder={copy.search}
                             className="h-12 w-full rounded-full border-0 bg-surface-container-lowest pl-11 pr-4 text-body-sm text-on-surface shadow-card placeholder:text-on-surface-variant/60 focus:ring-2 focus:ring-primary/30"
                         />
                     </div>
@@ -191,7 +243,7 @@ export default function Index({ categories, templates, filters }) {
                             <span>{category.emoji}</span>
                             <span>{category.name}</span>
                             {category.templates_count === 0 && (
-                                <span className="rounded-full bg-tertiary-fixed px-1.5 text-[9px] font-bold uppercase text-on-tertiary-fixed">Segera</span>
+                                <span className="rounded-full bg-tertiary-fixed px-1.5 text-[11px] font-bold uppercase text-on-tertiary-fixed">Segera</span>
                             )}
                         </button>
                     ))}
@@ -211,12 +263,12 @@ export default function Index({ categories, templates, filters }) {
                             {isFiltered ? `${templates.length} cerita ditemukan` : 'Cerita lainnya'}
                         </h2>
                         {isFiltered && (
-                            <button type="button" onClick={() => router.get(route('catalog.index'))} className="text-label-md text-primary">
+                            <button type="button" onClick={() => switchType(type)} className="text-label-md text-primary">
                                 Reset filter
                             </button>
                         )}
                     </div>
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                         {gridTemplates.map((template, index) => {
                             const isOrphan = gridTemplates.length % 2 === 1 && index === gridTemplates.length - 1;
 
@@ -241,7 +293,7 @@ export default function Index({ categories, templates, filters }) {
                             ? 'Sementara itu, template lain tetap bisa kamu pakai untuk momen ini — isinya bebas kamu tulis sendiri.'
                             : 'Coba kata kunci lain, misalnya “ulang tahun” atau “keluarga”.'}
                     </p>
-                    <button type="button" onClick={() => router.get(route('catalog.index'))} className="mt-2 rounded-full bg-primary px-5 py-2.5 text-label-md text-on-primary shadow-md">
+                    <button type="button" onClick={() => switchType(type)} className="mt-2 rounded-full bg-primary px-5 py-2.5 text-label-md text-on-primary shadow-md">
                         Lihat semua template
                     </button>
                 </section>
@@ -261,7 +313,7 @@ export default function Index({ categories, templates, filters }) {
                             >
                                 <span className="text-3xl grayscale-[30%]">{category.emoji}</span>
                                 <span className="font-display text-label-lg text-on-surface">{category.name}</span>
-                                <span className="inline-flex items-center gap-1 text-[11px] text-on-surface-variant">
+                                <span className="inline-flex items-center gap-1 text-xs text-on-surface-variant">
                                     <Icon name="hourglass_top" size={13} />
                                     Sedang disiapkan
                                 </span>
@@ -273,7 +325,7 @@ export default function Index({ categories, templates, filters }) {
 
             <section className="px-margin pb-space-xl">
                 <div className="grid gap-2 rounded-[1.75rem] bg-surface-container-low p-4 sm:grid-cols-3">
-                    {PROMISES.map(([icon, title, body]) => (
+                    {copy.promises.map(([icon, title, body]) => (
                         <div key={title} className="flex items-center gap-3">
                             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-surface-container-lowest text-primary shadow-sm">
                                 <Icon name={icon} size={20} />

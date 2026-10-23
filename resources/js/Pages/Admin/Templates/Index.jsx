@@ -10,7 +10,30 @@ export default function Index({ templates }) {
                 <Link href={route('admin.templates.create')} className="inline-flex rounded-full bg-primary px-4 py-2 text-label-md text-on-primary">
                     + Template Baru
                 </Link>
-                <div className="overflow-x-auto rounded-2xl bg-white shadow-card">
+                <div className="space-y-2 sm:hidden">
+                    {templates.map((template) => (
+                        <div key={template.id} className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card">
+                            <span className="h-10 w-10 shrink-0 rounded-xl" style={{ background: `linear-gradient(135deg, ${template.theme.accent}, ${template.theme.gradient[2]})` }} />
+                            <div className="min-w-0 flex-1">
+                                <p className="truncate text-label-sm text-on-surface-variant">{template.series ?? 'Tanpa seri'}</p>
+                                <p className="truncate text-label-lg text-on-surface">{template.design_name ?? template.name}</p>
+                                <p className="truncate text-label-sm text-on-surface-variant">
+                                    {rupiah(template.price)} • {template.category} • {template.is_published ? 'Terbit' : 'Draf'}
+                                </p>
+                            </div>
+                            <div className="flex shrink-0 flex-col items-end gap-1">
+                                <Link href={route('admin.templates.edit', template.slug)} className="rounded-full bg-primary-fixed px-3 py-1.5 text-label-md text-primary">
+                                    Ubah
+                                </Link>
+                                <button type="button" onClick={() => router.post(route('admin.templates.duplicate', template.slug))} className="px-3 py-1 text-label-sm text-on-surface-variant underline">
+                                    Duplikat
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="hidden overflow-x-auto rounded-2xl bg-white shadow-card sm:block">
                     <table className="min-w-full text-left text-body-sm">
                         <thead className="bg-surface-container-low text-label-md text-on-surface-variant">
                             <tr>

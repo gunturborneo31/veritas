@@ -11,3 +11,4 @@ Artisan::command('inspire', function () {
 Schedule::command('model:prune')->daily();
 Schedule::command('kartukita:send-reminders')->dailyAt('07:00');
 Schedule::command('kartukita:expire-orders')->hourly();
+Schedule::command('kartukita:check-qris-payments')->everyMinute()->withoutOverlapping();

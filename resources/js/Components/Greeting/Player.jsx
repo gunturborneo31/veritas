@@ -3,13 +3,25 @@ import { Motif } from '@/Components/TemplateCover';
 import { resolveTheme, themeVars } from '@/lib/theme';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import GateBadge from './blocks/GateBadge';
-import { BACKGROUND_COMPONENTS, BLOCKS } from './blocks';
+import { BACKGROUND_COMPONENTS, BLOCKS, INVITATION_SCENES } from './blocks';
 import { isTimeLocked } from './blocks/TimeLock';
 import Watermark from './Watermark';
 
 const IGNORED_FIELDS = ['enabled', 'allow_reply'];
 
 const WALL_SCENE_KEY = '__dinding_ucapan';
+
+/**
+ * Blok undangan tampil sesuai data undangannya (selalu tampil di Studio agar bisa diatur).
+ * Tanpa data undangan (mis. pratinjau admin), blok ini disembunyikan.
+ */
+function isVisibleInvitationScene(slot, invitation, mode) {
+    if (!invitation) {
+        return false;
+    }
+
+    return mode === 'studio' || INVITATION_SCENES[slot.component](invitation);
+}
 
 /**
  * Komponen opsional baru tampil jika pengirim benar-benar mengisinya.
@@ -48,17 +60,21 @@ export default function Player({
     const [index, setIndex] = useState(initialScene);
     const [isMuted, setIsMuted] = useState(false);
     const audioRef = useRef(null);
+    const pausedForSongRef = useRef(false);
 
     const theme = resolveTheme(greeting.theme);
 
     const contributions = greeting.contributions ?? [];
+    const invitation = greeting.invitation ?? null;
 
     const scenes = useMemo(() => {
         const list = components.filter(
             (slot) =>
                 !BACKGROUND_COMPONENTS.includes(slot.component) &&
                 BLOCKS[slot.component] &&
-                (slot.required || mode === 'studio' || hasContent(slot, values[slot.key])),
+                (INVITATION_SCENES[slot.component]
+                    ? isVisibleInvitationScene(slot, invitation, mode)
+                    : slot.required || mode === 'studio' || hasContent(slot, values[slot.key])),
         );
 
         if (contributions.length === 0) {
@@ -70,7 +86,7 @@ export default function Player({
         const closingIndex = list.findIndex((slot) => slot.component === 'penutup');
 
         return closingIndex === -1 ? [...list, wall] : [...list.slice(0, closingIndex), wall, ...list.slice(closingIndex)];
-    }, [components, values, mode, contributions.length]);
+    }, [components, values, mode, contributions.length, invitation]);
     const musicSlot = components.find((slot) => slot.component === 'musik_latar');
     const gateSlot = components.find((slot) => slot.component === 'gembok_pin');
     const track = musicSlot ? values[musicSlot.key]?.track : null;
@@ -92,6 +108,25 @@ export default function Player({
     const isBlockedByTime = mode === 'recipient' && scene?.component === 'kunci_waktu' && isTimeLocked(sceneValues);
     const isLast = index >= scenes.length - 1;
     const Block = scene ? BLOCKS[scene.component] : null;
+    const isSongScene = scene?.component === 'lagu_kita';
+
+    // Di adegan Lagu Kita, musik latar dijeda agar tidak bertabrakan dengan pemutar Spotify/YouTube,
+    // lalu dilanjutkan saat penerima pindah adegan.
+    useEffect(() => {
+        const audio = audioRef.current;
+
+        if (!audio) {
+            return;
+        }
+
+        if (isSongScene && !audio.paused) {
+            audio.pause();
+            pausedForSongRef.current = true;
+        } else if (!isSongScene && pausedForSongRef.current) {
+            pausedForSongRef.current = false;
+            audio.play().catch(() => {});
+        }
+    }, [isSongScene]);
 
     const toggleMusic = () => {
         if (!audioRef.current) {
@@ -167,6 +202,7 @@ export default function Player({
                             reacted={reacted}
                             answers={answers}
                             reactionEmojis={reactionEmojis}
+                            invitation={invitation}
                         />
                     </div>
                 )}
@@ -190,7 +226,7 @@ export default function Player({
                             disabled={isBlockedByTime}
                             onClick={() => setIndex((value) => value + 1)}
                             className="group flex flex-1 items-center justify-between rounded-full px-6 py-3.5 text-white shadow-lg transition-all active:scale-[0.98] disabled:opacity-50"
-                            style={{ backgroundColor: theme.accent }}
+                            style={{ backgroundColor: theme.ink }}
                         >
                             <span className="text-label-lg font-bold tracking-wide">Lanjut</span>
                             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
@@ -199,7 +235,7 @@ export default function Player({
                         </button>
                     )}
                 </div>
-                <span className="mt-2 text-label-sm text-on-surface-variant opacity-70">
+                <span className="mt-2 text-label-sm text-on-surface-variant">
                     Bagian {Math.min(index + 1, scenes.length)} dari {scenes.length}
                 </span>
             </div>

@@ -22,6 +22,27 @@ class PublishGreeting
             throw new LogicException("Ucapan [{$greeting->public_id}] harus berstatus terkunci sebelum diterbitkan.");
         }
 
+        $snapshot = $this->freeze($greeting);
+
+        $greeting->forceFill([
+            // Nama link pilihan pembeli (dipesan saat checkout) dipertahankan; selain itu acak.
+            'slug' => $greeting->slug ?? $this->uniqueSlug(),
+            'contribution_token' => null,
+            'status' => GreetingStatus::Terbit,
+            'published_at' => now(),
+            'preview_token_hash' => null,
+            'preview_expires_at' => null,
+        ])->save();
+
+        return $snapshot;
+    }
+
+    /**
+     * Buat snapshot baru dari isi ucapan saat ini dengan nomor revisi berikutnya.
+     * Dipakai saat terbit pertama dan saat undangan direvisi.
+     */
+    public function freeze(Greeting $greeting): GreetingSnapshot
+    {
         $greeting->loadMissing('template', 'contributions.media');
         $content = [
             ...($greeting->content ?? ['components' => []]),
@@ -42,8 +63,9 @@ class PublishGreeting
                 ->all(),
         ];
 
-        $snapshot = $greeting->snapshot()->create([
+        $snapshot = $greeting->snapshots()->create([
             'template_id' => $greeting->template_id,
+            'revision' => (int) $greeting->snapshots()->max('revision') + 1,
             'recipient_name' => $greeting->recipient_name,
             'sender_name' => $greeting->sender_name,
             'occasion' => $greeting->occasion,
@@ -52,14 +74,7 @@ class PublishGreeting
             'content_hash' => hash('sha256', json_encode($content)),
         ]);
 
-        $greeting->forceFill([
-            'slug' => $this->uniqueSlug(),
-            'contribution_token' => null,
-            'status' => GreetingStatus::Terbit,
-            'published_at' => now(),
-            'preview_token_hash' => null,
-            'preview_expires_at' => null,
-        ])->save();
+        $greeting->setRelation('snapshot', $snapshot);
 
         return $snapshot;
     }

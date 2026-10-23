@@ -100,7 +100,7 @@ export default {
                 'body-sm': ['14px', { lineHeight: '20px', fontWeight: '400' }],
                 'label-lg': ['15px', { lineHeight: '20px', letterSpacing: '0.01em', fontWeight: '600' }],
                 'label-md': ['13px', { lineHeight: '18px', letterSpacing: '0.01em', fontWeight: '600' }],
-                'label-sm': ['11px', { lineHeight: '14px', letterSpacing: '0.04em', fontWeight: '700' }],
+                'label-sm': ['12px', { lineHeight: '16px', letterSpacing: '0.02em', fontWeight: '700' }],
             },
             keyframes: {
                 'scene-in': {

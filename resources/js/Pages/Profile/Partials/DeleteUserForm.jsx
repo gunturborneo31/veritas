@@ -48,11 +48,11 @@ export default function DeleteUserForm({ className = '' }) {
     return (
         <section className={`space-y-6 ${className}`}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">
+                <h2 className="text-headline-sm text-on-surface">
                     Hapus Akun
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="mt-1 text-body-sm text-on-surface-variant">
                     Akun yang belum pernah memesan bisa langsung dihapus beserta drafnya. Akun dengan riwayat pesanan dihapus lewat tim kami karena ada data pembukuan yang wajib disimpan.
                 </p>
             </header>
@@ -63,11 +63,11 @@ export default function DeleteUserForm({ className = '' }) {
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900">
+                    <h2 className="text-headline-sm text-on-surface">
                         Yakin ingin menghapus akunmu?
                     </h2>
 
-                    <p className="mt-1 text-sm text-gray-600">
+                    <p className="mt-1 text-body-sm text-on-surface-variant">
                         Akun dan draf milikmu akan terhapus permanen. Masukkan kata sandi untuk mengonfirmasi.
                     </p>
 
@@ -87,7 +87,7 @@ export default function DeleteUserForm({ className = '' }) {
                             onChange={(e) =>
                                 setData('password', e.target.value)
                             }
-                            className="mt-1 block w-3/4"
+                            className="mt-1 block w-full"
                             isFocused
                             placeholder="Kata sandi"
                         />
@@ -98,12 +98,12 @@ export default function DeleteUserForm({ className = '' }) {
                         />
                     </div>
 
-                    <div className="mt-6 flex justify-end">
+                    <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                         <SecondaryButton onClick={closeModal}>
                             Batal
                         </SecondaryButton>
 
-                        <DangerButton className="ms-3" disabled={processing}>
+                        <DangerButton className="justify-center" disabled={processing}>
                             Hapus Akun
                         </DangerButton>
                     </div>

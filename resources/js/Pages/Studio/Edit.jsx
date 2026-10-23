@@ -5,7 +5,7 @@ import PhoneFrame from '@/Components/Greeting/PhoneFrame';
 import Player from '@/Components/Greeting/Player';
 import CollaborationPanel from '@/Components/Studio/CollaborationPanel';
 import StudioLayout from '@/Layouts/StudioLayout';
-import { time } from '@/lib/format';
+import { dateTime, time } from '@/lib/format';
 import { router, usePage } from '@inertiajs/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -62,8 +62,12 @@ function SectionCard({ number, icon, title, isComplete, children, defaultOpen = 
     );
 }
 
-export default function Edit({ greeting, template, occasions, missing, musicTracks, collaboration }) {
+export default function Edit({ greeting, template, occasions, missing, musicTracks, collaboration, revision = null }) {
     const { errors } = usePage().props;
+    const isInvitation = template.type === 'undangan';
+    // Revisi undangan terbit: tanpa autosave, karena setiap simpan menjadi versi baru yang langsung dilihat tamu.
+    const isRevising = revision !== null;
+    const [hasUnsavedRevision, setHasUnsavedRevision] = useState(false);
     const initial = useMemo(() => toRawValues(greeting.components, greeting.values), []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const [base, setBase] = useState({
@@ -86,6 +90,20 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
         () => ({ ...base, opens_at: base.opens_at ? new Date(base.opens_at).toISOString() : null, content: { components: values } }),
         [base, values],
     );
+
+    const saveRevision = () =>
+        router.put(route('invitations.revise', greeting.id), payload(), {
+            preserveScroll: true,
+            preserveState: true,
+            onStart: () => setSaveState({ tone: 'saving', label: 'Menyimpan revisi…' }),
+            onSuccess: () => {
+                setHasUnsavedRevision(false);
+                setSaveState({ tone: 'saved', label: `Revisi tersimpan • ${time(new Date())}` });
+            },
+            onError: () => setSaveState({ tone: 'error', label: 'Periksa isian' }),
+        });
+
+    const leaveRevision = (go) => (!hasUnsavedRevision || confirm('Perubahan revisi belum disimpan. Tetap keluar?') ? go() : null);
 
     const save = useCallback(
         (options = {}) => {
@@ -126,6 +144,13 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
             return;
         }
 
+        if (isRevising) {
+            setHasUnsavedRevision(true);
+            setSaveState({ tone: 'saving', label: 'Revisi belum disimpan' });
+
+            return;
+        }
+
         setSaveState({ tone: 'saving', label: 'Belum tersimpan' });
         timer.current = setTimeout(() => save(), AUTOSAVE_DELAY);
 
@@ -136,7 +161,8 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
     const addMedia = (media) => setMediaCache((cache) => ({ ...cache, [media.id]: media }));
 
     const missingKeys = new Set(missing.map((item) => `${item.slot}.${item.field}`));
-    const requiredCount = greeting.components.reduce((count, slot) => count + slot.schema.filter((field) => field.required).length, 2);
+    // Nama & momen (+ minimal satu acara untuk undangan) selalu wajib di luar skema komponen.
+    const requiredCount = greeting.components.reduce((count, slot) => count + slot.schema.filter((field) => field.required).length, isInvitation ? 3 : 2);
     const completeCount = Math.max(0, requiredCount - missing.length);
     const editableSlots = greeting.components;
 
@@ -148,174 +174,269 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
 
     return (
         <StudioLayout
-            title="Kustomisasi Kartu"
-            step={base.recipient_name ? 1 : 0}
+            title={isRevising ? 'Revisi Undangan' : 'Kustomisasi Kartu'}
+            greetingId={greeting.id}
+            beforeLeave={isRevising ? leaveRevision : (go) => (saveState.tone === 'saving' ? save({ onSuccess: go }) : go())}
+            wide
+            showStepper={!isRevising}
+            step={(isInvitation ? base.sender_name : base.recipient_name) ? 1 : 0}
             saveState={saveState}
-            onBack={() => router.visit(route('catalog.show', template.slug))}
+            onBack={() => router.visit(isRevising ? route('invitations.show', greeting.id) : route('catalog.show', template.slug))}
             actions={
                 <>
                     <button
                         type="button"
                         onClick={() => setShowPreview(true)}
-                        className="flex h-12 items-center justify-center gap-1 rounded-full bg-surface-container px-space-lg text-label-lg text-on-surface hover:bg-surface-container-high"
+                        className="flex h-12 items-center justify-center gap-1 rounded-full bg-surface-container px-space-lg text-label-lg text-on-surface hover:bg-surface-container-high lg:hidden"
                     >
                         <Icon name="visibility" size={18} />
                         Lihat
                     </button>
-                    <button
-                        type="button"
-                        onClick={() => save({ onSuccess: () => router.visit(route('studio.style', greeting.id)) })}
-                        className="flex h-12 flex-1 items-center justify-center gap-space-xs rounded-full bg-primary px-space-lg text-label-lg text-on-primary shadow-[0_4px_16px_rgba(168,50,35,0.25)] hover:bg-primary-container active:scale-[0.98]"
-                    >
-                        <span>Lanjut: Gaya</span>
-                        <Icon name="arrow_forward" size={18} />
-                    </button>
+                    {isRevising ? (
+                        <button
+                            type="button"
+                            disabled={!hasUnsavedRevision || saveState.label === 'Menyimpan revisi…'}
+                            onClick={saveRevision}
+                            className="flex h-12 flex-1 items-center justify-center gap-space-xs rounded-full bg-primary px-space-lg text-label-lg text-on-primary shadow-[0_4px_16px_rgba(168,50,35,0.25)] hover:bg-primary-container active:scale-[0.98] disabled:opacity-50"
+                        >
+                            <Icon name="published_with_changes" size={18} />
+                            <span>Simpan Revisi</span>
+                        </button>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={() => save({ onSuccess: () => router.visit(route('studio.style', greeting.id)) })}
+                            className="flex h-12 flex-1 items-center justify-center gap-space-xs rounded-full bg-primary px-space-lg text-label-lg text-on-primary shadow-[0_4px_16px_rgba(168,50,35,0.25)] hover:bg-primary-container active:scale-[0.98]"
+                        >
+                            <span>Lanjut: Gaya</span>
+                            <Icon name="arrow_forward" size={18} />
+                        </button>
+                    )}
                 </>
             }
         >
-            <div className="flex w-full flex-col space-y-space-lg px-margin pb-10">
-                <div className="flex flex-col space-y-1.5">
-                    <div className="flex items-center justify-between">
-                        <div className="inline-flex items-center gap-1.5 rounded-full bg-surface-container-low px-3 py-1 text-on-surface-variant">
-                            <Icon name={template.highlight_icon ?? 'auto_awesome'} size={16} className="text-tertiary-container" />
-                            <span className="text-label-sm font-semibold">{template.name}</span>
+            <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:gap-space-lg lg:pr-margin">
+                <div className="flex w-full min-w-0 flex-col space-y-space-lg px-margin pb-10">
+                    <div className="flex flex-col space-y-1.5">
+                        <div className="flex items-center justify-between">
+                            <div className="inline-flex items-center gap-1.5 rounded-full bg-surface-container-low px-3 py-1 text-on-surface-variant">
+                                <Icon name={template.highlight_icon ?? 'auto_awesome'} size={16} className="text-tertiary-container" />
+                                <span className="text-label-sm font-semibold">{template.name}</span>
+                            </div>
+                            <span className="text-label-sm font-bold text-primary">
+                                {completeCount}/{requiredCount} Lengkap
+                            </span>
                         </div>
-                        <span className="text-label-sm font-bold text-primary">
-                            {completeCount}/{requiredCount} Lengkap
-                        </span>
+                        <h2 className="pt-1 text-headline-lg-mobile font-bold tracking-tight text-on-surface">
+                            {isRevising ? 'Revisi Isi Undangan' : isInvitation ? 'Personalisasi Isi Undangan' : 'Personalisasi Isi Kartu'}
+                        </h2>
+                        <p className="text-body-sm text-on-surface-variant">
+                            {isRevising
+                                ? 'Ubah nama, foto, atau cerita, lalu tekan Simpan Revisi. Link undangan tetap sama dan tamu langsung melihat versi terbaru.'
+                                : 'Tuliskan kata terindah dan pilih momen tak terlupakan. Semua tersimpan otomatis.'}
+                        </p>
                     </div>
-                    <h2 className="pt-1 text-headline-lg-mobile font-bold tracking-tight text-on-surface">Personalisasi Isi Kartu</h2>
-                    <p className="text-body-sm text-on-surface-variant">Tuliskan kata terindah dan pilih momen tak terlupakan. Semua tersimpan otomatis.</p>
+
+                    {isRevising && (
+                        <div className="flex items-start gap-3 rounded-2xl bg-tertiary-fixed px-4 py-3 text-on-tertiary-fixed">
+                            <Icon name="history_edu" size={22} className="shrink-0" />
+                            <div className="text-body-sm">
+                                <p className="text-label-md">Mode revisi — tanpa biaya tambahan</p>
+                                <p className="opacity-80">Bisa direvisi sampai {dateTime(revision.revisable_until)}. Template dan gaya tidak bisa diganti.</p>
+                                {errors.greeting && <p className="mt-1 font-semibold text-error">{errors.greeting}</p>}
+                            </div>
+                        </div>
+                    )}
+
+                    <SectionCard
+                        number={1}
+                        icon="badge"
+                        title={isInvitation ? 'Tuan Rumah & Acara' : 'Nama & Momen Spesial'}
+                        isComplete={Boolean((isInvitation ? base.sender_name : base.recipient_name) && base.occasion)}
+                    >
+                        {isInvitation ? (
+                            <div>
+                                <label className="mb-1 block text-label-md font-semibold text-on-surface">
+                                    Nama Mempelai / Tuan Rumah <span className="text-primary">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    maxLength={80}
+                                    value={base.sender_name}
+                                    placeholder="Misal: Raka & Dinda"
+                                    onChange={(event) => setBase({ ...base, sender_name: event.target.value })}
+                                    className={inputClass}
+                                />
+                                <p className="mt-1 text-label-sm text-on-surface-variant">Nama tamu tidak diisi di sini — setiap tamu mendapat link dengan namanya sendiri.</p>
+                            </div>
+                        ) : (
+                            <>
+                        <div>
+                            <label className="mb-1 block text-label-md font-semibold text-on-surface">
+                                Nama Panggilan Penerima <span className="text-primary">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                maxLength={80}
+                                value={base.recipient_name}
+                                placeholder="Misal: Sarah"
+                                onChange={(event) => setBase({ ...base, recipient_name: event.target.value })}
+                                className={inputClass}
+                            />
+                            {errors.recipient_name && <span className="text-label-sm text-error">{errors.recipient_name}</span>}
+                        </div>
+                        <div>
+                            <label className="mb-1 block text-label-md font-semibold text-on-surface">Dari Siapa?</label>
+                            <input
+                                type="text"
+                                maxLength={80}
+                                value={base.sender_name}
+                                placeholder="Misal: Sahabatmu, Nadia"
+                                onChange={(event) => setBase({ ...base, sender_name: event.target.value })}
+                                className={inputClass}
+                            />
+                        </div>
+                            </>
+                        )}
+                        <div>
+                            <label className="mb-2 block text-label-md font-semibold text-on-surface">
+                                {isInvitation ? 'Jenis Acara' : 'Pilih Momen Ucapan'} <span className="text-primary">*</span>
+                            </label>
+                            <div className="flex flex-wrap gap-2">
+                                {occasions.map((occasion) => (
+                                    <button
+                                        key={occasion}
+                                        type="button"
+                                        onClick={() => setBase({ ...base, occasion })}
+                                        className={`rounded-full px-4 py-2 text-label-md ${
+                                            base.occasion === occasion ? 'bg-primary text-on-primary shadow-sm' : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+                                        }`}
+                                    >
+                                        {occasion}
+                                    </button>
+                                ))}
+                            </div>
+                            <input
+                                type="text"
+                                maxLength={80}
+                                value={base.occasion}
+                                placeholder="Atau tulis momen lain…"
+                                onChange={(event) => setBase({ ...base, occasion: event.target.value })}
+                                className={`${inputClass} mt-2`}
+                            />
+                        </div>
+                        {!isInvitation && (
+                        <div className="rounded-2xl bg-surface-container-low/70 p-3.5">
+                            <label className="mb-1 flex items-center gap-1.5 text-label-md font-semibold text-on-surface">
+                                <Icon name="schedule_send" size={18} className="text-primary" />
+                                Kapan boleh dibuka?
+                            </label>
+                            <p className="mb-2 text-label-sm text-on-surface-variant">Kirim link-nya kapan saja; isinya baru terbuka di waktu ini. Cocok untuk kejutan tengah malam.</p>
+                            <div className="flex flex-wrap gap-2">
+                                {[
+                                    ['Langsung', ''],
+                                    ['Tengah malam ini', toLocalInput(nextMidnight())],
+                                    ['Besok 07.00', toLocalInput(tomorrowAt(7))],
+                                ].map(([label, value]) => (
+                                    <button
+                                        key={label}
+                                        type="button"
+                                        onClick={() => setBase({ ...base, opens_at: value })}
+                                        className={`rounded-full px-3 py-1.5 text-label-sm ${
+                                            base.opens_at === value ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface'
+                                        }`}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
+                            </div>
+                            <input
+                                type="datetime-local"
+                                value={base.opens_at}
+                                min={toLocalInput(new Date())}
+                                onChange={(event) => setBase({ ...base, opens_at: event.target.value })}
+                                className={`${inputClass} mt-2`}
+                            />
+                            {errors.opens_at && <span className="text-label-sm text-error">Waktu buka harus di masa depan.</span>}
+                        </div>
+                        )}
+                    </SectionCard>
+
+                    {isInvitation && greeting.invitation && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const url = `${route('invitations.show', greeting.id)}#${greeting.invitation.events.length === 0 ? 'acara' : 'tamu'}`;
+                                isRevising ? leaveRevision(() => router.visit(url)) : save({ onSuccess: () => router.visit(url) });
+                            }}
+                            className={`flex items-center gap-3 rounded-3xl px-4 py-3.5 text-left shadow-sm active:scale-[0.99] ${
+                                greeting.invitation.events.length === 0 ? 'bg-tertiary-fixed text-on-tertiary-fixed' : 'bg-primary-fixed text-on-primary-fixed'
+                            }`}
+                        >
+                            <Icon name="event_note" size={24} className="shrink-0" />
+                            <span className="min-w-0 flex-1">
+                                <span className="block text-label-lg">Acara, Amplop & Daftar Tamu</span>
+                                <span className="block text-body-sm opacity-80">
+                                    {greeting.invitation.events.length === 0
+                                        ? 'Wajib: tambahkan minimal satu acara (akad, resepsi, …).'
+                                        : `${greeting.invitation.events.length} acara • ${greeting.invitation.gifts.length} amplop digital — atur di Kelola Undangan.`}
+                                </span>
+                            </span>
+                            <Icon name="arrow_forward" size={20} className="shrink-0" />
+                        </button>
+                    )}
+
+                    {editableSlots.map((slot, index) => {
+                        const slotValues = values[slot.key] ?? {};
+                        const toggleField = slot.schema.find((field) => field.name === 'enabled' && field.type === 'toggle');
+                        const isEnabled = !toggleField || Boolean(slotValues.enabled);
+                        const isComplete = !slot.schema.some((field) => missingKeys.has(`${slot.key}.${field.name}`));
+
+                        return (
+                            <SectionCard
+                                key={slot.key}
+                                number={index + 2}
+                                icon={slot.icon}
+                                title={slot.title ?? slot.name}
+                                isComplete={isComplete && isEnabled}
+                                defaultOpen={index < 3}
+                            >
+                                {!slot.required && <p className="text-label-sm text-on-surface-variant">Opsional — kosongkan jika tidak dipakai.</p>}
+                                {slot.schema
+                                    .filter((field) => isEnabled || field === toggleField)
+                                    .map((field) => (
+                                        <FieldInput
+                                            key={field.name}
+                                            field={field}
+                                            value={slotValues[field.name]}
+                                            onChange={(value) => setField(slot.key, field.name, value)}
+                                            error={errors[`content.components.${slot.key}.${field.name}`]}
+                                            context={{
+                                                greetingId: greeting.id,
+                                                mediaCache,
+                                                addMedia,
+                                                musicTracks,
+                                                isPinSet: pinState[slot.key],
+                                                base,
+                                            }}
+                                        />
+                                    ))}
+                            </SectionCard>
+                        );
+                    })}
+
+                    {!isInvitation && <CollaborationPanel greetingId={greeting.id} recipientName={base.recipient_name} collaboration={collaboration} />}
                 </div>
 
-                <SectionCard number={1} icon="badge" title="Nama & Momen Spesial" isComplete={Boolean(base.recipient_name && base.occasion)}>
-                    <div>
-                        <label className="mb-1 block text-label-md font-semibold text-on-surface">
-                            Nama Panggilan Penerima <span className="text-primary">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            maxLength={80}
-                            value={base.recipient_name}
-                            placeholder="Misal: Sarah"
-                            onChange={(event) => setBase({ ...base, recipient_name: event.target.value })}
-                            className={inputClass}
-                        />
-                        {errors.recipient_name && <span className="text-label-sm text-error">{errors.recipient_name}</span>}
-                    </div>
-                    <div>
-                        <label className="mb-1 block text-label-md font-semibold text-on-surface">Dari Siapa?</label>
-                        <input
-                            type="text"
-                            maxLength={80}
-                            value={base.sender_name}
-                            placeholder="Misal: Sahabatmu, Nadia"
-                            onChange={(event) => setBase({ ...base, sender_name: event.target.value })}
-                            className={inputClass}
-                        />
-                    </div>
-                    <div>
-                        <label className="mb-2 block text-label-md font-semibold text-on-surface">
-                            Pilih Momen Ucapan <span className="text-primary">*</span>
-                        </label>
-                        <div className="flex flex-wrap gap-2">
-                            {occasions.map((occasion) => (
-                                <button
-                                    key={occasion}
-                                    type="button"
-                                    onClick={() => setBase({ ...base, occasion })}
-                                    className={`rounded-full px-4 py-2 text-label-md ${
-                                        base.occasion === occasion ? 'bg-primary text-on-primary shadow-sm' : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
-                                    }`}
-                                >
-                                    {occasion}
-                                </button>
-                            ))}
-                        </div>
-                        <input
-                            type="text"
-                            maxLength={80}
-                            value={base.occasion}
-                            placeholder="Atau tulis momen lain…"
-                            onChange={(event) => setBase({ ...base, occasion: event.target.value })}
-                            className={`${inputClass} mt-2`}
-                        />
-                    </div>
-                    <div className="rounded-2xl bg-surface-container-low/70 p-3.5">
-                        <label className="mb-1 flex items-center gap-1.5 text-label-md font-semibold text-on-surface">
-                            <Icon name="schedule_send" size={18} className="text-primary" />
-                            Kapan boleh dibuka?
-                        </label>
-                        <p className="mb-2 text-label-sm text-on-surface-variant">Kirim link-nya kapan saja; isinya baru terbuka di waktu ini. Cocok untuk kejutan tengah malam.</p>
-                        <div className="flex flex-wrap gap-2">
-                            {[
-                                ['Langsung', ''],
-                                ['Tengah malam ini', toLocalInput(nextMidnight())],
-                                ['Besok 07.00', toLocalInput(tomorrowAt(7))],
-                            ].map(([label, value]) => (
-                                <button
-                                    key={label}
-                                    type="button"
-                                    onClick={() => setBase({ ...base, opens_at: value })}
-                                    className={`rounded-full px-3 py-1.5 text-label-sm ${
-                                        base.opens_at === value ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface'
-                                    }`}
-                                >
-                                    {label}
-                                </button>
-                            ))}
-                        </div>
-                        <input
-                            type="datetime-local"
-                            value={base.opens_at}
-                            min={toLocalInput(new Date())}
-                            onChange={(event) => setBase({ ...base, opens_at: event.target.value })}
-                            className={`${inputClass} mt-2`}
-                        />
-                        {errors.opens_at && <span className="text-label-sm text-error">Waktu buka harus di masa depan.</span>}
-                    </div>
-                </SectionCard>
-
-                {editableSlots.map((slot, index) => {
-                    const slotValues = values[slot.key] ?? {};
-                    const toggleField = slot.schema.find((field) => field.name === 'enabled' && field.type === 'toggle');
-                    const isEnabled = !toggleField || Boolean(slotValues.enabled);
-                    const isComplete = !slot.schema.some((field) => missingKeys.has(`${slot.key}.${field.name}`));
-
-                    return (
-                        <SectionCard
-                            key={slot.key}
-                            number={index + 2}
-                            icon={slot.icon}
-                            title={slot.title ?? slot.name}
-                            isComplete={isComplete && isEnabled}
-                            defaultOpen={index < 3}
-                        >
-                            {!slot.required && <p className="text-label-sm text-on-surface-variant">Opsional — kosongkan jika tidak dipakai.</p>}
-                            {slot.schema
-                                .filter((field) => isEnabled || field === toggleField)
-                                .map((field) => (
-                                    <FieldInput
-                                        key={field.name}
-                                        field={field}
-                                        value={slotValues[field.name]}
-                                        onChange={(value) => setField(slot.key, field.name, value)}
-                                        error={errors[`content.components.${slot.key}.${field.name}`]}
-                                        context={{
-                                            greetingId: greeting.id,
-                                            mediaCache,
-                                            addMedia,
-                                            musicTracks,
-                                            isPinSet: pinState[slot.key],
-                                            base,
-                                        }}
-                                    />
-                                ))}
-                        </SectionCard>
-                    );
-                })}
-
-                <CollaborationPanel greetingId={greeting.id} recipientName={base.recipient_name} collaboration={collaboration} />
+                <aside className="sticky top-24 hidden flex-col items-center gap-2 lg:flex">
+                    <PhoneFrame screenClassName="h-[600px] max-h-[calc(100vh-14rem)]">
+                        <Player greeting={livePreview} mode="studio" watermark />
+                    </PhoneFrame>
+                    <p className="flex items-center gap-1 text-label-sm text-on-surface-variant">
+                        <Icon name="bolt" size={14} className="text-primary" />
+                        Pratinjau langsung
+                    </p>
+                </aside>
             </div>
 
             {showPreview && (
@@ -323,8 +444,8 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
                     className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
                     onClick={(event) => event.target === event.currentTarget && setShowPreview(false)}
                 >
-                    <div className="flex flex-col items-center gap-3">
-                        <PhoneFrame>
+                    <div className="flex w-full max-w-[340px] flex-col items-center gap-3">
+                        <PhoneFrame bare screenClassName="h-[min(620px,calc(100dvh_-_7rem))] min-h-[420px]">
                             <Player greeting={livePreview} mode="studio" watermark />
                         </PhoneFrame>
                         <button type="button" onClick={() => setShowPreview(false)} className="rounded-full bg-primary px-6 py-3 text-label-lg text-on-primary shadow-md">

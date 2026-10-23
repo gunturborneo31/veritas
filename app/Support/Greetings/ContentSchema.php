@@ -40,6 +40,26 @@ class ContentSchema
     public const TYPE_TOGGLE = 'toggle';
 
     /**
+     * Titik lokasi di peta: [{name, lat, lng, caption?, media?}]. Tiap titik butuh teks, foto, atau keduanya.
+     */
+    public const TYPE_LOCATIONS = 'locations';
+
+    /**
+     * Lagu dari Spotify/YouTube yang diputar lewat pemutar resmi: {provider, id, title, artist?, image?}.
+     */
+    public const TYPE_SONG = 'song';
+
+    /**
+     * Pola ID per penyedia: ID lagu Spotify (22 karakter base62) dan ID video YouTube (11 karakter).
+     *
+     * @var array<string, string>
+     */
+    public const SONG_ID_PATTERNS = [
+        'spotify' => '/^[A-Za-z0-9]{22}$/',
+        'youtube' => '/^[A-Za-z0-9_-]{11}$/',
+    ];
+
+    /**
      * Aturan validasi untuk autosave. Semua field boleh kosong; kelengkapan
      * baru diperiksa saat pratinjau/checkout lewat {@see missingFields()}.
      *
@@ -107,10 +127,19 @@ class ContentSchema
     {
         $missing = [];
 
-        foreach (['recipient_name' => 'Nama penerima', 'occasion' => 'Momen'] as $attribute => $label) {
+        // Undangan ditujukan ke banyak tamu, jadi yang wajib adalah nama tuan rumah dan minimal satu acara.
+        $baseFields = $greeting->isInvitation()
+            ? ['sender_name' => 'Nama mempelai / tuan rumah', 'occasion' => 'Momen']
+            : ['recipient_name' => 'Nama penerima', 'occasion' => 'Momen'];
+
+        foreach ($baseFields as $attribute => $label) {
             if (blank($greeting->{$attribute})) {
                 $missing[] = ['slot' => 'dasar', 'field' => $attribute, 'label' => $label];
             }
+        }
+
+        if ($greeting->isInvitation() && ! $greeting->invitationEvents()->exists()) {
+            $missing[] = ['slot' => 'acara', 'field' => 'events', 'label' => 'Detail acara'];
         }
 
         $content = $greeting->content['components'] ?? [];
@@ -131,6 +160,8 @@ class ContentSchema
                     self::TYPE_PIN => $greeting->gate instanceof Gate,
                     self::TYPE_IMAGES, self::TYPE_LIST, self::TYPE_QUIZ => is_array($value) && count($value) >= ($field['min'] ?? 1),
                     self::TYPE_TOGGLE => $value !== null,
+                    self::TYPE_LOCATIONS => $this->completeLocationCount($value) >= ($field['min'] ?? 1),
+                    self::TYPE_SONG => is_array($value) && filled($value['provider'] ?? null) && filled($value['id'] ?? null),
                     default => filled($value),
                 };
 
@@ -194,7 +225,38 @@ class ContentSchema
                 "{$path}.*.answer" => ['required', 'integer', 'min:0', 'max:3'],
             ],
             self::TYPE_PIN => [$path => ['nullable', 'string', 'regex:/^\d{'.($field['min'] ?? 4).','.($field['max'] ?? 6).'}$/']],
+            self::TYPE_LOCATIONS => [
+                $path => ['nullable', 'array', 'max:'.($field['max'] ?? 3)],
+                "{$path}.*" => ['array'],
+                "{$path}.*.name" => ['nullable', 'string', 'max:80'],
+                "{$path}.*.lat" => ['nullable', 'numeric', 'between:-90,90'],
+                "{$path}.*.lng" => ['nullable', 'numeric', 'between:-180,180'],
+                "{$path}.*.caption" => ['nullable', 'string', 'max:200'],
+                "{$path}.*.media" => ['nullable', 'string', $mediaExists('image')],
+            ],
+            self::TYPE_SONG => [
+                $path => ['nullable', 'array'],
+                "{$path}.provider" => ["required_with:{$path}", Rule::in(array_keys(self::SONG_ID_PATTERNS))],
+                "{$path}.id" => ["required_with:{$path}", 'string', 'regex:/^([A-Za-z0-9]{22}|[A-Za-z0-9_-]{11})$/'],
+                "{$path}.title" => ['nullable', 'string', 'max:200'],
+                "{$path}.artist" => ['nullable', 'string', 'max:200'],
+                "{$path}.image" => ['nullable', 'url', 'max:500', 'regex:#^https://(i\.scdn\.co|image-cdn-[a-z0-9-]+\.spotifycdn\.com|i\.ytimg\.com|img\.youtube\.com)/#'],
+            ],
             default => [$path => ['prohibited']],
         };
+    }
+
+    /**
+     * Titik dianggap lengkap bila punya nama, koordinat, dan setidaknya teks atau foto.
+     */
+    public function completeLocationCount(mixed $value): int
+    {
+        return collect(is_array($value) ? $value : [])
+            ->filter(fn (mixed $place): bool => is_array($place)
+                && filled($place['name'] ?? null)
+                && is_numeric($place['lat'] ?? null)
+                && is_numeric($place['lng'] ?? null)
+                && (filled($place['caption'] ?? null) || filled($place['media'] ?? null)))
+            ->count();
     }
 }

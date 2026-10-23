@@ -11,7 +11,7 @@ export default function LegalDocument({ title, intro, updatedAt, sections, suppo
     const updated = updatedAt ? new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(new Date(updatedAt)) : null;
 
     return (
-        <PublicLayout title={title}>
+        <PublicLayout title={title} back={{ href: route('home'), label: 'Beranda' }}>
             <article className="px-margin py-space-lg">
                 <header className="mb-space-lg">
                     <p className="text-label-sm uppercase tracking-[0.25em] text-primary">Legal</p>

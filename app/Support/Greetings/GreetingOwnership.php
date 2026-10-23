@@ -33,4 +33,18 @@ class GreetingOwnership
     {
         abort_unless($this->owns($request, $greeting), 404);
     }
+
+    /**
+     * Kelola undangan: hanya pemilik, hanya ucapan bertipe undangan. Perubahan data
+     * (acara, tamu, rekening) ditolak setelah masa aktif undangan berakhir.
+     */
+    public function authorizeInvitation(Request $request, Greeting $greeting, bool $requiresActive = true): void
+    {
+        $this->authorize($request, $greeting);
+        abort_unless($greeting->isInvitation(), 404);
+
+        if ($requiresActive) {
+            abort_if($greeting->hasExpired(), 403, 'Masa aktif undangan ini sudah berakhir.');
+        }
+    }
 }

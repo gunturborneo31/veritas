@@ -1,6 +1,7 @@
 import Icon from '@/Components/Icon';
 import TemplateCover from '@/Components/TemplateCover';
 import { rupiah } from '@/lib/format';
+import { readableAccent } from '@/lib/theme';
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -28,10 +29,10 @@ export function FlowPeek({ template, onClose }) {
             <ol className="no-scrollbar flex flex-1 flex-col gap-1.5 overflow-y-auto">
                 {flow.map((step, index) => (
                     <li key={`${step.key}-${index}`} className="flex items-center gap-2">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/15 text-[10px] font-bold">{index + 1}</span>
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/15 text-xs font-bold">{index + 1}</span>
                         <Icon name={step.icon} size={15} className="text-tertiary-fixed-dim" />
                         <span className="truncate text-label-md">{step.name}</span>
-                        {step.optional && <span className="shrink-0 rounded-full bg-white/15 px-1.5 text-[9px] uppercase tracking-wider text-white/80">opsional</span>}
+                        {step.optional && <span className="shrink-0 rounded-full bg-white/15 px-1.5 text-[10px] uppercase tracking-wider text-white/80">opsional</span>}
                     </li>
                 ))}
             </ol>
@@ -48,7 +49,7 @@ export function DesignDots({ designs = [] }) {
     }
 
     return (
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-on-surface-variant">
+        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-on-surface-variant">
             <span className="flex -space-x-1">
                 {designs.slice(0, 5).map((design) => (
                     <span key={design.slug} className="h-3.5 w-3.5 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: design.theme.accent }} />
@@ -71,7 +72,7 @@ export function cardTitle(template) {
  */
 export default function TemplateCard({ template, wide = false }) {
     const [isPeeking, setIsPeeking] = useState(false);
-    const accent = template.theme?.accent ?? '#a83223';
+    const accent = readableAccent(template.theme?.accent ?? '#a83223');
     const flow = visibleFlow(template);
 
     return (
@@ -97,7 +98,7 @@ export default function TemplateCard({ template, wide = false }) {
                         style={{ color: accent }}
                     >
                         <Icon name="visibility" size={14} />
-                        Ketuk untuk mengintip
+                        Intip alurnya
                     </button>
                 )}
 
@@ -111,7 +112,7 @@ export default function TemplateCard({ template, wide = false }) {
                 )}
                 <DesignDots designs={template.designs} />
 
-                <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 pt-1 text-[11px] text-on-surface-variant">
+                <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 pt-1 text-xs text-on-surface-variant">
                     <span className="inline-flex items-center gap-0.5">
                         <Icon name="schedule" size={13} />~{template.duration_minutes} mnt
                     </span>
@@ -127,9 +128,9 @@ export default function TemplateCard({ template, wide = false }) {
                     )}
                 </div>
 
-                <div className="flex items-center justify-between gap-2 pt-1.5">
+                <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5 pt-1.5">
                     <span className="font-display text-label-lg" style={{ color: accent }}>
-                        {(template.designs?.length ?? 0) > 1 && <span className="text-[10px] font-semibold text-on-surface-variant">mulai </span>}
+                        {(template.designs?.length ?? 0) > 1 && <span className="text-xs font-semibold text-on-surface-variant">mulai </span>}
                         {rupiah(Math.min(template.price, ...(template.designs ?? []).map((design) => design.price)))}
                     </span>
                     <Link

@@ -8,6 +8,8 @@ use App\Http\Requests\UnlockGreetingRequest;
 use App\Models\Greeting;
 use App\Models\Reaction;
 use App\Support\Greetings\GreetingPresenter;
+use App\Support\Invitations\GuestSession;
+use App\Support\Invitations\InvitationPresenter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -21,17 +23,24 @@ use Inertia\Response;
  * Isi ucapan baru dikirim ke browser setelah penerima menekan "Buka" dan
  * (jika ada gembok) menjawab dengan benar, sehingga gembok benar-benar
  * melindungi isi, bukan sekadar efek visual.
+ *
+ * Undangan memakai halaman yang sama: link pribadi tamu (`?tamu=kode`) mengganti
+ * nama penerima dengan nama tamu, dan data acara/RSVP/amplop ikut dikirim.
  */
 class RecipientController extends Controller
 {
-    public function show(Request $request, string $slug, GreetingPresenter $presenter): Response
+    public function __construct(private GuestSession $guestSession) {}
+
+    public function show(Request $request, string $slug, GreetingPresenter $presenter, InvitationPresenter $invitationPresenter): Response
     {
         $greeting = $this->findPublished($slug);
+        $guest = $greeting->isInvitation() ? $this->guestSession->resolve($request, $greeting) : null;
 
         if (! $this->isUnlocked($request, $greeting)) {
             return Inertia::render('Recipient/Gate', [
                 'slug' => $greeting->slug,
-                'recipient_name' => $greeting->snapshot->recipient_name,
+                'type' => $greeting->type->value,
+                'recipient_name' => $guest->name ?? $greeting->snapshot->recipient_name,
                 'sender_name' => $greeting->snapshot->sender_name,
                 'occasion' => $greeting->snapshot->occasion,
                 'gate' => $greeting->gate?->toPublicArray(),
@@ -42,7 +51,12 @@ class RecipientController extends Controller
 
         return Inertia::render('Recipient/Play', [
             'slug' => $greeting->slug,
-            'greeting' => $presenter->forSnapshot($greeting->snapshot),
+            'greeting' => [
+                ...$presenter->forSnapshot($greeting->snapshot),
+                'invitation' => $greeting->isInvitation()
+                    ? $invitationPresenter->forGuest($greeting, $guest, $this->guestSession->rsvp($request, $greeting, $guest))
+                    : null,
+            ],
             'replied' => (bool) $request->session()->get($this->sessionKey($greeting, 'replied')),
             'reacted' => $request->session()->get($this->sessionKey($greeting, 'reacted'), []),
             'answers' => $request->session()->get($this->sessionKey($greeting, 'answers'), []),
@@ -80,6 +94,12 @@ class RecipientController extends Controller
         $request->session()->put($this->sessionKey($greeting, 'unlocked'), true);
         $recordOpen->handle($greeting, $request);
 
+        $guest = $greeting->isInvitation() ? $this->guestSession->guest($request, $greeting) : null;
+
+        if ($guest !== null && $guest->opened_at === null && $request->user()?->id !== $greeting->user_id) {
+            $guest->update(['opened_at' => now()]);
+        }
+
         return to_route('recipient.show', $greeting->slug);
     }
 
@@ -87,11 +107,12 @@ class RecipientController extends Controller
     {
         $greeting = Greeting::query()
             ->where('slug', $slug)
-            ->with('snapshot.template', 'gate', 'template')
+            ->with('snapshot.template', 'gate', 'template', 'invitation', 'invitationEvents')
             ->firstOrFail();
 
         abort_if($greeting->status === GreetingStatus::Arsip, 410, 'Ucapan ini sudah diarsipkan.');
         abort_unless($greeting->status === GreetingStatus::Terbit && $greeting->snapshot !== null, 404);
+        abort_if($greeting->isInvitation() && $greeting->hasExpired(), 410, 'Masa aktif undangan ini sudah berakhir.');
 
         return $greeting;
     }

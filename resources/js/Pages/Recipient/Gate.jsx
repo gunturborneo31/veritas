@@ -1,9 +1,10 @@
 import BottomSheet from '@/Components/BottomSheet';
 import Icon from '@/Components/Icon';
+import Illustration from '@/Components/Illustration';
 import { resolveTheme, themeVars } from '@/lib/theme';
 import { CountdownDigits, useRemaining } from '@/Components/Greeting/blocks/Countdown';
 import { dateTime } from '@/lib/format';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
@@ -32,7 +33,7 @@ function ScheduledScreen({ recipient_name, sender_name, occasion, opens_at, them
             <Head title={`Untuk ${recipient_name}`}>
                 <meta name="robots" content="noindex" />
             </Head>
-            <span className="text-6xl">{theme.emoji}</span>
+            <Illustration theme={theme} className="h-36 w-36" />
             <div className="max-w-sm space-y-1">
                 <p className="text-label-sm uppercase tracking-[0.3em] text-primary">{occasion || 'Kejutan'} untukmu</p>
                 <h1 className="font-display text-headline-lg-mobile text-on-surface">Hai {recipient_name}, sabar sebentar ya…</h1>
@@ -56,7 +57,9 @@ function ScheduledScreen({ recipient_name, sender_name, occasion, opens_at, them
     );
 }
 
-function UnlockScreen({ slug, recipient_name, sender_name, occasion, gate, theme: rawTheme }) {
+function UnlockScreen({ slug, type, recipient_name, sender_name, occasion, gate, theme: rawTheme }) {
+    const { brand } = usePage().props;
+    const isInvitation = type === 'undangan';
     const theme = resolveTheme(rawTheme);
     const form = useForm({ answer: '' });
     const [showHint, setShowHint] = useState(false);
@@ -111,7 +114,7 @@ function UnlockScreen({ slug, recipient_name, sender_name, occasion, gate, theme
             className="relative min-h-screen w-full select-none overflow-hidden"
             style={{ ...themeVars(theme), background: `linear-gradient(180deg, ${theme.gradient.join(', ')})` }}
         >
-            <Head title={`Untuk ${recipient_name}`}>
+            <Head title={isInvitation ? `Undangan ${occasion ?? ''} ${sender_name ?? ''}`.trim() : `Untuk ${recipient_name}`}>
                 <meta name="robots" content="noindex" />
             </Head>
 
@@ -121,15 +124,15 @@ function UnlockScreen({ slug, recipient_name, sender_name, occasion, gate, theme
                 <div className="absolute bottom-20 left-4 h-72 w-72 rounded-full bg-tertiary-fixed-dim/25 mix-blend-multiply blur-3xl" />
             </div>
 
-            <div className="pb-safe relative z-10 mx-auto flex min-h-screen w-full max-w-md flex-col items-center justify-between px-margin pb-6 pt-4">
+            <div className="relative z-10 mx-auto flex min-h-[100dvh] w-full max-w-md flex-col items-center justify-between px-margin pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)] pt-4">
                 <div className="flex w-full flex-col items-center space-y-1.5 text-center">
                     <div className="inline-flex items-center space-x-1.5 rounded-full bg-surface-container-lowest/70 px-3 py-1 shadow-sm backdrop-blur-md">
                         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-                        <span className="text-label-sm uppercase tracking-widest text-on-surface-variant">KartuKita • Kado Digital</span>
+                        <span className="text-label-sm uppercase tracking-widest text-on-surface-variant">{brand} • {isInvitation ? 'Undangan Digital' : 'Kado Digital'}</span>
                     </div>
-                    <div className="flex items-center space-x-1 text-on-surface-variant/70">
+                    <div className="flex items-center space-x-1 text-on-surface-variant">
                         <Icon name="headphones" size={14} className="text-tertiary" />
-                        <span className="text-xs text-on-surface-variant/80">Nyalakan suara untuk pengalaman terbaik</span>
+                        <span className="text-xs text-on-surface-variant">Nyalakan suara untuk pengalaman terbaik</span>
                     </div>
                 </div>
 
@@ -153,8 +156,19 @@ function UnlockScreen({ slug, recipient_name, sender_name, occasion, gate, theme
                             <Icon name="favorite" filled size={13} className="text-primary" />
                             <span className="text-label-sm text-on-primary-fixed">{occasion || 'Sebuah Rahasia Manis'}</span>
                         </div>
-                        <h1 className="mt-1 text-headline-lg-mobile tracking-tight text-on-surface">Ada ucapan untukmu, {recipient_name}</h1>
-                        {sender_name && <p className="text-body-sm text-on-surface-variant/90">dari {sender_name}</p>}
+                        {isInvitation ? (
+                            <>
+                                {sender_name && <h1 className="mt-1 font-display text-headline-lg-mobile tracking-tight text-on-surface">{sender_name}</h1>}
+                                <p className="pt-3 text-label-sm uppercase tracking-widest text-on-surface-variant">Kepada Yth. Bapak/Ibu/Saudara/i</p>
+                                <p className="text-headline-sm text-on-surface">{recipient_name}</p>
+                                <p className="max-w-xs pt-1 text-body-sm text-on-surface-variant">Tanpa mengurangi rasa hormat, kami mengundang Anda untuk hadir di acara kami.</p>
+                            </>
+                        ) : (
+                            <>
+                                <h1 className="mt-1 text-headline-lg-mobile tracking-tight text-on-surface">Ada ucapan untukmu, {recipient_name}</h1>
+                                {sender_name && <p className="text-body-sm text-on-surface-variant">dari {sender_name}</p>}
+                            </>
+                        )}
                     </div>
 
                     {gate ? (
@@ -178,7 +192,7 @@ function UnlockScreen({ slug, recipient_name, sender_name, occasion, gate, theme
                                         {form.errors.answer}
                                     </span>
                                 ) : (
-                                    <span className="text-label-sm text-on-surface-variant/70">{form.processing ? 'Memeriksa…' : `Masukkan ${length} digit PIN`}</span>
+                                    <span className="text-label-sm text-on-surface-variant">{form.processing ? 'Memeriksa…' : `Masukkan ${length} digit PIN`}</span>
                                 )}
                             </div>
                             {(gate.question || gate.hint) && (
@@ -205,7 +219,7 @@ function UnlockScreen({ slug, recipient_name, sender_name, occasion, gate, theme
                             className="flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-label-lg text-on-primary shadow-lg active:scale-95"
                         >
                             <Icon name="drafts" size={20} />
-                            Buka Ucapan
+                            {isInvitation ? 'Buka Undangan' : 'Buka Ucapan'}
                         </button>
                     )}
                 </div>
@@ -244,7 +258,7 @@ function UnlockScreen({ slug, recipient_name, sender_name, occasion, gate, theme
                 )}
 
                 <footer className="flex w-full flex-col items-center space-y-1 pt-1 text-center">
-                    <p className="flex items-center gap-1.5 text-xs text-on-surface-variant/80">
+                    <p className="flex items-center gap-1.5 text-xs text-on-surface-variant">
                         <Icon name="lock" size={13} className="text-tertiary" />
                         Dibuat khusus untuk <strong className="font-semibold text-on-surface">{recipient_name}</strong> • Dilindungi privasi
                     </p>

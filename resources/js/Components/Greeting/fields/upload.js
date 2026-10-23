@@ -40,8 +40,20 @@ export function toRawValues(components, presentedValues) {
                         return { media: item.media.id, caption: item.caption ?? '' };
                     });
                     break;
+                case 'locations':
+                    values[slot.key][field.name] = (value ?? []).map((place) => {
+                        if (place.media?.id) {
+                            mediaCache[place.media.id] = place.media;
+                        }
+
+                        return { name: place.name ?? '', lat: place.lat ?? null, lng: place.lng ?? null, caption: place.caption ?? '', media: place.media?.id ?? null };
+                    });
+                    break;
                 case 'music':
                     values[slot.key][field.name] = value?.id ?? null;
+                    break;
+                case 'song':
+                    values[slot.key][field.name] = value?.id ? value : null;
                     break;
                 case 'pin':
                     values[slot.key][field.name] = '';
@@ -81,6 +93,9 @@ export function toPresentedValues(components, rawValues, mediaCache, musicTracks
                     break;
                 case 'images':
                     values[slot.key][field.name] = (value ?? []).map((item) => ({ ...item, media: mediaCache[item.media] }));
+                    break;
+                case 'locations':
+                    values[slot.key][field.name] = (value ?? []).map((place) => ({ ...place, media: place.media ? mediaCache[place.media] ?? null : null }));
                     break;
                 case 'music':
                     values[slot.key][field.name] = musicTracks.find((track) => track.id === value) ?? null;

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\GreetingType;
 use App\Enums\TemplateTier;
 use Database\Factories\TemplateFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Storage;
  * Template = rakitan komponen berurutan + data contoh + aset.
  */
 #[Fillable([
-    'category_id', 'series_id', 'slug', 'name', 'design_name', 'tagline', 'story', 'description', 'tier', 'price', 'duration_minutes',
+    'category_id', 'series_id', 'type', 'slug', 'name', 'design_name', 'tagline', 'story', 'description', 'tier', 'price', 'duration_minutes',
     'cover_path', 'theme', 'highlight_icon', 'highlight_label', 'tags', 'sample_content', 'is_published', 'sort_order',
 ])]
 class Template extends Model
@@ -63,6 +64,7 @@ class Template extends Model
     protected function casts(): array
     {
         return [
+            'type' => GreetingType::class,
             'tier' => TemplateTier::class,
             'theme' => 'array',
             'tags' => 'array',
@@ -156,6 +158,7 @@ class Template extends Model
 
         return [
             'slug' => $this->slug,
+            'type' => $this->type->value,
             'name' => $this->name,
             'design_name' => $this->design_name,
             'series' => $this->series_id !== null && $this->relationLoaded('series')

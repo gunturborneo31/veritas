@@ -31,6 +31,56 @@ class CatalogTest extends TestCase
                 ->where('categories.1.templates_count', 0));
     }
 
+    public function test_greeting_catalog_hides_invitations_and_categories_that_only_hold_invitations(): void
+    {
+        $birthday = Category::factory()->create(['slug' => 'ulang-tahun', 'sort_order' => 0]);
+        $wedding = Category::factory()->create(['slug' => 'pernikahan', 'sort_order' => 1]);
+        Category::factory()->create(['slug' => 'kangen', 'sort_order' => 2]);
+        Template::factory()->for($birthday)->create(['slug' => 'kue']);
+        Template::factory()->for($wedding)->invitation()->create(['slug' => 'janji-suci']);
+
+        $this->get(route('catalog.index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('filters.jenis', 'ucapan')
+                ->has('templates', 1)
+                ->where('templates.0.slug', 'kue')
+                ->where('categories', fn ($categories) => collect($categories)->pluck('slug')->all() === ['ulang-tahun', 'kangen']));
+    }
+
+    public function test_invitation_catalog_lists_only_invitations_and_their_categories(): void
+    {
+        $birthday = Category::factory()->create(['slug' => 'ulang-tahun', 'sort_order' => 0]);
+        $wedding = Category::factory()->create(['slug' => 'pernikahan', 'sort_order' => 1]);
+        Template::factory()->for($birthday)->create(['slug' => 'kue']);
+        Template::factory()->for($wedding)->invitation()->create(['slug' => 'janji-suci']);
+
+        $this->get(route('catalog.index', ['jenis' => 'undangan']))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('filters.jenis', 'undangan')
+                ->has('templates', 1)
+                ->where('templates.0.slug', 'janji-suci')
+                ->where('categories', fn ($categories) => collect($categories)->pluck('slug')->all() === ['pernikahan']));
+    }
+
+    public function test_unknown_catalog_type_falls_back_to_greetings(): void
+    {
+        Template::factory()->create(['slug' => 'kue']);
+
+        $this->get(route('catalog.index', ['jenis' => 'ngawur']))
+            ->assertInertia(fn (Assert $page) => $page->where('filters.jenis', 'ucapan')->has('templates', 1));
+    }
+
+    public function test_home_sends_invitation_only_categories_to_the_invitation_catalog(): void
+    {
+        $wedding = Category::factory()->create(['slug' => 'pernikahan']);
+        Template::factory()->for($wedding)->invitation()->create();
+
+        $this->get(route('home'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('categories.0.jenis', 'undangan')
+                ->where('featured', []));
+    }
+
     public function test_template_card_includes_theme_and_recipient_flow(): void
     {
         $template = $this->createTemplate();

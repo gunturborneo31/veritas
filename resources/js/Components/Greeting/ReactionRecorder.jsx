@@ -106,7 +106,7 @@ export default function ReactionRecorder({ slug, senderName, alreadySent }) {
 
     if (phase === 'ask') {
         return (
-            <div className="pb-safe fixed inset-x-0 bottom-0 z-[80] mx-auto max-w-md p-3">
+            <div className="fixed inset-x-0 bottom-0 z-[80] mx-auto max-w-md p-3 pb-[calc(env(safe-area-inset-bottom)_+_0.75rem)]">
                 <div className="flex flex-col gap-3 rounded-3xl bg-inverse-surface p-4 text-inverse-on-surface shadow-2xl">
                     <div className="flex items-start gap-3">
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary">
@@ -140,12 +140,12 @@ export default function ReactionRecorder({ slug, senderName, alreadySent }) {
             <div className="fixed right-3 top-24 z-[80] flex flex-col items-center gap-1.5">
                 <div className="relative h-28 w-20 overflow-hidden rounded-2xl border-2 border-white shadow-xl">
                     <video ref={previewRef} autoPlay muted playsInline className="h-full w-full scale-x-[-1] object-cover" />
-                    <span className="absolute left-1 top-1 flex items-center gap-1 rounded-full bg-error px-1.5 text-[10px] font-bold text-white">
+                    <span className="absolute left-1 top-1 flex items-center gap-1 rounded-full bg-error px-1.5 text-[11px] font-bold text-white">
                         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
                         REC {seconds}s
                     </span>
                 </div>
-                <button type="button" onClick={stop} className="rounded-full bg-inverse-surface px-3 py-1 text-[11px] text-inverse-on-surface shadow">
+                <button type="button" onClick={stop} className="rounded-full bg-inverse-surface px-3 py-1 text-xs text-inverse-on-surface shadow">
                     Selesai
                 </button>
             </div>
@@ -154,7 +154,7 @@ export default function ReactionRecorder({ slug, senderName, alreadySent }) {
 
     return (
         <div className="fixed inset-0 z-[90] flex items-end justify-center bg-black/60 p-3 backdrop-blur-sm">
-            <div className="pb-safe flex w-full max-w-md flex-col gap-3 rounded-3xl bg-surface p-4 shadow-2xl">
+            <div className="flex w-full max-w-md flex-col gap-3 rounded-3xl bg-surface p-4 pb-[calc(env(safe-area-inset-bottom)_+_1rem)] shadow-2xl">
                 <p className="font-display text-headline-sm text-on-surface">Kirim video reaksimu?</p>
                 <video src={videoUrl} controls playsInline className="max-h-[50vh] w-full rounded-2xl bg-black" />
                 <label className="flex items-start gap-2 text-body-sm text-on-surface">

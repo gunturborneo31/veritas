@@ -12,9 +12,26 @@ export const DEFAULT_THEME = {
  */
 export const FONTS = {
     modern: { label: 'Modern', family: 'Epilogue, ui-sans-serif, system-ui, sans-serif' },
-    klasik: { label: 'Klasik', family: '"Playfair Display", Georgia, serif' },
-    tulisan: { label: 'Tulisan Tangan', family: 'Caveat, "Segoe Print", cursive' },
+    klasik: { label: 'Klasik', family: '"Playfair Display", Georgia, serif', stylesheet: 'family=Playfair+Display:ital,wght@0,600;0,700;1,600' },
+    tulisan: { label: 'Tulisan Tangan', family: 'Caveat, "Segoe Print", cursive', stylesheet: 'family=Caveat:wght@600;700' },
 };
+
+/**
+ * Muat huruf judul tambahan hanya saat tema memakainya, supaya halaman lain tetap ringan.
+ */
+export function loadFont(font) {
+    const stylesheet = FONTS[font]?.stylesheet;
+
+    if (!stylesheet || typeof document === 'undefined' || document.querySelector(`link[data-font="${font}"]`)) {
+        return;
+    }
+
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?${stylesheet}&display=swap`;
+    link.dataset.font = font;
+    document.head.appendChild(link);
+}
 
 export const MOTIFS = {
     confetti: { label: 'Konfeti', emoji: '🎊' },
@@ -60,10 +77,41 @@ function mix(from, to, weight) {
     return mixRgb(from, to, weight).join(' ');
 }
 
-function mixHex(from, to, weight) {
+export function mixHex(from, to, weight) {
     return `#${mixRgb(from, to, weight)
         .map((channel) => channel.toString(16).padStart(2, '0'))
         .join('')}`;
+}
+
+function luminance(hex) {
+    const [red, green, blue] = toRgb(hex).map((channel) => {
+        const value = channel / 255;
+
+        return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+    });
+
+    return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+/**
+ * Rasio kontras WCAG antara warna dan putih.
+ */
+export function contrastWithWhite(hex) {
+    return 1.05 / (luminance(hex) + 0.05);
+}
+
+/**
+ * Versi warna aksen yang aman dipakai di bawah teks putih (dan sebagai warna teks di atas latar terang).
+ * Warna pilihan pengirim yang terlalu terang digelapkan bertahap sampai kontrasnya minimal 4.5:1.
+ */
+export function readableAccent(accent) {
+    let color = accent;
+
+    for (let step = 1; contrastWithWhite(color) < 4.5 && step <= 20; step++) {
+        color = mixHex(accent, '#000000', step * 0.05);
+    }
+
+    return color;
 }
 
 /**
@@ -77,8 +125,13 @@ export function paletteFromAccent(accent) {
     };
 }
 
+/**
+ * Tema lengkap dengan nilai bawaan. `ink` adalah aksen yang sudah dijamin terbaca untuk tombol dan teks.
+ */
 export function resolveTheme(theme) {
-    return { ...DEFAULT_THEME, ...(theme ?? {}) };
+    const resolved = { ...DEFAULT_THEME, ...(theme ?? {}) };
+
+    return { ...resolved, ink: readableAccent(resolved.accent) };
 }
 
 /**
@@ -86,14 +139,15 @@ export function resolveTheme(theme) {
  * Pasang di elemen pembungkus, maka semua kelas Tailwind `*-primary*` di dalamnya ikut tema tersebut.
  */
 export function themeVars(theme) {
-    const { accent, soft, font } = resolveTheme(theme);
+    const { ink, soft, font } = resolveTheme(theme);
+    loadFont(font);
 
     return {
-        '--color-primary': mix(accent, '#000000', 0),
-        '--color-primary-container': mix(accent, '#ffffff', 0.18),
+        '--color-primary': mix(ink, '#000000', 0),
+        '--color-primary-container': mix(ink, '#ffffff', 0.18),
         '--color-primary-fixed': mix(soft, soft, 0),
-        '--color-primary-fixed-dim': mix(soft, accent, 0.3),
-        '--color-on-primary-fixed': mix(accent, '#000000', 0.55),
+        '--color-primary-fixed-dim': mix(soft, ink, 0.3),
+        '--color-on-primary-fixed': mix(ink, '#000000', 0.55),
         '--font-display': (FONTS[font] ?? FONTS.modern).family,
     };
 }

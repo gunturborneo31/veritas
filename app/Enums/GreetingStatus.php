@@ -15,7 +15,7 @@ enum GreetingStatus: string
     case Arsip = 'arsip';
 
     /**
-     * Isi ucapan hanya boleh diubah sebelum bukti bayar dikirim.
+     * Isi ucapan hanya boleh diubah sebelum pembayaran berhasil (atau bukti transfer lama dikirim).
      */
     public function isEditable(): bool
     {

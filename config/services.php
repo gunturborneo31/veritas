@@ -28,6 +28,30 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    /*
+    | Komponen "Lagu Kita": pencarian lagu memakai Spotify Web API (Client Credentials).
+    | Buat aplikasi gratis di https://developer.spotify.com/dashboard. Tanpa kredensial,
+    | pengirim tetap bisa menempel link Spotify/YouTube.
+    */
+    'spotify' => [
+        'client_id' => env('SPOTIFY_CLIENT_ID'),
+        'client_secret' => env('SPOTIFY_CLIENT_SECRET'),
+        'market' => env('SPOTIFY_MARKET', 'ID'),
+    ],
+
+    /*
+    | Notifikasi admin lewat Telegram (mis. pembayaran manual menunggu konfirmasi).
+    | Buat bot di @BotFather, kirim pesan apa saja ke bot, lalu ambil chat_id dari
+    | https://api.telegram.org/bot<token>/getUpdates. Kosongkan untuk mematikan.
+    */
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        // Hanya chat ini yang boleh menekan tombol verifikasi pembayaran.
+        'chat_id' => env('TELEGRAM_ADMIN_CHAT_ID'),
+        // Rahasia webhook (header X-Telegram-Bot-Api-Secret-Token); wajib bila memakai webhook di produksi.
+        'webhook_secret' => env('TELEGRAM_WEBHOOK_SECRET'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

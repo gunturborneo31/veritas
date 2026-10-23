@@ -1,10 +1,16 @@
 import Brand from '@/Components/Brand';
+import PhoneFrame from '@/Components/Greeting/PhoneFrame';
+import Player from '@/Components/Greeting/Player';
 import Icon from '@/Components/Icon';
-import TemplateCover from '@/Components/TemplateCover';
+import TemplateCard from '@/Components/TemplateCard';
 import PublicLayout from '@/Layouts/PublicLayout';
-import { rupiah } from '@/lib/format';
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+
+const PROMISES = [
+    ['visibility', 'Coba gratis', 'Isi & pratinjau tanpa daftar'],
+    ['smartphone', 'Tanpa aplikasi', 'Cukup link & QR via WhatsApp'],
+    ['lock', 'Bisa dikunci PIN', 'Hanya dia yang bisa membuka'],
+];
 
 const STEPS = [
     ['palette', 'bg-primary-fixed text-primary', '1. Pilih Konsep', 'Pilih template interaktif yang pas dengan momenmu: tiup lilin, kartu gosok, hingga surat bergembok.'],
@@ -12,183 +18,182 @@ const STEPS = [
     ['send', 'bg-secondary-fixed text-on-surface', '3. Bagikan Sekejap', 'Kirim tautan via WhatsApp atau QR Code. Penerima langsung membuka tanpa install aplikasi.'],
 ];
 
+const numberFormatter = new Intl.NumberFormat('id-ID');
+
+/**
+ * Demo kartu asli di hero: pengunjung langsung merasakan interaksinya, bukan sekadar membaca.
+ */
+function ShowcasePhone({ showcase }) {
+    return (
+        <div className="relative flex w-full flex-col items-center gap-3">
+            <PhoneFrame className="max-w-[300px]" screenClassName="h-[540px] lg:h-[600px]">
+                <Player greeting={showcase.greeting} mode="demo" watermark />
+            </PhoneFrame>
+            <div className="flex items-center gap-1.5 text-label-md text-on-surface-variant">
+                <Icon name="touch_app" size={18} className="text-primary" />
+                Ini kartu sungguhan — coba ketuk &amp; geser
+            </div>
+            <Link href={route('catalog.show', showcase.template.slug)} className="text-label-md text-primary underline-offset-4 hover:underline">
+                {showcase.template.series?.name ?? showcase.template.name} • lihat detail
+            </Link>
+        </div>
+    );
+}
+
 /**
  * Beranda (desain promptgayaumum / Jelajah).
  */
-export default function Home({ categories, featured }) {
+export default function Home({ categories, featured, showcase, stats }) {
     const { brand } = usePage().props;
-    const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <PublicLayout title="Ucapan Digital Interaktif">
-            <section className="relative flex flex-col items-center overflow-hidden px-margin pb-space-lg pt-space-md text-center">
-                <div className="pointer-events-none absolute -left-16 -top-12 h-56 w-56 rounded-full bg-primary-fixed/40 blur-3xl" />
-                <div className="pointer-events-none absolute -right-16 top-24 h-60 w-60 rounded-full bg-tertiary-fixed/35 blur-3xl" />
+        <PublicLayout title="Ucapan Digital Interaktif" wide>
+            <section className="relative grid items-center gap-space-xl overflow-hidden px-margin pb-space-xl pt-space-lg md:grid-cols-[1.1fr_1fr] md:pt-space-xl">
+                <div className="pointer-events-none absolute -left-16 -top-12 h-56 w-56 rounded-full bg-primary-fixed/40 blur-3xl md:h-80 md:w-80" />
 
-                <div className="mb-space-sm inline-flex items-center gap-1.5 rounded-full bg-surface-container px-3 py-1 text-label-sm text-primary shadow-sm">
-                    <Icon name="auto_awesome" filled size={15} className="text-tertiary" />
-                    Kirim Rasa, Bukan Cuma Pesan Singkat
-                </div>
-                <h1 className="mb-space-sm max-w-sm text-headline-lg-mobile tracking-tight text-on-surface">
-                    Ucapan yang bikin dia{' '}
-                    <span className="text-primary underline decoration-tertiary-fixed-dim decoration-4 underline-offset-4">berhenti sejenak</span>
-                </h1>
-                <p className="mb-space-md max-w-xs text-body-md text-on-surface-variant">
-                    Bukan sekadar teks biasa. Kirim kartu digital penuh interaksi—bisa ditiup lilinnya, digosok kartunya, hingga diputar lagunya.
-                </p>
-                <Link
-                    href={route('catalog.index')}
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-space-lg text-label-lg text-on-primary shadow-md shadow-primary/25 transition-all active:scale-95"
-                >
-                    Lihat Katalog
-                    <Icon name="arrow_forward" size={20} className="text-tertiary-fixed" />
-                </Link>
-
-                <div className="relative mt-space-lg w-full max-w-sm">
-                    <div className="relative flex flex-col items-center rounded-3xl bg-surface-container-lowest p-5 shadow-lg shadow-on-surface/5">
-                        <div className="absolute -top-3 right-5 flex items-center gap-1 rounded-full bg-tertiary-container px-3 py-0.5 text-on-tertiary shadow-sm">
-                            <Icon name="favorite" size={14} />
-                            <span className="text-label-sm">Spesial</span>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={() => setIsOpen((open) => !open)}
-                            className="relative flex h-44 w-full items-center justify-center overflow-hidden rounded-2xl bg-surface-container-low"
+                <div className="relative flex flex-col items-center text-center md:items-start md:text-left">
+                    <div className="mb-space-md inline-flex items-center gap-1.5 rounded-full bg-surface-container px-3 py-1 text-label-sm text-primary">
+                        <Icon name="auto_awesome" filled size={15} className="text-tertiary" />
+                        Kirim Rasa, Bukan Cuma Pesan Singkat
+                    </div>
+                    <h1 className="mb-space-md max-w-md text-display-hero-mobile text-on-surface md:max-w-lg md:text-display-hero lg:text-[52px] lg:leading-[60px]">
+                        Ucapan yang bikin dia <span className="text-primary underline decoration-tertiary-fixed-dim decoration-4 underline-offset-4">berhenti sejenak</span>
+                    </h1>
+                    <p className="mb-space-lg max-w-sm text-body-md text-on-surface-variant md:max-w-md md:text-body-lg">
+                        Bukan sekadar teks biasa. Kirim kartu digital penuh interaksi—bisa ditiup lilinnya, digosok kartunya, hingga diputar lagunya.
+                    </p>
+                    <div className="flex w-full max-w-sm flex-col gap-2 sm:flex-row md:max-w-none">
+                        <Link
+                            href={route('catalog.index')}
+                            className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-space-lg text-label-lg text-on-primary shadow-md shadow-primary/25 transition-all active:scale-95"
                         >
-                            <div className="absolute inset-0 bg-[radial-gradient(#e0bfba_1px,transparent_1px)] opacity-40 [background-size:12px_12px]" />
-                            <div
-                                className={`flex h-32 w-48 flex-col items-center justify-center rounded-xl bg-surface-container-lowest p-3 text-center shadow-md transition-all duration-500 ${
-                                    isOpen ? '-translate-y-6 scale-105' : 'translate-y-3'
-                                }`}
+                            Pilih Kartu
+                            <Icon name="arrow_forward" size={20} />
+                        </Link>
+                        {showcase && (
+                            <Link
+                                href={route('catalog.demo', showcase.template.slug)}
+                                className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-surface-container-lowest px-space-lg text-label-lg text-on-surface shadow-sm transition-all active:scale-95 md:hidden"
                             >
-                                <Icon name="celebration" size={28} className="animate-bounce text-primary" />
-                                <p className="mt-1 text-headline-sm text-on-surface">Selamat Ya! 🎉</p>
-                                <p className="text-label-sm text-on-surface-variant">Dari: Sahabat Tersayang</p>
-                            </div>
-                            <div
-                                className={`absolute z-10 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-on-primary shadow-md transition-all duration-300 ${
-                                    isOpen ? 'scale-125 opacity-0' : ''
-                                }`}
-                            >
-                                <Icon name="favorite" size={24} />
-                            </div>
-                        </button>
-                        <div className="mt-3 flex items-center gap-1.5 text-tertiary">
-                            <Icon name="touch_app" size={16} className="animate-pulse" />
-                            <span className="text-label-md font-semibold">Ketuk untuk buka kartu ✨</span>
+                                <Icon name="play_circle" size={20} />
+                                Coba Demo Layar Penuh
+                            </Link>
+                        )}
+                    </div>
+
+                    <ul className="mt-space-lg grid w-full max-w-sm gap-3 text-left sm:max-w-none sm:grid-cols-3">
+                        {PROMISES.map(([icon, title, body]) => (
+                            <li key={title} className="flex items-center gap-3 sm:flex-col sm:items-start sm:gap-1.5">
+                                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-surface-container-lowest text-primary shadow-sm">
+                                    <Icon name={icon} size={20} />
+                                </span>
+                                <span>
+                                    <span className="block text-label-md text-on-surface">{title}</span>
+                                    <span className="block text-body-sm text-on-surface-variant">{body}</span>
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {showcase && <ShowcasePhone showcase={showcase} />}
+            </section>
+
+            {stats && (
+                <section className="px-margin pb-space-lg">
+                    <div className="grid grid-cols-2 divide-x divide-outline-variant/40 rounded-3xl bg-surface-container-lowest py-space-md text-center shadow-card">
+                        <div>
+                            <p className="font-display text-headline-lg-mobile text-primary md:text-headline-lg">{numberFormatter.format(stats.sent)}+</p>
+                            <p className="text-body-sm text-on-surface-variant">ucapan sudah terkirim</p>
+                        </div>
+                        <div>
+                            <p className="font-display text-headline-lg-mobile text-primary md:text-headline-lg">{numberFormatter.format(stats.replies)}</p>
+                            <p className="text-body-sm text-on-surface-variant">balasan dari penerima</p>
                         </div>
                     </div>
-                </div>
-            </section>
-
-            <section className="w-full overflow-hidden py-space-sm pl-margin">
-                <div className="no-scrollbar flex gap-2 overflow-x-auto py-1 pr-margin">
-                    <Link href={route('catalog.index')} className="shrink-0 rounded-full bg-primary px-4 py-2 text-label-md text-on-primary shadow-sm">
-                        ✨ Semua
-                    </Link>
-                    {categories.map((category) => (
-                        <Link
-                            key={category.slug}
-                            href={route('catalog.index', { kategori: category.slug })}
-                            className="shrink-0 rounded-full bg-surface-container px-4 py-2 text-label-md text-on-surface shadow-sm"
-                        >
-                            {category.emoji} {category.name}
-                        </Link>
-                    ))}
-                </div>
-            </section>
+                </section>
+            )}
 
             <section className="flex flex-col gap-space-md px-margin py-space-md">
                 <div className="flex items-end justify-between">
                     <div>
                         <p className="text-label-sm uppercase tracking-wider text-primary">Pilihan Kami</p>
-                        <h2 className="text-headline-md text-on-surface">Kartu Paling Disukai</h2>
+                        <h2 className="text-headline-md text-on-surface md:text-headline-lg">Kartu Paling Disukai</h2>
                     </div>
                     <Link href={route('catalog.index')} className="flex items-center gap-0.5 text-label-md text-primary">
                         Semua
                         <Icon name="chevron_right" size={18} />
                     </Link>
                 </div>
-                {featured.map((template) => (
-                    <div key={template.slug} className="flex flex-col gap-3 rounded-3xl bg-surface-container-lowest p-4 shadow-md shadow-on-surface/5">
-                        <div className="relative h-48 w-full overflow-hidden rounded-2xl">
-                            <TemplateCover template={template} />
-                            {template.highlight_label && (
-                                <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-surface-container/90 px-2.5 py-1 text-label-sm text-on-surface shadow-sm backdrop-blur-md">
-                                    <Icon name={template.highlight_icon} size={14} className="text-primary" />
-                                    {template.highlight_label}
-                                </div>
-                            )}
-                            <div className="absolute right-3 top-3 rounded-full bg-tertiary px-2.5 py-1 text-label-sm text-on-tertiary shadow-sm">Coba Gratis</div>
-                            {template.tagline && (
-                                <div className="absolute bottom-3 left-3 right-3 truncate rounded-xl bg-inverse-surface/80 px-3 py-1.5 text-body-sm text-inverse-on-surface backdrop-blur-md">
-                                    {template.tagline}
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex items-center justify-between px-1">
-                            <h3 className="text-headline-sm text-on-surface">{template.name}</h3>
-                            <span className="text-label-md font-bold text-tertiary">{rupiah(template.price)}</span>
-                        </div>
-                        <p className="px-1 text-body-sm text-on-surface-variant">
-                            {template.category?.emoji} {template.category?.name} • {template.tags.join(' & ')}
-                        </p>
-                        <div className="flex items-center gap-2 pt-1">
-                            <Link
-                                href={route('catalog.demo', template.slug)}
-                                className="flex h-11 flex-1 items-center justify-center gap-1 rounded-full bg-primary text-label-md text-on-primary shadow-sm active:scale-95"
-                            >
-                                <Icon name="visibility" size={18} />
-                                Lihat Pratinjau
-                            </Link>
-                            <Link
-                                href={route('catalog.show', template.slug)}
-                                aria-label="Detail template"
-                                className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-container text-on-surface active:scale-95"
-                            >
-                                <Icon name="arrow_forward" size={20} />
-                            </Link>
-                        </div>
-                    </div>
-                ))}
+
+                <div className="no-scrollbar -mx-margin flex gap-2 overflow-x-auto px-margin py-1">
+                    {categories.map((category) => (
+                        <Link
+                            key={category.slug}
+                            href={route('catalog.index', { jenis: category.jenis ?? undefined, kategori: category.slug })}
+                            className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-surface-container-lowest px-3.5 text-label-md text-on-surface shadow-sm hover:bg-surface-container"
+                        >
+                            {category.emoji} {category.name}
+                        </Link>
+                    ))}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                    {featured.map((template, index) => {
+                        const isOrphan = featured.length % 2 === 1 && index === featured.length - 1;
+
+                        return (
+                            <div key={template.slug} className={isOrphan ? 'col-span-2 md:col-span-1' : ''}>
+                                <TemplateCard template={template} wide={isOrphan} />
+                            </div>
+                        );
+                    })}
+                </div>
             </section>
 
-            <section className="my-space-sm flex flex-col gap-space-md bg-surface-container-low/70 px-margin py-space-lg">
+            <section className="my-space-md flex flex-col gap-space-md bg-surface-container-low/70 px-margin py-space-xl md:rounded-[2rem]">
                 <div className="text-center">
                     <p className="text-label-sm uppercase tracking-wider text-primary">Mudah & Menyenangkan</p>
-                    <h2 className="text-headline-md text-on-surface">Cara Kerja {brand}</h2>
+                    <h2 className="text-headline-md text-on-surface md:text-headline-lg">Cara Kerja {brand}</h2>
                 </div>
-                {STEPS.map(([icon, tone, title, body]) => (
-                    <div key={title} className="flex items-start gap-4 rounded-3xl bg-surface-container-lowest p-5 shadow-sm">
-                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm ${tone}`}>
-                            <Icon name={icon} size={26} />
+                <div className="grid gap-space-md md:grid-cols-3">
+                    {STEPS.map(([icon, tone, title, body]) => (
+                        <div key={title} className="flex items-start gap-4 rounded-3xl bg-surface-container-lowest p-5 shadow-sm md:flex-col">
+                            <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${tone}`}>
+                                <Icon name={icon} size={26} />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <h3 className="text-headline-sm text-on-surface">{title}</h3>
+                                <p className="text-body-sm text-on-surface-variant">{body}</p>
+                            </div>
                         </div>
-                        <div className="flex flex-col gap-1">
-                            <h3 className="text-headline-sm text-on-surface">{title}</h3>
-                            <p className="text-body-sm text-on-surface-variant">{body}</p>
-                        </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
+                <Link
+                    href={route('catalog.index')}
+                    className="mx-auto inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-space-lg text-label-lg text-on-primary shadow-md shadow-primary/25 transition-all active:scale-95"
+                >
+                    Mulai Buat Kartu
+                    <Icon name="arrow_forward" size={20} />
+                </Link>
             </section>
 
-            <footer className="mt-space-lg flex flex-col gap-space-lg rounded-t-3xl bg-surface-container-high/60 px-margin pb-space-xl pt-space-lg">
+            <footer className="mt-space-lg flex flex-col gap-space-lg rounded-t-3xl bg-surface-container-high/60 px-margin pb-space-xl pt-space-lg md:grid md:grid-cols-[1.5fr_1fr_1fr]">
                 <div className="flex flex-col gap-2">
                     <Brand />
                     <p className="max-w-xs text-body-sm text-on-surface-variant">Hangatkan setiap jarak dengan ucapan yang berkesan.</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-body-sm text-on-surface-variant">
-                    <div className="flex flex-col gap-2">
-                        <p className="text-label-sm font-bold uppercase tracking-wider text-primary">Navigasi</p>
-                        <Link href={route('catalog.index')}>Katalog</Link>
-                        <Link href={route('dashboard')}>Kartu Saya</Link>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <p className="text-label-sm font-bold uppercase tracking-wider text-primary">Dukungan</p>
-                        <Link href={route('legal.terms')}>Syarat & Ketentuan</Link>
-                        <Link href={route('legal.privacy')}>Kebijakan Privasi</Link>
-                    </div>
+                <div className="flex flex-col gap-2 text-body-sm text-on-surface-variant">
+                    <p className="text-label-sm font-bold uppercase tracking-wider text-primary">Navigasi</p>
+                    <Link href={route('catalog.index')}>Katalog</Link>
+                    <Link href={route('dashboard')}>Kartu Saya</Link>
                 </div>
-                <p className="border-t border-outline-variant/30 pt-space-md text-center text-label-sm text-on-surface-variant">
+                <div className="flex flex-col gap-2 text-body-sm text-on-surface-variant">
+                    <p className="text-label-sm font-bold uppercase tracking-wider text-primary">Dukungan</p>
+                    <Link href={route('legal.terms')}>Syarat & Ketentuan</Link>
+                    <Link href={route('legal.privacy')}>Kebijakan Privasi</Link>
+                </div>
+                <p className="border-t border-outline-variant/30 pt-space-md text-center text-label-sm text-on-surface-variant md:col-span-3">
                     © {new Date().getFullYear()} {brand}. Dibuat dengan penuh cinta di Indonesia. 🇮🇩
                 </p>
             </footer>

@@ -35,7 +35,11 @@ export default function Terms({ supportEmail, supportWhatsapp, orderExpiresHours
             body: (
                 <ul>
                     <li>Harga ditampilkan sebelum membayar dan dihitung oleh sistem kami. Kode promo dan referral mengikuti ketentuan masing-masing kode.</li>
-                    <li>Pembayaran dilakukan lewat transfer bank atau QRIS lalu diverifikasi oleh tim kami. Ucapan terbit setelah pembayaran dikonfirmasi.</li>
+                    <li>
+                        Pembayaran dilakukan lewat QRIS dinamis dengan nominal yang sudah terisi. QR berlaku 30 menit; bila lewat, kamu bisa membuat QR baru. Ucapan terbit
+                        otomatis begitu pembayaran terkonfirmasi oleh penyedia QRIS, tanpa perlu mengirim bukti.
+                    </li>
+                    <li>Bila terjadi pembayaran ganda untuk ucapan yang sama, kelebihannya kami kembalikan setelah dikonfirmasi tim kami.</li>
                     <li>Pesanan yang tidak dibayar dalam {orderExpiresHours} jam dibatalkan otomatis; ucapanmu tetap tersimpan sebagai draf.</li>
                     <li>Satu pembayaran berlaku untuk satu ucapan dan satu penerima. Untuk penerima lain, gunakan fitur duplikat dan lakukan pembayaran terpisah.</li>
                 </ul>
@@ -47,7 +51,7 @@ export default function Terms({ supportEmail, supportWhatsapp, orderExpiresHours
             body: (
                 <>
                     <p>
-                        Begitu bukti pembayaran dikirim, <strong>seluruh isi ucapan dikunci dan tidak dapat diubah</strong> — termasuk nama, tanggal, foto, pesan, musik, dan
+                        Begitu pembayaran berhasil, <strong>seluruh isi ucapan dikunci dan tidak dapat diubah</strong> — termasuk nama, tanggal, foto, pesan, musik, dan
                         gembok. Ini menjaga keaslian ucapan yang diterima penerima.
                     </p>
                     <p>Karena itu, mohon periksa ejaan nama, tanggal, dan seluruh isi di halaman pratinjau sebelum membayar.</p>

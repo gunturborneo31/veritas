@@ -55,7 +55,7 @@ export default function ReferralCard({ referral }) {
                             <div key={voucher.code} className="flex items-center justify-between rounded-2xl bg-white/10 px-4 py-2.5">
                                 <div>
                                     <p className="font-display text-label-lg tracking-wider">{voucher.code}</p>
-                                    {voucher.ends_at && <p className="text-[11px] opacity-70">Berlaku sampai {dateTime(voucher.ends_at)}</p>}
+                                    {voucher.ends_at && <p className="text-xs opacity-70">Berlaku sampai {dateTime(voucher.ends_at)}</p>}
                                 </div>
                                 <span className="rounded-full bg-primary px-3 py-1 text-label-sm text-on-primary">{voucher.value}</span>
                             </div>

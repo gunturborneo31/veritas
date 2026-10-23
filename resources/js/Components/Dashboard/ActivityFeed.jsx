@@ -46,7 +46,7 @@ export default function ActivityFeed({ activities }) {
                                     <p className="text-label-md text-on-surface">{activity.title}</p>
                                 )}
                                 <p className="truncate text-body-sm text-on-surface-variant">{activity.body}</p>
-                                <p className="text-[11px] text-on-surface-variant/80">{dateTime(activity.created_at)}</p>
+                                <p className="text-xs text-on-surface-variant/80">{dateTime(activity.created_at)}</p>
                             </div>
                             {activity.is_unread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" />}
                         </li>

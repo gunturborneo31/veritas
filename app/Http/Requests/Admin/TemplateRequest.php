@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\GreetingType;
 use App\Enums\TemplateTier;
 use App\Models\Template;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -27,6 +28,8 @@ class TemplateRequest extends FormRequest
             'tagline' => ['nullable', 'string', 'max:120'],
             'story' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:2000'],
+            // Opsional agar form admin lama tetap jalan; template tanpa pilihan tetap ucapan.
+            'type' => ['sometimes', Rule::enum(GreetingType::class)],
             'tier' => ['required', Rule::enum(TemplateTier::class)],
             'price' => ['required', 'integer', 'min:1000'],
             'duration_minutes' => ['required', 'integer', 'min:1', 'max:30'],

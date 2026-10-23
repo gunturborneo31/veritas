@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\GreetingType;
 use App\Enums\TemplateTier;
 use App\Models\Category;
 use App\Models\Component;
@@ -9,6 +10,7 @@ use App\Models\MusicTrack;
 use App\Models\Series;
 use App\Models\Template;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 /**
  * Isi katalog: kategori, komponen, varian, pustaka musik, lalu seri template.
@@ -47,6 +49,15 @@ class CatalogSeeder extends Seeder
             ['nembak', 'Nembak', '💘'],
             ['wisuda', 'Wisuda', '🎓'],
             ['terima-kasih', 'Terima Kasih', '🌷'],
+            ['pernikahan', 'Pernikahan', '💍'],
+            ['lamaran', 'Lamaran & Tunangan', '💐'],
+            ['aqiqah', 'Aqiqah & Kelahiran', '👶'],
+            ['khitanan', 'Khitanan', '🌙'],
+            ['syukuran', 'Syukuran & Hajatan', '🍚'],
+            ['pesta', 'Pesta & Reuni', '🎉'],
+            ['kehamilan', 'Kehamilan & Baby Shower', '🤰'],
+            ['peresmian', 'Grand Opening & Peresmian', '🎊'],
+            ['pengajian', 'Pengajian & Doa Bersama', '📿'],
         ];
 
         return collect($rows)->mapWithKeys(fn (array $row, int $index): array => [
@@ -119,6 +130,15 @@ class CatalogSeeder extends Seeder
             'linimasa' => ['Linimasa Foto', 'Perjalanan kenangan dari masa ke masa.', 'timeline', [
                 ['name' => 'moments', 'type' => 'images', 'label' => 'Momen (isi keterangan dengan tahun/cerita)', 'min' => 2, 'max' => 10, 'required' => true],
             ]],
+            'jejak_lokasi' => ['Jejak Kenangan', 'Peta tempat-tempat bersejarah kalian; penerima diajak berpindah dari satu titik ke titik berikutnya.', 'map', [
+                ['name' => 'title', 'type' => 'text', 'label' => 'Judul', 'placeholder' => 'Jejak kita', 'max' => 60],
+                ['name' => 'places', 'type' => 'locations', 'label' => 'Titik kenangan (isi teks, foto, atau keduanya)', 'min' => 2, 'max' => 3, 'required' => true],
+            ]],
+            'lagu_kita' => ['Lagu Kita', 'Lagu dari Spotify atau YouTube yang mengingatkan pada kalian, diputar lewat pemutar resminya.', 'queue_music', [
+                ['name' => 'title', 'type' => 'text', 'label' => 'Judul', 'placeholder' => 'Lagu kita', 'max' => 60],
+                ['name' => 'song', 'type' => 'song', 'label' => 'Lagunya (cari di Spotify atau tempel link Spotify/YouTube)', 'required' => true],
+                ['name' => 'note', 'type' => 'textarea', 'label' => 'Kenapa lagu ini?', 'placeholder' => 'Setiap dengar lagu ini, aku ingat kamu…', 'max' => 200],
+            ]],
             'sertifikat' => ['Sertifikat Unduhan', 'Sertifikat lucu yang bisa diunduh penerima.', 'workspace_premium', [
                 ['name' => 'title', 'type' => 'text', 'label' => 'Judul sertifikat', 'placeholder' => 'Sahabat Terbaik Sedunia', 'required' => true, 'max' => 60],
                 ['name' => 'description', 'type' => 'text', 'label' => 'Keterangan', 'max' => 140],
@@ -141,6 +161,38 @@ class CatalogSeeder extends Seeder
                 ['name' => 'title', 'type' => 'text', 'label' => 'Judul', 'placeholder' => 'Kita dalam angka', 'max' => 60],
                 ['name' => 'stats', 'type' => 'list', 'label' => 'Angka & keterangan (awali dengan angka, mis. "730 hari kita bareng")', 'min' => 2, 'max' => 6, 'item_max' => 60, 'required' => true],
                 ['name' => 'footnote', 'type' => 'text', 'label' => 'Catatan kaki', 'max' => 100],
+            ]],
+            // Komponen undangan. Acara, RSVP, amplop, dan ucapan & doa mengambil datanya dari halaman
+            // Kelola Undangan (tidak ikut snapshot); skema di sini hanya untuk judul dan catatan bagian.
+            'mempelai' => ['Mempelai', 'Perkenalan kedua mempelai beserta keterangan orang tua.', 'diversity_1', [
+                ['name' => 'opening', 'type' => 'textarea', 'label' => 'Kalimat pembuka', 'placeholder' => 'Dengan memohon rahmat Tuhan Yang Maha Esa, kami bermaksud menyelenggarakan pernikahan:', 'max' => 300],
+                ['name' => 'groom_name', 'type' => 'text', 'label' => 'Nama lengkap mempelai pria', 'required' => true, 'max' => 80],
+                ['name' => 'groom_parents', 'type' => 'text', 'label' => 'Keterangan orang tua mempelai pria', 'placeholder' => 'Putra pertama Bapak … & Ibu …', 'max' => 140],
+                ['name' => 'groom_photo', 'type' => 'image', 'label' => 'Foto mempelai pria'],
+                ['name' => 'bride_name', 'type' => 'text', 'label' => 'Nama lengkap mempelai wanita', 'required' => true, 'max' => 80],
+                ['name' => 'bride_parents', 'type' => 'text', 'label' => 'Keterangan orang tua mempelai wanita', 'placeholder' => 'Putri kedua Bapak … & Ibu …', 'max' => 140],
+                ['name' => 'bride_photo', 'type' => 'image', 'label' => 'Foto mempelai wanita'],
+            ]],
+            'profil_acara' => ['Yang Dirayakan', 'Foto, nama, dan keterangan orang yang dirayakan (anak, yang berulang tahun, tuan rumah).', 'person_celebrate', [
+                ['name' => 'label', 'type' => 'text', 'label' => 'Judul bagian', 'placeholder' => 'Buah Hati Kami', 'max' => 60],
+                ['name' => 'photo', 'type' => 'image', 'label' => 'Foto'],
+                ['name' => 'name', 'type' => 'text', 'label' => 'Nama', 'required' => true, 'max' => 80],
+                ['name' => 'description', 'type' => 'text', 'label' => 'Keterangan', 'placeholder' => 'Putra pertama dari Bapak … & Ibu …', 'max' => 140],
+                ['name' => 'note', 'type' => 'textarea', 'label' => 'Catatan / harapan', 'max' => 300],
+            ]],
+            'acara_undangan' => ['Rangkaian Acara', 'Jadwal, lokasi, petunjuk arah, dan hitung mundur. Detailnya diisi di halaman Kelola Undangan.', 'event', [
+                ['name' => 'title', 'type' => 'text', 'label' => 'Judul bagian', 'placeholder' => 'Rangkaian Acara', 'max' => 60],
+            ]],
+            'rsvp' => ['Konfirmasi Kehadiran', 'Tamu memilih hadir atau tidak beserta jumlah orang.', 'event_available', [
+                ['name' => 'title', 'type' => 'text', 'label' => 'Judul bagian', 'placeholder' => 'Konfirmasi Kehadiran', 'max' => 60],
+                ['name' => 'note', 'type' => 'text', 'label' => 'Catatan untuk tamu', 'placeholder' => 'Mohon konfirmasi sebelum H-7, ya.', 'max' => 200],
+            ]],
+            'amplop_digital' => ['Amplop Digital', 'Rekening, e-wallet, dan alamat kado yang bisa disalin tamu.', 'redeem', [
+                ['name' => 'title', 'type' => 'text', 'label' => 'Judul bagian', 'placeholder' => 'Amplop Digital', 'max' => 60],
+                ['name' => 'note', 'type' => 'textarea', 'label' => 'Catatan untuk tamu', 'placeholder' => 'Doa restu Anda adalah hadiah terindah bagi kami.', 'max' => 300],
+            ]],
+            'ucapan_doa' => ['Ucapan & Doa', 'Buku tamu digital yang bisa dibaca semua tamu.', 'forum', [
+                ['name' => 'title', 'type' => 'text', 'label' => 'Judul bagian', 'placeholder' => 'Ucapan & Doa', 'max' => 60],
             ]],
             'penutup' => ['Penutup', 'Kalimat penutup dan tombol balas untuk penerima.', 'favorite', [
                 ['name' => 'closing', 'type' => 'textarea', 'label' => 'Kalimat penutup', 'max' => 400],
@@ -231,6 +283,21 @@ class CatalogSeeder extends Seeder
             ['lempar-toga', 'Lempar Toga', 'Rayakan perjalanan panjang menuju toga', 'Linimasa perjuangan, surat bangga, hadiah kelulusan di balik kartu gosok, dan sertifikat lucu.', $this->lemparToga()],
             ['seikat-terima-kasih', 'Seikat Terima Kasih', 'Untuk orang yang terlalu sering lupa kita terima kasihi', 'Hal-hal kecil yang kamu syukuri darinya, dibuka satu per satu, ditutup surat dan janji balas budi.', $this->seikatTerimaKasih()],
             ['jarak-rindu', 'Jarak & Rindu', 'Untuk yang sedang berjauhan', 'Hitung mundur ke pertemuan berikutnya, kenangan yang bikin rindu, dan janji saat bertemu lagi.', $this->jarakRindu()],
+            ['janji-suci', 'Janji Suci', 'Undangan pernikahan dengan RSVP & amplop digital', 'Undangan dengan nama tiap tamu, rangkaian acara, kisah kalian, konfirmasi kehadiran, amplop digital, dan ucapan & doa.', $this->janjiSuci()],
+            ['ikat-janji', 'Ikat Janji', 'Undangan lamaran & tunangan', 'Kabarkan langkah pertama menuju pernikahan kepada keluarga dan sahabat terdekat.', $this->ikatJanji()],
+            ['buah-hati', 'Buah Hati', 'Undangan aqiqah & tasyakuran kelahiran', 'Perkenalkan si kecil, kumpulkan doa, dan rekap siapa saja yang hadir.', $this->buahHati()],
+            ['langkah-sholeh', 'Langkah Sholeh', 'Undangan khitanan', 'Undang keluarga dan tetangga merayakan khitanan si jagoan.', $this->langkahSholeh()],
+            ['pesta-ulang-tahun', 'Pesta Ulang Tahun', 'Undangan pesta ulang tahun anak sampai dewasa', 'Undang teman ke pesta, rekap yang datang, dan terima ucapan untuk yang berulang tahun.', $this->pestaUlangTahun()],
+            ['syukur-bersama', 'Syukur Bersama', 'Undangan syukuran & hajatan', 'Rumah baru, tasyakuran, sampai purna bakti — undang tamu dan kumpulkan doa.', $this->syukurBersama()],
+            ['malam-pesta', 'Malam Pesta', 'Undangan pesta, gathering & reuni', 'Semua info pesta dalam satu link: waktu, tempat, dress code, dan konfirmasi kehadiran.', $this->malamPesta()],
+            ['pesona-nusantara', 'Pesona Nusantara', 'Undangan pernikahan bernuansa adat', 'Palet dan susunan acara khas Jawa, Sunda, Minang, Bali, Batak, dan Betawi.', $this->pesonaNusantara()],
+            ['ngunduh-mantu', 'Ngunduh Mantu', 'Undangan ngunduh mantu', 'Sambut menantu di keluarga mempelai pria bersama kerabat dan tetangga.', $this->ngunduhMantu()],
+            ['menanti-buah-hati', 'Menanti Buah Hati', 'Undangan baby shower, gender reveal & tujuh bulanan', 'Rayakan penantian si kecil dan kumpulkan doa untuk ibu dan bayi.', $this->menantiBuahHati()],
+            ['syukuran-wisuda', 'Syukuran Wisuda', 'Undangan syukuran wisuda & kelulusan', 'Rayakan kelulusan bersama keluarga dan teman.', $this->syukuranWisuda()],
+            ['ulang-tahun-pernikahan', 'Ulang Tahun Pernikahan', 'Undangan anniversary pernikahan', 'Rayakan 25 atau 50 tahun bersama dengan keluarga besar.', $this->ulangTahunPernikahan()],
+            ['halal-bihalal', 'Halal Bihalal', 'Undangan halal bihalal & open house', 'Silaturahmi Idulfitri untuk keluarga besar, kantor, atau komunitas.', $this->halalBihalal()],
+            ['grand-opening', 'Grand Opening', 'Undangan grand opening & peresmian', 'Ajak pelanggan dan mitra ke pembukaan usaha atau kantor baru.', $this->grandOpening()],
+            ['doa-bersama', 'Doa Bersama', 'Undangan pengajian, tahlilan & haul', 'Undang jamaah dan kerabat untuk doa bersama dengan rekap kehadiran.', $this->doaBersama()],
         ];
 
         $sortOrder = 0;
@@ -247,6 +314,7 @@ class CatalogSeeder extends Seeder
                 $template = Template::updateOrCreate(['slug' => $data['slug']], [
                     'category_id' => $categories[$data['category']]->id,
                     'series_id' => $series->id,
+                    'type' => $data['type'] ?? GreetingType::Ucapan,
                     'name' => "{$name} · {$data['design']}",
                     'design_name' => $data['design'],
                     'tagline' => $data['tagline'],
@@ -264,9 +332,11 @@ class CatalogSeeder extends Seeder
                     'sort_order' => $sortOrder++,
                 ]);
 
-                $template->components()->whereNotIn('key', array_column($data['slots'], 0))->delete();
+                $slots = $this->withOptionalExtras($data['slots']);
 
-                foreach ($data['slots'] as $position => $slot) {
+                $template->components()->whereNotIn('key', array_column($slots, 0))->delete();
+
+                foreach ($slots as $position => $slot) {
                     $template->components()->updateOrCreate(['key' => $slot[0]], [
                         'component_id' => $components[$slot[1]]->id,
                         'position' => $position + 1,
@@ -276,6 +346,36 @@ class CatalogSeeder extends Seeder
                 }
             }
         }
+    }
+
+    /**
+     * Bagian opsional yang tersedia di semua template: Jejak Kenangan dan Lagu Kita, diletakkan sebelum surat
+     * (atau sebelum penutup bila tanpa surat). Komponen yang sudah dipasang sendiri oleh template dibiarkan.
+     *
+     * @param  list<array{0: string, 1: string, 2?: bool, 3?: string}>  $slots
+     * @return list<array{0: string, 1: string, 2?: bool, 3?: string}>
+     */
+    private function withOptionalExtras(array $slots): array
+    {
+        $extras = [['jejak', 'jejak_lokasi', false, 'Jejak Kenangan'], ['lagu', 'lagu_kita', false, 'Lagu Kita']];
+
+        foreach ($extras as $extra) {
+            $components = array_column($slots, 1);
+
+            if (in_array($extra[1], $components, true)) {
+                continue;
+            }
+
+            // Undangan tidak punya surat; bagian tambahan diletakkan sebelum RSVP.
+            $anchor = collect(['surat', 'rsvp', 'penutup'])
+                ->map(fn (string $key): int|false => array_search($key, $components, true))
+                ->first(fn (int|false $position): bool => $position !== false, false);
+            $position = $anchor === false ? count($slots) : $anchor;
+
+            array_splice($slots, $position, 0, [$extra]);
+        }
+
+        return $slots;
     }
 
     /**
@@ -1369,6 +1469,7 @@ class CatalogSeeder extends Seeder
                 'tags' => ['LDR', 'Rindu'],
                 'slots' => [
                     ['sampul', 'sampul'], ['mundur', 'hitung_mundur', true, 'Menuju Hari Bertemu'], ['angka', 'angka_kita', true, 'Jarak Kita dalam Angka'], ['galeri', 'galeri_geser', true, 'Kenangan yang Bikin Rindu'],
+                    ['jejak', 'jejak_lokasi', false, 'Jejak Kita'],
                     ['suara', 'pesan_suara', false], ['kutipan', 'kutipan'], ['surat', 'surat'], ['nanti', 'kupon_janji', true, 'Saat Kita Bertemu Nanti'],
                     ['musik', 'musik_latar', false], ['penutup', 'penutup'],
                 ],
@@ -1380,6 +1481,11 @@ class CatalogSeeder extends Seeder
                         'mundur' => ['target_at' => '+23 days 10:00', 'label' => 'Sampai kita ketemu di stasiun'],
                         'angka' => ['title' => 'Jarak kita dalam angka', 'stats' => ['842 km antara kita', '96 hari sejak terakhir ketemu', '310 video call', '1 tujuan: pulang ke kamu']],
                         'galeri' => ['photos' => $this->photos([['kafe', 'Kopi terakhir sebelum kamu berangkat'], ['senja', 'Senja yang kita kejar bareng'], ['pantai', 'Janji balik ke pantai ini']])],
+                        'jejak' => ['title' => 'Jejak kita sebelum berjauhan', 'places' => [
+                            ['name' => 'Stasiun Bandung', 'lat' => -6.914744, 'lng' => 107.602243, 'caption' => 'Pertama kali ketemu. Kamu telat 20 menit, tapi aku tetap nunggu.', 'media' => $this->image('kafe')],
+                            ['name' => 'Jalan Braga', 'lat' => -6.917464, 'lng' => 107.609361, 'caption' => 'Jalan kaki sore-sore sambil cari cilok. Di sini kamu bilang mau serius.', 'media' => null],
+                            ['name' => 'Stasiun Gambir, Jakarta', 'lat' => -6.176655, 'lng' => 106.830583, 'caption' => null, 'media' => $this->image('kota-malam')],
+                        ]],
                         'kutipan' => ['quote' => 'Jarak cuma angka. Yang kurasakan tiap malam jauh lebih besar dari itu.', 'caption' => '— Nisa'],
                         'surat' => ['greeting_line' => 'Arga,', 'body' => 'Hari-hariku tetap jalan, tapi selalu ada yang kurang. Terima kasih sudah tetap mengabari walau lelah. Sebentar lagi, ya.', 'signature' => 'Yang menunggumu, Nisa'],
                         'nanti' => ['coupons' => ['Makan seblak di tempat biasa', 'Nonton film yang kita tunda', 'Peluk lama di peron stasiun']],
@@ -1464,5 +1570,1111 @@ class CatalogSeeder extends Seeder
                 ],
             ],
         ];
+    }
+
+    /**
+     * Rakit desain-desain satu seri undangan. Alur, deskripsi, dan isi contoh dipakai bersama;
+     * setiap desain cukup menimpa yang berbeda (warna, hiasan, huruf, sampul, nama acara, kutipan).
+     * Desain pertama memakai slug seri agar tautan lama tetap berlaku.
+     *
+     * @param  array<string, mixed>  $series
+     * @param  list<array<string, mixed>>  $designs
+     * @return list<array<string, mixed>>
+     */
+    private function invitationDesigns(string $slug, array $series, array $designs): array
+    {
+        return array_map(fn (array $design, int $index): array => [
+            'slug' => $index === 0 ? $slug : "{$slug}-".Str::slug($design['design']),
+            'type' => GreetingType::Undangan,
+            'category' => $series['category'],
+            'design' => $design['design'],
+            'tagline' => $design['tagline'],
+            'story' => $series['story'],
+            'description' => $series['description'],
+            'tier' => $design['tier'] ?? $series['tier'],
+            'price' => $design['price'] ?? $series['price'],
+            'duration_minutes' => 3,
+            'theme' => $design['theme'],
+            'highlight_icon' => $series['highlight_icon'],
+            'highlight_label' => $series['highlight_label'],
+            'tags' => $design['tags'] ?? $series['tags'],
+            'slots' => $series['slots'],
+            'sample' => $this->mergeSample($series['sample'], $design['sample'] ?? []),
+        ], $designs, array_keys($designs));
+    }
+
+    /**
+     * Gabungkan isi contoh seri dengan milik desain. Bila desain mengganti tempat acara tanpa
+     * memberi koordinat, koordinat lama dibuang agar "Petunjuk Arah" tidak menunjuk ke tempat lain.
+     *
+     * @param  array<string, mixed>  $base
+     * @param  array<string, mixed>  $override
+     * @return array<string, mixed>
+     */
+    private function mergeSample(array $base, array $override): array
+    {
+        $sample = array_replace_recursive($base, $override);
+
+        foreach ($override['invitation']['events'] ?? [] as $index => $event) {
+            if (isset($event['venue_name']) && ! array_key_exists('latitude', $event)) {
+                unset($sample['invitation']['events'][$index]['latitude'], $sample['invitation']['events'][$index]['longitude']);
+            }
+        }
+
+        return $sample;
+    }
+
+    /**
+     * Alur undangan untuk acara dengan satu "yang dirayakan" (aqiqah, ulang tahun, khitanan, syukuran, pesta).
+     *
+     * @return list<array{0: string, 1: string, 2?: bool, 3?: string}>
+     */
+    private function celebrationSlots(string $honoreeTitle, bool $isHonoreeRequired = true): array
+    {
+        return [
+            ['sampul', 'sampul'], ['profil', 'profil_acara', $isHonoreeRequired, $honoreeTitle], ['doa', 'kutipan', false, 'Doa & Harapan'],
+            ['acara', 'acara_undangan', true, 'Detail Acara'], ['galeri', 'galeri_geser', false, 'Galeri'], ['rsvp', 'rsvp', true, 'Konfirmasi Kehadiran'],
+            ['amplop', 'amplop_digital', false, 'Kirim Hadiah'], ['ucapan', 'ucapan_doa', true, 'Ucapan & Doa'], ['musik', 'musik_latar', false], ['penutup', 'penutup'],
+        ];
+    }
+
+    /**
+     * @param  list<array{0: string, 1: string, 2: string}>  $events  [nama, jam mulai, jam selesai]
+     * @return list<array<string, mixed>>
+     */
+    private function sampleEvents(array $events, string $venue, string $address, int $daysAhead = 45): array
+    {
+        return array_map(fn (array $event): array => [
+            'name' => $event[0],
+            'starts_at' => "+{$daysAhead} days {$event[1]}",
+            'ends_at' => "+{$daysAhead} days {$event[2]}",
+            'timezone' => 'Asia/Jakarta',
+            'venue_name' => $venue,
+            'address' => $address,
+        ], $events);
+    }
+
+    /**
+     * Isi bersama undangan pernikahan: dipakai seri Janji Suci, Pesona Nusantara, dan Ngunduh Mantu.
+     *
+     * @return array<string, mixed>
+     */
+    private function weddingSeries(): array
+    {
+        return [
+            'category' => 'pernikahan',
+            'story' => 'Sampul, mempelai, kutipan, rangkaian acara dengan peta, kisah kalian, galeri, konfirmasi kehadiran, amplop digital, dan ucapan & doa.',
+            'description' => 'Undangan pernikahan digital: setiap tamu menerima link dengan namanya sendiri, melihat jadwal dan petunjuk arah, mengonfirmasi kehadiran, mengirim amplop digital, dan menulis ucapan. Jumlah tamu tidak dibatasi; jadwal dan lokasi tetap bisa diubah setelah disebar.',
+            'tier' => TemplateTier::Premium,
+            'price' => 79000,
+            'highlight_icon' => 'event_available',
+            'highlight_label' => 'RSVP & Amplop',
+            'tags' => ['Pernikahan', 'RSVP'],
+            'slots' => [
+                ['sampul', 'sampul'], ['mempelai', 'mempelai'], ['ayat', 'kutipan', false, 'Ayat / Kutipan'], ['acara', 'acara_undangan', true, 'Rangkaian Acara'],
+                ['kisah', 'linimasa', false, 'Kisah Kami'], ['galeri', 'galeri_geser', false, 'Galeri Kami'], ['rsvp', 'rsvp', true, 'Konfirmasi Kehadiran'],
+                ['amplop', 'amplop_digital', false, 'Amplop Digital'], ['ucapan', 'ucapan_doa', true, 'Ucapan & Doa'], ['musik', 'musik_latar', false], ['penutup', 'penutup'],
+            ],
+            'sample' => [
+                'occasions' => ['Pernikahan', 'Akad & Resepsi', 'Pemberkatan & Resepsi', 'Ngunduh Mantu', 'Tasyakuran Pernikahan'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Raka & Dinda', 'occasion' => 'Pernikahan'],
+                'components' => [
+                    'sampul' => ['title' => 'The Wedding of Raka & Dinda', 'subtitle' => 'Dengan penuh syukur, kami mengundang Anda di hari bahagia kami', 'photo' => $this->image('buket')],
+                    'mempelai' => [
+                        'opening' => 'Dengan memohon rahmat Tuhan Yang Maha Esa, kami bermaksud menyelenggarakan pernikahan putra-putri kami:',
+                        'groom_name' => 'Raka Aditya Pratama',
+                        'groom_parents' => 'Putra pertama Bapak Hendra Pratama & Ibu Sari Wulandari',
+                        'groom_photo' => $this->image('senja'),
+                        'bride_name' => 'Dinda Ayu Lestari',
+                        'bride_parents' => 'Putri kedua Bapak Agus Santoso & Ibu Rina Marlina',
+                        'bride_photo' => $this->image('pantai'),
+                    ],
+                    'ayat' => ['quote' => 'Dua jiwa yang dipertemukan bukan untuk saling melengkapi kekurangan, tetapi untuk saling menumbuhkan dalam kasih.', 'caption' => '— Raka & Dinda'],
+                    'acara' => ['title' => 'Rangkaian Acara'],
+                    'kisah' => ['moments' => $this->photos([
+                        ['kampus', '2019 — Pertama bertemu di perpustakaan kampus'],
+                        ['kafe', '2023 — Lamaran sederhana bersama dua keluarga'],
+                        ['buket', '2026 — Hari ini, kami memulai babak baru'],
+                    ])],
+                    'galeri' => ['photos' => $this->photos([['senja', 'Prewedding di bukit'], ['pantai', 'Pantai favorit kami'], ['kota-malam', 'Kota tempat kami tumbuh bersama']])],
+                    'rsvp' => ['title' => 'Konfirmasi Kehadiran', 'note' => 'Mohon konfirmasi kehadiran sebelum H-7 agar kami dapat menyiapkan jamuan dengan baik.'],
+                    'amplop' => ['title' => 'Amplop Digital', 'note' => 'Doa restu Anda adalah hadiah terindah bagi kami. Namun bila ingin memberi tanda kasih, dapat melalui:'],
+                    'ucapan' => ['title' => 'Ucapan & Doa'],
+                    'musik' => ['track' => $this->track('kotak_musik')],
+                    'penutup' => ['closing' => 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu. Terima kasih.', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => [
+                        ['name' => 'Akad Nikah', 'starts_at' => '+45 days 08:00', 'ends_at' => '+45 days 10:00', 'timezone' => 'Asia/Jakarta', 'venue_name' => 'Masjid Agung Al-Azhar', 'address' => 'Jl. Sisingamangaraja, Kebayoran Baru, Jakarta Selatan', 'latitude' => -6.235, 'longitude' => 106.7995],
+                        ['name' => 'Resepsi', 'starts_at' => '+45 days 11:00', 'ends_at' => '+45 days 14:00', 'timezone' => 'Asia/Jakarta', 'venue_name' => 'Gedung Serbaguna Melati', 'address' => 'Jl. Melati No. 12, Kebayoran Baru, Jakarta Selatan', 'latitude' => -6.2402, 'longitude' => 106.7987],
+                    ],
+                    'gifts' => [
+                        ['kind' => 'bank', 'provider' => 'BCA', 'account_number' => '1234567890', 'account_holder' => 'Dinda Ayu Lestari'],
+                        ['kind' => 'ewallet', 'provider' => 'GoPay', 'account_number' => '081234567890', 'account_holder' => 'Raka Aditya Pratama'],
+                    ],
+                    'wishes' => [
+                        ['name' => 'Keluarga Besar Santoso', 'message' => 'Selamat menempuh hidup baru! Semoga menjadi keluarga yang penuh kasih dan berkah.'],
+                        ['name' => 'Teman-teman Kantor', 'message' => 'Bahagia selalu, Raka & Dinda! Sampai jumpa di resepsi 🤍'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function janjiSuci(): array
+    {
+        return $this->invitationDesigns('janji-suci', $this->weddingSeries(), [
+            [
+                'design' => 'Klasik Emas',
+                'tagline' => 'Undangan pernikahan elegan dengan RSVP & amplop digital',
+                'theme' => ['accent' => '#8a6a2f', 'soft' => '#f3e7cf', 'gradient' => ['#fdfaf3', '#f6ecd8', '#f3e6ea'], 'emoji' => '💍', 'motif' => 'petals', 'font' => 'klasik'],
+            ],
+            [
+                'design' => 'Sage Rustic',
+                'tagline' => 'Hijau sage bernuansa taman, hangat dan sederhana',
+                'theme' => ['accent' => '#4f6b52', 'soft' => '#e0eadc', 'gradient' => ['#f7f9f4', '#e6eee1', '#f3ece0'], 'emoji' => '🌿', 'motif' => 'petals', 'font' => 'tulisan'],
+                'tags' => ['Pernikahan', 'Rustic'],
+                'sample' => ['components' => ['sampul' => ['title' => 'Raka & Dinda', 'subtitle' => 'Bersama keluarga, kami mengundang Anda merayakan cinta di taman kecil kami']]],
+            ],
+            [
+                'design' => 'Modern Minimalis',
+                'tagline' => 'Bersih, lapang, dan tegas — untuk pasangan modern',
+                'theme' => ['accent' => '#3a3a3a', 'soft' => '#e8e6e3', 'gradient' => ['#ffffff', '#f5f4f2', '#ebe9e6'], 'emoji' => '🤍', 'motif' => 'none', 'font' => 'modern'],
+                'tags' => ['Pernikahan', 'Minimalis'],
+                'sample' => ['components' => ['sampul' => ['title' => 'RAKA & DINDA', 'subtitle' => 'We are getting married', 'photo' => $this->image('kota-malam')]]],
+            ],
+            [
+                'design' => 'Navy Malam',
+                'tagline' => 'Biru tua dan bintang untuk resepsi malam hari',
+                'tier' => TemplateTier::Premium,
+                'price' => 89000,
+                'theme' => ['accent' => '#1e3a8a', 'soft' => '#dbe4fb', 'gradient' => ['#f4f7ff', '#dfe7fb', '#f6e9d8'], 'emoji' => '🌙', 'motif' => 'stars', 'font' => 'klasik'],
+                'tags' => ['Pernikahan', 'Malam'],
+                'sample' => [
+                    'components' => ['sampul' => ['title' => 'Malam Bahagia Raka & Dinda', 'photo' => $this->image('bintang')]],
+                    'invitation' => ['events' => [1 => ['name' => 'Resepsi Malam', 'starts_at' => '+45 days 19:00', 'ends_at' => '+45 days 22:00']]],
+                ],
+            ],
+            [
+                'design' => 'Akad Syahdu',
+                'tagline' => 'Nuansa islami yang teduh untuk akad & walimah',
+                'theme' => ['accent' => '#0f766e', 'soft' => '#d3efe9', 'gradient' => ['#f3fbf9', '#dcf2ec', '#f6f0dc'], 'emoji' => '🕌', 'motif' => 'stars', 'font' => 'klasik'],
+                'tags' => ['Pernikahan', 'Islami'],
+                'sample' => [
+                    'components' => [
+                        'sampul' => ['title' => 'Walimatul ‘Ursy Raka & Dinda', 'subtitle' => 'Bismillahirrahmanirrahim', 'photo' => $this->image('masjid')],
+                        'mempelai' => ['opening' => 'Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami:'],
+                        'ayat' => ['quote' => 'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.', 'caption' => '— QS. Ar-Rum: 21'],
+                    ],
+                    'invitation' => ['events' => [1 => ['name' => 'Walimatul ‘Ursy']]],
+                ],
+            ],
+            [
+                'design' => 'Kapel Putih',
+                'tagline' => 'Lembut dan khidmat untuk pemberkatan & resepsi',
+                'theme' => ['accent' => '#6d4c7d', 'soft' => '#ece2f1', 'gradient' => ['#fbf8fd', '#efe6f4', '#f9eef0'], 'emoji' => '💒', 'motif' => 'hearts', 'font' => 'klasik'],
+                'tags' => ['Pernikahan', 'Pemberkatan'],
+                'sample' => [
+                    'base' => ['occasion' => 'Pemberkatan & Resepsi'],
+                    'components' => [
+                        'mempelai' => ['opening' => 'Dengan penuh syukur kepada Tuhan, kami mengundang Bapak/Ibu/Saudara/i pada pemberkatan pernikahan kami:'],
+                        'ayat' => ['quote' => 'Kasih itu sabar; kasih itu murah hati; ia tidak cemburu. Ia tidak memegahkan diri dan tidak sombong.', 'caption' => '— 1 Korintus 13:4'],
+                    ],
+                    'invitation' => ['events' => [
+                        0 => ['name' => 'Pemberkatan Nikah', 'venue_name' => 'Gereja Santa Maria', 'address' => 'Jl. Kebon Jeruk Raya No. 5, Jakarta Barat'],
+                    ]],
+                ],
+            ],
+            [
+                'design' => 'Terracotta Boho',
+                'tagline' => 'Warna tanah dan bunga kering yang hangat',
+                'theme' => ['accent' => '#a3471f', 'soft' => '#f6dfd2', 'gradient' => ['#fdf7f3', '#f8e6da', '#efe4d0'], 'emoji' => '🌾', 'motif' => 'petals', 'font' => 'tulisan'],
+                'tags' => ['Pernikahan', 'Boho'],
+                'sample' => ['components' => ['sampul' => ['photo' => $this->image('senja')]]],
+            ],
+            [
+                'design' => 'Floral Pastel',
+                'tagline' => 'Taburan bunga pastel yang ringan dan romantis',
+                'theme' => ['accent' => '#b4466b', 'soft' => '#fbe0ea', 'gradient' => ['#fff8fb', '#fde6ef', '#eef3fb'], 'emoji' => '🌸', 'motif' => 'petals', 'font' => 'tulisan'],
+                'tags' => ['Pernikahan', 'Floral'],
+                'sample' => ['components' => ['sampul' => ['subtitle' => 'Bersama bunga-bunga yang mekar, kami memulai hidup baru']]],
+            ],
+            [
+                'design' => 'Vintage Polaroid',
+                'tagline' => 'Nuansa film lama untuk pasangan yang suka kenangan',
+                'theme' => ['accent' => '#6b4f2c', 'soft' => '#efe3cf', 'gradient' => ['#fbf6ec', '#f0e4cf', '#e6e1d8'], 'emoji' => '📷', 'motif' => 'film', 'font' => 'tulisan'],
+                'tags' => ['Pernikahan', 'Vintage'],
+                'sample' => ['components' => ['sampul' => ['title' => 'Raka & Dinda: Babak Baru', 'photo' => $this->image('keluarga-lama')]]],
+            ],
+            [
+                'design' => 'Hitam Putih Elegan',
+                'tagline' => 'Monokrom berkelas untuk resepsi formal',
+                'tier' => TemplateTier::Premium,
+                'price' => 89000,
+                'theme' => ['accent' => '#1f1f1f', 'soft' => '#e6e6e6', 'gradient' => ['#ffffff', '#f2f2f2', '#e4e4e4'], 'emoji' => '🖤', 'motif' => 'stars', 'font' => 'klasik'],
+                'tags' => ['Pernikahan', 'Formal'],
+                'sample' => ['components' => ['sampul' => ['title' => 'The Wedding Celebration', 'subtitle' => 'Raka Aditya & Dinda Ayu', 'photo' => $this->image('kota-malam')]]],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function ikatJanji(): array
+    {
+        $series = [
+            'category' => 'lamaran',
+            'story' => 'Kedua calon mempelai, cerita singkat, detail acara lamaran, konfirmasi kehadiran keluarga, dan ucapan & doa.',
+            'description' => 'Undangan lamaran atau tunangan untuk keluarga dan sahabat terdekat. Setiap tamu mendapat link pribadi; RSVP membantu menyiapkan jumlah kursi dan jamuan.',
+            'tier' => TemplateTier::Interaktif,
+            'price' => 59000,
+            'highlight_icon' => 'diamond',
+            'highlight_label' => 'Lamaran',
+            'tags' => ['Lamaran', 'Keluarga'],
+            'slots' => [
+                ['sampul', 'sampul'], ['mempelai', 'mempelai', true, 'Calon Mempelai'], ['ayat', 'kutipan', false, 'Kutipan'], ['acara', 'acara_undangan', true, 'Detail Acara'],
+                ['galeri', 'galeri_geser', false, 'Galeri'], ['rsvp', 'rsvp', true, 'Konfirmasi Kehadiran'], ['ucapan', 'ucapan_doa', true, 'Ucapan & Doa'],
+                ['musik', 'musik_latar', false], ['penutup', 'penutup'],
+            ],
+            'sample' => [
+                'occasions' => ['Lamaran', 'Tunangan', 'Khitbah', 'Tukar Cincin'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Keluarga Bima & Sekar', 'occasion' => 'Lamaran'],
+                'components' => [
+                    'sampul' => ['title' => 'Lamaran Bima & Sekar', 'subtitle' => 'Satu langkah menuju janji suci', 'photo' => $this->image('buket')],
+                    'mempelai' => [
+                        'opening' => 'Dengan penuh syukur, kami mengundang keluarga dan sahabat untuk menyaksikan acara lamaran:',
+                        'groom_name' => 'Bima Satria',
+                        'groom_parents' => 'Putra Bapak Wahyu & Ibu Ratih',
+                        'bride_name' => 'Sekar Ayuningtyas',
+                        'bride_parents' => 'Putri Bapak Darmawan & Ibu Lestari',
+                    ],
+                    'ayat' => ['quote' => 'Bukan tentang seberapa lama kita mengenal, tetapi seberapa yakin kita untuk melangkah bersama.', 'caption' => '— Bima & Sekar'],
+                    'galeri' => ['photos' => $this->photos([['kafe', 'Kencan pertama'], ['senja', 'Senja kesukaan kami'], ['buket', 'Hari ia berkata ya']])],
+                    'rsvp' => ['note' => 'Acara terbatas untuk keluarga & sahabat dekat. Mohon konfirmasi jumlah yang hadir.'],
+                    'musik' => ['track' => $this->track('kotak_musik')],
+                    'penutup' => ['closing' => 'Doa dan kehadiran Anda sangat berarti bagi kami sekeluarga. Terima kasih.', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Acara Lamaran', '10:00', '13:00']], 'Kediaman Keluarga Darmawan', 'Jl. Kenanga No. 8, Yogyakarta', 30),
+                    'wishes' => [['name' => 'Tante Wulan', 'message' => 'Lancar sampai hari H ya, Sekar & Bima! 💐']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('ikat-janji', $series, [
+            [
+                'design' => 'Blush Pink',
+                'tagline' => 'Merah muda lembut untuk lamaran yang manis',
+                'theme' => ['accent' => '#b03a5b', 'soft' => '#fbdfe7', 'gradient' => ['#fff7f9', '#fde7ee', '#fbeedd'], 'emoji' => '💐', 'motif' => 'hearts', 'font' => 'tulisan'],
+            ],
+            [
+                'design' => 'Champagne',
+                'tagline' => 'Krem dan emas pucat yang anggun',
+                'theme' => ['accent' => '#8c6d3f', 'soft' => '#f1e6d2', 'gradient' => ['#fdfbf7', '#f5ecdc', '#efe7e1'], 'emoji' => '💍', 'motif' => 'petals', 'font' => 'klasik'],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function buahHati(): array
+    {
+        $series = [
+            'category' => 'aqiqah',
+            'story' => 'Perkenalan si kecil, doa untuknya, detail acara aqiqah, konfirmasi kehadiran, kirim hadiah, dan ucapan & doa.',
+            'description' => 'Undangan aqiqah atau tasyakuran kelahiran. Perkenalkan buah hati dengan foto dan namanya, lalu tamu bisa mengonfirmasi kehadiran dan menitipkan doa.',
+            'tier' => TemplateTier::Klasik,
+            'price' => 49000,
+            'highlight_icon' => 'child_care',
+            'highlight_label' => 'Aqiqah',
+            'tags' => ['Aqiqah', 'Kelahiran'],
+            'slots' => $this->celebrationSlots('Buah Hati Kami'),
+            'sample' => [
+                'occasions' => ['Aqiqah', 'Tasyakuran Kelahiran', 'Syukuran Bayi', 'Turun Tanah'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Keluarga Fajar & Nadia', 'occasion' => 'Aqiqah'],
+                'components' => [
+                    'sampul' => ['title' => 'Aqiqah Muhammad Arkana', 'subtitle' => 'Alhamdulillah, telah lahir buah hati kami', 'photo' => $this->image('balon')],
+                    'profil' => ['label' => 'Buah Hati Kami', 'name' => 'Muhammad Arkana Putra', 'description' => 'Putra pertama dari Bapak Fajar & Ibu Nadia, lahir 3 Oktober 2026', 'note' => 'Semoga tumbuh menjadi anak yang sholeh, sehat, dan menjadi penyejuk hati.'],
+                    'doa' => ['quote' => 'Ya Allah, jadikanlah ia anak yang sholeh, berbakti kepada kedua orang tua, dan bermanfaat bagi sesama.', 'caption' => '— Doa kami untukmu, Nak'],
+                    'rsvp' => ['note' => 'Mohon konfirmasi kehadiran agar kami dapat menyiapkan hidangan.'],
+                    'amplop' => ['note' => 'Kehadiran dan doa Anda sudah sangat berarti. Bila ingin mengirim hadiah untuk si kecil:'],
+                    'musik' => ['track' => $this->track('kotak_musik')],
+                    'penutup' => ['closing' => 'Atas kehadiran dan doa restunya, kami ucapkan terima kasih. Jazakumullah khairan.', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Aqiqah & Tasyakuran', '10:00', '13:00']], 'Kediaman Bapak Fajar', 'Perumahan Griya Asri Blok C-12, Bekasi', 21),
+                    'gifts' => [['kind' => 'bank', 'provider' => 'BSI', 'account_number' => '7123456789', 'account_holder' => 'Nadia Rahma']],
+                    'wishes' => [['name' => 'Om Rizal', 'message' => 'Selamat atas kelahiran Arkana! Semoga jadi anak sholeh kebanggaan keluarga.']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('buah-hati', $series, [
+            [
+                'design' => 'Biru Bayi',
+                'tagline' => 'Biru lembut untuk si jagoan kecil',
+                'theme' => ['accent' => '#2563a8', 'soft' => '#dbeafb', 'gradient' => ['#f5f9ff', '#e2eefb', '#fdf3df'], 'emoji' => '👶', 'motif' => 'stars', 'font' => 'modern'],
+            ],
+            [
+                'design' => 'Merah Muda',
+                'tagline' => 'Merah muda manis untuk si putri kecil',
+                'theme' => ['accent' => '#be3a6e', 'soft' => '#fcdfea', 'gradient' => ['#fff6fa', '#fde4ee', '#fef3dc'], 'emoji' => '🎀', 'motif' => 'hearts', 'font' => 'tulisan'],
+                'sample' => [
+                    'base' => ['sender_name' => 'Keluarga Fajar & Nadia'],
+                    'components' => [
+                        'sampul' => ['title' => 'Aqiqah Aisyah Humaira'],
+                        'profil' => ['name' => 'Aisyah Humaira Putri', 'description' => 'Putri pertama dari Bapak Fajar & Ibu Nadia, lahir 3 Oktober 2026', 'note' => 'Semoga tumbuh menjadi anak yang sholehah, cerdas, dan penuh kasih.'],
+                    ],
+                ],
+            ],
+            [
+                'design' => 'Krem Netral',
+                'tagline' => 'Warna netral yang hangat untuk semua',
+                'theme' => ['accent' => '#7a5c3e', 'soft' => '#efe4d6', 'gradient' => ['#fdfaf6', '#f3ebdf', '#e9efe6'], 'emoji' => '🧸', 'motif' => 'none', 'font' => 'klasik'],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function langkahSholeh(): array
+    {
+        $series = [
+            'category' => 'khitanan',
+            'story' => 'Perkenalan anak yang dikhitan, doa keluarga, detail acara, konfirmasi kehadiran, kirim hadiah, dan ucapan & doa.',
+            'description' => 'Undangan khitanan atau sunatan dengan link pribadi untuk setiap tamu, rekap kehadiran, dan buku ucapan digital.',
+            'tier' => TemplateTier::Klasik,
+            'price' => 49000,
+            'highlight_icon' => 'mosque',
+            'highlight_label' => 'Khitanan',
+            'tags' => ['Khitanan', 'Keluarga'],
+            'slots' => $this->celebrationSlots('Yang Dikhitan'),
+            'sample' => [
+                'occasions' => ['Khitanan', 'Tasyakuran Khitan', 'Sunatan'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Keluarga Bapak Hasan', 'occasion' => 'Khitanan'],
+                'components' => [
+                    'sampul' => ['title' => 'Tasyakuran Khitan Ahmad Fadhil', 'subtitle' => 'Langkah pertama menjadi anak sholeh', 'photo' => $this->image('masjid')],
+                    'profil' => ['label' => 'Yang Dikhitan', 'name' => 'Ahmad Fadhil Hasan', 'description' => 'Putra kedua dari Bapak Hasan & Ibu Fitri'],
+                    'doa' => ['quote' => 'Semoga menjadi anak yang sholeh, taat beribadah, dan berbakti kepada orang tua.', 'caption' => '— Keluarga Bapak Hasan'],
+                    'musik' => ['track' => $this->track('teduh')],
+                    'penutup' => ['closing' => 'Merupakan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa. Terima kasih.', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Tasyakuran Khitan', '09:00', '13:00']], 'Kediaman Bapak Hasan', 'Jl. Merpati No. 21, Depok', 30),
+                    'wishes' => [['name' => 'Keluarga Pak RT', 'message' => 'Selamat ya Fadhil, semoga cepat pulih dan jadi anak sholeh!']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('langkah-sholeh', $series, [
+            [
+                'design' => 'Hijau Teduh',
+                'tagline' => 'Hijau teduh bernuansa islami',
+                'theme' => ['accent' => '#166534', 'soft' => '#d9f0df', 'gradient' => ['#f4fbf6', '#dff1e4', '#f6f1dc'], 'emoji' => '🌙', 'motif' => 'stars', 'font' => 'klasik'],
+            ],
+            [
+                'design' => 'Biru Langit',
+                'tagline' => 'Biru cerah yang ceria untuk si jagoan',
+                'theme' => ['accent' => '#1d5fa8', 'soft' => '#dbe9fb', 'gradient' => ['#f4f9ff', '#ddebfb', '#e8f6ef'], 'emoji' => '⭐', 'motif' => 'confetti', 'font' => 'modern'],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function pestaUlangTahun(): array
+    {
+        $series = [
+            'category' => 'ulang-tahun',
+            'story' => 'Yang berulang tahun, detail pesta dengan peta, galeri, konfirmasi kehadiran, kirim kado, dan ucapan untuknya.',
+            'description' => 'Undangan pesta ulang tahun anak, sweet seventeen, atau dewasa. Tamu konfirmasi kehadiran sehingga jumlah kursi, goodie bag, dan makanan pas.',
+            'tier' => TemplateTier::Klasik,
+            'price' => 49000,
+            'highlight_icon' => 'cake',
+            'highlight_label' => 'Pesta Ultah',
+            'tags' => ['Ulang Tahun', 'Pesta'],
+            'slots' => $this->celebrationSlots('Yang Berulang Tahun'),
+            'sample' => [
+                'occasions' => ['Ulang Tahun', 'Pesta Ulang Tahun', 'Sweet Seventeen', 'Ulang Tahun ke-50'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Kirana', 'occasion' => 'Pesta Ulang Tahun'],
+                'components' => [
+                    'sampul' => ['title' => 'Kirana is Turning 7! 🎈', 'subtitle' => 'Ayo datang dan rayakan bersama', 'photo' => $this->image('balon')],
+                    'profil' => ['label' => 'Yang Berulang Tahun', 'name' => 'Kirana Larasati', 'description' => 'Ulang tahun ke-7', 'note' => 'Datang pakai baju warna favoritmu, ya!'],
+                    'galeri' => ['photos' => $this->photos([['kue', 'Kue tahun lalu'], ['balon', 'Pesta balon'], ['keluarga-kini', 'Bersama keluarga']])],
+                    'rsvp' => ['note' => 'Konfirmasi paling lambat 3 hari sebelum acara untuk goodie bag ya!'],
+                    'amplop' => ['title' => 'Kirim Kado', 'note' => 'Kehadiranmu adalah kado terbaik. Bila ingin mengirim kado:'],
+                    'musik' => ['track' => $this->track('akustik')],
+                    'penutup' => ['closing' => 'Sampai jumpa di pesta! Terima kasih sudah membuat hari Kirana makin seru 🎉', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Pesta Ulang Tahun', '15:00', '18:00']], 'Kafe Pelangi Kids', 'Jl. Bunga Raya No. 3, Bandung', 14),
+                    'gifts' => [['kind' => 'alamat', 'account_holder' => 'Kirana (d/a Ibu Maya)', 'address' => 'Jl. Bunga Raya No. 10, Bandung 40123']],
+                    'wishes' => [['name' => 'Tante Dewi', 'message' => 'Selamat ulang tahun Kirana! Tante pasti datang 🥳']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('pesta-ulang-tahun', $series, [
+            [
+                'design' => 'Balon Ceria',
+                'tagline' => 'Warna-warni balon untuk pesta anak',
+                'theme' => ['accent' => '#d9480f', 'soft' => '#ffe3d1', 'gradient' => ['#fff8f1', '#ffe8d6', '#e3f1ff'], 'emoji' => '🎈', 'motif' => 'confetti', 'font' => 'tulisan'],
+            ],
+            [
+                'design' => 'Sweet Seventeen',
+                'tagline' => 'Glam merah muda & ungu untuk usia 17',
+                'price' => 59000,
+                'theme' => ['accent' => '#9d174d', 'soft' => '#fbdbe9', 'gradient' => ['#fff5fa', '#fadcec', '#ede0fb'], 'emoji' => '✨', 'motif' => 'stars', 'font' => 'modern'],
+                'tags' => ['Sweet 17', 'Pesta'],
+                'sample' => [
+                    'base' => ['sender_name' => 'Nayla', 'occasion' => 'Sweet Seventeen'],
+                    'components' => [
+                        'sampul' => ['title' => "Nayla's Sweet Seventeen", 'subtitle' => 'A night to remember', 'photo' => $this->image('kota-malam')],
+                        'profil' => ['name' => 'Nayla Putri', 'description' => 'Sweet Seventeen', 'note' => 'Dress code: pink & silver ✨'],
+                        'penutup' => ['closing' => 'Can’t wait to celebrate with you! 💖'],
+                    ],
+                    'invitation' => ['events' => [0 => ['name' => 'Sweet Seventeen Party', 'starts_at' => '+14 days 19:00', 'ends_at' => '+14 days 22:00', 'venue_name' => 'Ballroom Hotel Mawar']]],
+                ],
+            ],
+            [
+                'design' => 'Dinner Elegan',
+                'tagline' => 'Makan malam hangat untuk ulang tahun dewasa',
+                'theme' => ['accent' => '#7c2d12', 'soft' => '#f6e0d4', 'gradient' => ['#fdf8f4', '#f5e5d9', '#e9e3dc'], 'emoji' => '🥂', 'motif' => 'none', 'font' => 'klasik'],
+                'tags' => ['Ulang Tahun', 'Dewasa'],
+                'sample' => [
+                    'base' => ['sender_name' => 'Keluarga Bapak Yusuf', 'occasion' => 'Ulang Tahun ke-60'],
+                    'components' => [
+                        'sampul' => ['title' => '60 Tahun Bapak Yusuf', 'subtitle' => 'Merayakan perjalanan hidup yang penuh syukur', 'photo' => $this->image('keluarga-lama')],
+                        'profil' => ['name' => 'Bapak Yusuf Hidayat', 'description' => 'Ulang tahun ke-60', 'note' => 'Terima kasih telah menjadi ayah, kakek, dan sahabat terbaik bagi kami.'],
+                    ],
+                    'invitation' => ['events' => [0 => ['name' => 'Makan Malam Syukuran', 'starts_at' => '+14 days 18:30', 'ends_at' => '+14 days 21:00', 'venue_name' => 'Restoran Rumah Kayu']]],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function syukurBersama(): array
+    {
+        $series = [
+            'category' => 'syukuran',
+            'story' => 'Kabar bahagia dari tuan rumah, doa, detail acara, konfirmasi kehadiran, dan ucapan & doa dari tamu.',
+            'description' => 'Undangan syukuran dan hajatan: rumah baru, tasyakuran keluarga, kenaikan jabatan, atau pensiun. Tamu konfirmasi kehadiran agar hidangan cukup.',
+            'tier' => TemplateTier::Klasik,
+            'price' => 49000,
+            'highlight_icon' => 'volunteer_activism',
+            'highlight_label' => 'Syukuran',
+            'tags' => ['Syukuran', 'Hajatan'],
+            'slots' => $this->celebrationSlots('Tuan Rumah'),
+            'sample' => [
+                'occasions' => ['Syukuran', 'Syukuran Rumah Baru', 'Tasyakuran', 'Hajatan', 'Syukuran Pensiun'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Keluarga Bapak Darto', 'occasion' => 'Syukuran Rumah Baru'],
+                'components' => [
+                    'sampul' => ['title' => 'Syukuran Rumah Baru', 'subtitle' => 'Alhamdulillah, rumah kecil kami siap menyambut Anda', 'photo' => $this->image('keluarga-kini')],
+                    'profil' => ['label' => 'Tuan Rumah', 'name' => 'Keluarga Bapak Darto & Ibu Sri', 'description' => 'Bersama putra-putri: Dimas & Laras'],
+                    'doa' => ['quote' => 'Semoga rumah ini menjadi tempat yang penuh berkah, ketenangan, dan kebahagiaan bagi siapa pun yang singgah.', 'caption' => '— Keluarga Bapak Darto'],
+                    'musik' => ['track' => $this->track('teduh')],
+                    'penutup' => ['closing' => 'Kehadiran dan doa Bapak/Ibu/Saudara/i sangat berarti bagi kami. Terima kasih.', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Syukuran & Doa Bersama', '16:00', '19:00']], 'Rumah Baru Keluarga Darto', 'Perumahan Taman Sari Blok F-7, Sidoarjo', 21),
+                    'wishes' => [['name' => 'Tetangga Blok F', 'message' => 'Selamat menempati rumah baru, Pak Darto sekeluarga. Semoga betah dan berkah!']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('syukur-bersama', $series, [
+            [
+                'design' => 'Rumah Baru',
+                'tagline' => 'Hangat untuk syukuran rumah baru',
+                'theme' => ['accent' => '#9a5b13', 'soft' => '#f6e6cc', 'gradient' => ['#fffaf2', '#f8ead4', '#e7f0e4'], 'emoji' => '🏡', 'motif' => 'petals', 'font' => 'modern'],
+            ],
+            [
+                'design' => 'Tumpeng Syukur',
+                'tagline' => 'Nuansa tradisional untuk tasyakuran keluarga',
+                'theme' => ['accent' => '#8a3b12', 'soft' => '#f5dfcf', 'gradient' => ['#fdf6ef', '#f3e1cf', '#f3edd5'], 'emoji' => '🍚', 'motif' => 'none', 'font' => 'klasik'],
+                'sample' => [
+                    'base' => ['occasion' => 'Tasyakuran'],
+                    'components' => [
+                        'sampul' => ['title' => 'Tasyakuran Keluarga Bapak Darto', 'subtitle' => 'Atas nikmat dan rezeki yang telah diberikan'],
+                        'profil' => ['description' => 'Mengundang Bapak/Ibu/Saudara/i untuk doa bersama dan potong tumpeng'],
+                    ],
+                ],
+            ],
+            [
+                'design' => 'Purna Bakti',
+                'tagline' => 'Syukuran pensiun yang penuh terima kasih',
+                'theme' => ['accent' => '#1f4e79', 'soft' => '#dce8f4', 'gradient' => ['#f6f9fc', '#e1ebf5', '#f4eedf'], 'emoji' => '🎖️', 'motif' => 'confetti', 'font' => 'klasik'],
+                'sample' => [
+                    'base' => ['sender_name' => 'Keluarga Ibu Ratna', 'occasion' => 'Syukuran Pensiun'],
+                    'components' => [
+                        'sampul' => ['title' => 'Purna Bakti Ibu Ratna', 'subtitle' => '32 tahun mengabdi, saatnya beristirahat', 'photo' => $this->image('kampus')],
+                        'profil' => ['label' => 'Yang Purna Bakti', 'name' => 'Ibu Ratna Kusumawati, S.Pd.', 'description' => 'Guru SD Negeri 1 Sidoarjo, 1994–2026'],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function malamPesta(): array
+    {
+        $series = [
+            'category' => 'pesta',
+            'story' => 'Ajakan pesta, detail acara & dress code, galeri, konfirmasi kehadiran, dan ucapan dari tamu.',
+            'description' => 'Undangan pesta, gathering, dan reuni. Tamu konfirmasi kehadiran beserta jumlah orang, dan semua info acara ada di satu link.',
+            'tier' => TemplateTier::Interaktif,
+            'price' => 49000,
+            'highlight_icon' => 'nightlife',
+            'highlight_label' => 'Party',
+            'tags' => ['Pesta', 'Gathering'],
+            'slots' => $this->celebrationSlots('Tentang Acara', isHonoreeRequired: false),
+            'sample' => [
+                'occasions' => ['Pesta', 'Reuni', 'Gathering', 'Garden Party', 'Malam Tahun Baru'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Panitia Reuni SMA 3', 'occasion' => 'Reuni'],
+                'components' => [
+                    'sampul' => ['title' => 'Reuni Akbar Angkatan 2016', 'subtitle' => '10 tahun lulus, saatnya kumpul lagi!', 'photo' => $this->image('kampus')],
+                    'profil' => ['label' => 'Tentang Acara', 'name' => 'Satu Dekade Bersama', 'description' => 'Makan malam, foto bersama, dan kejutan untuk wali kelas.', 'note' => 'Dress code: putih abu-abu, tentu saja 😄'],
+                    'galeri' => ['photos' => $this->photos([['kampus', 'Gerbang sekolah'], ['wisuda', 'Hari kelulusan 2016'], ['kafe', 'Nongkrong sepulang sekolah']])],
+                    'rsvp' => ['note' => 'Konfirmasi sebelum H-7 untuk pemesanan tempat & kaos reuni.'],
+                    'musik' => ['track' => $this->track('jazz')],
+                    'penutup' => ['closing' => 'Sampai jumpa! Jangan lupa ajak teman seangkatan lainnya 🙌', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Reuni Akbar', '18:00', '22:00']], 'Aula Hotel Santika', 'Jl. Pemuda No. 118, Semarang', 30),
+                    'wishes' => [['name' => 'Rendi (XII IPS 2)', 'message' => 'Akhirnya! Gue pasti datang, siapin kursi buat geng belakang 😆']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('malam-pesta', $series, [
+            [
+                'design' => 'Reuni Angkatan',
+                'tagline' => 'Ajak teman seangkatan kumpul lagi',
+                'theme' => ['accent' => '#1e40af', 'soft' => '#dde6fb', 'gradient' => ['#f5f8ff', '#e0e8fb', '#fdeedd'], 'emoji' => '🎓', 'motif' => 'confetti', 'font' => 'modern'],
+            ],
+            [
+                'design' => 'Garden Party',
+                'tagline' => 'Pesta santai di taman, segar dan ceria',
+                'theme' => ['accent' => '#3f7d20', 'soft' => '#e1f1d8', 'gradient' => ['#f7fcf3', '#e4f2da', '#fdf3dc'], 'emoji' => '🌼', 'motif' => 'petals', 'font' => 'tulisan'],
+                'sample' => [
+                    'base' => ['sender_name' => 'Alya & Dimas', 'occasion' => 'Garden Party'],
+                    'components' => [
+                        'sampul' => ['title' => 'Garden Party di Rumah Kami', 'subtitle' => 'Sore santai, makanan enak, teman-teman tersayang', 'photo' => $this->image('buket')],
+                        'profil' => ['name' => 'Sore yang Hangat', 'description' => 'BBQ, musik akustik, dan permainan seru.', 'note' => 'Dress code: pastel & nyaman'],
+                    ],
+                ],
+            ],
+            [
+                'design' => 'Gala Malam',
+                'tagline' => 'Hitam-emas untuk pesta malam yang berkelas',
+                'price' => 59000,
+                'theme' => ['accent' => '#8a6a1f', 'soft' => '#efe3c7', 'gradient' => ['#fbf8f0', '#efe5cf', '#e4e0dc'], 'emoji' => '🥂', 'motif' => 'stars', 'font' => 'klasik'],
+                'sample' => [
+                    'base' => ['sender_name' => 'PT Nusantara Jaya', 'occasion' => 'Gala Dinner'],
+                    'components' => [
+                        'sampul' => ['title' => 'Gala Dinner Akhir Tahun', 'subtitle' => 'Merayakan pencapaian kita bersama', 'photo' => $this->image('kota-malam')],
+                        'profil' => ['name' => 'Malam Apresiasi 2026', 'description' => 'Penghargaan karyawan, makan malam, dan live music.', 'note' => 'Dress code: black tie'],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Pernikahan bernuansa adat. Desain dibedakan lewat palet warna, huruf, dan susunan acara khas
+     * daerahnya; ornamen adat asli (gunungan, songket, dsb.) menunggu aset dari desainer.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function pesonaNusantara(): array
+    {
+        $series = array_replace($this->weddingSeries(), [
+            'story' => 'Undangan pernikahan bernuansa adat: mempelai, susunan acara khas daerah, peta, kisah, RSVP, amplop digital, dan ucapan & doa.',
+            'tags' => ['Pernikahan', 'Adat'],
+            'highlight_icon' => 'temple_hindu',
+            'highlight_label' => 'Nuansa Adat',
+        ]);
+
+        return $this->invitationDesigns('pesona-nusantara', $series, [
+            [
+                'design' => 'Jawa Sogan',
+                'tagline' => 'Cokelat sogan dan emas khas batik Jawa',
+                'theme' => ['accent' => '#7a4a1e', 'soft' => '#efdcc4', 'gradient' => ['#fbf5ec', '#f0e0c8', '#e9dcc6'], 'emoji' => '🪷', 'motif' => 'petals', 'font' => 'klasik'],
+                'tags' => ['Pernikahan', 'Adat Jawa'],
+                'sample' => [
+                    'components' => [
+                        'sampul' => ['title' => 'Pahargyan Raka & Dinda', 'subtitle' => 'Nyuwun pangestu, kami mengundang Bapak/Ibu/Saudara/i'],
+                        'ayat' => ['quote' => 'Witing tresna jalaran saka kulina — cinta tumbuh karena terbiasa bersama.', 'caption' => '— Pepatah Jawa'],
+                    ],
+                    'invitation' => ['events' => [1 => ['name' => 'Panggih & Resepsi']]],
+                ],
+            ],
+            [
+                'design' => 'Sunda Pasundan',
+                'tagline' => 'Hijau dan emas yang sejuk khas tanah Pasundan',
+                'theme' => ['accent' => '#356b3a', 'soft' => '#dcebd5', 'gradient' => ['#f6faf2', '#e0eed8', '#f4ead2'], 'emoji' => '🎋', 'motif' => 'petals', 'font' => 'klasik'],
+                'tags' => ['Pernikahan', 'Adat Sunda'],
+                'sample' => [
+                    'components' => ['ayat' => ['quote' => 'Silih asih, silih asah, silih asuh — saling mengasihi, saling mengasah, saling mengasuh.', 'caption' => '— Falsafah Sunda']],
+                    'invitation' => ['events' => [1 => ['name' => 'Resepsi & Sawer']]],
+                ],
+            ],
+            [
+                'design' => 'Minang Songket',
+                'tagline' => 'Merah dan emas yang megah khas Minangkabau',
+                'price' => 89000,
+                'theme' => ['accent' => '#9b1c1c', 'soft' => '#f6d9d0', 'gradient' => ['#fff7f2', '#f8e1d2', '#f6e8c8'], 'emoji' => '🏯', 'motif' => 'stars', 'font' => 'klasik'],
+                'tags' => ['Pernikahan', 'Adat Minang'],
+                'sample' => [
+                    'components' => [
+                        'sampul' => ['title' => 'Baralek Gadang Raka & Dinda'],
+                        'ayat' => ['quote' => 'Adat basandi syarak, syarak basandi Kitabullah.', 'caption' => '— Falsafah Minangkabau'],
+                    ],
+                    'invitation' => ['events' => [1 => ['name' => 'Baralek']]],
+                ],
+            ],
+            [
+                'design' => 'Bali Kamboja',
+                'tagline' => 'Putih kamboja dan hijau toska ala Pulau Dewata',
+                'theme' => ['accent' => '#0f6e6e', 'soft' => '#d4eeec', 'gradient' => ['#f5fbfa', '#dcf0ee', '#fbf3dc'], 'emoji' => '🌺', 'motif' => 'petals', 'font' => 'tulisan'],
+                'tags' => ['Pernikahan', 'Adat Bali'],
+                'sample' => [
+                    'base' => ['occasion' => 'Pawiwahan'],
+                    'components' => [
+                        'sampul' => ['title' => 'Pawiwahan Raka & Dinda', 'subtitle' => 'Om Swastyastu', 'photo' => $this->image('pantai')],
+                        'mempelai' => ['opening' => 'Atas asung kertha wara nugraha Ida Sang Hyang Widhi Wasa, kami bermaksud menyelenggarakan pawiwahan putra-putri kami:'],
+                        'ayat' => ['quote' => 'Semoga kalian selalu bersatu dalam suka dan duka, dikaruniai keturunan yang suputra.', 'caption' => '— Doa Pawiwahan'],
+                        'penutup' => ['closing' => 'Merupakan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu. Om Shanti Shanti Shanti Om.'],
+                    ],
+                    'invitation' => ['events' => [
+                        0 => ['name' => 'Upacara Pawiwahan', 'venue_name' => 'Griya Keluarga Mempelai', 'address' => 'Banjar Kaja, Ubud, Gianyar, Bali', 'timezone' => 'Asia/Makassar'],
+                        1 => ['name' => 'Resepsi', 'venue_name' => 'Wantilan Desa Ubud', 'address' => 'Jl. Raya Ubud, Gianyar, Bali', 'timezone' => 'Asia/Makassar'],
+                    ]],
+                ],
+            ],
+            [
+                'design' => 'Batak Ulos',
+                'tagline' => 'Merah, hitam, dan putih khas kain ulos',
+                'theme' => ['accent' => '#8f1d1d', 'soft' => '#f2d8d2', 'gradient' => ['#fdf6f4', '#f3dfd9', '#e8e2e0'], 'emoji' => '🧣', 'motif' => 'none', 'font' => 'klasik'],
+                'tags' => ['Pernikahan', 'Adat Batak'],
+                'sample' => [
+                    'base' => ['occasion' => 'Pemberkatan & Ulaon Unjuk'],
+                    'components' => [
+                        'sampul' => ['title' => 'Pesta Unjuk Raka & Dinda', 'subtitle' => 'Horas! Dengan sukacita kami mengundang Anda'],
+                        'mempelai' => ['opening' => 'Dengan penuh syukur kepada Tuhan Yang Maha Kasih, kami mengundang Bapak/Ibu/Saudara/i pada pernikahan putra-putri kami:'],
+                        'ayat' => ['quote' => 'Demikianlah mereka bukan lagi dua, melainkan satu. Karena itu, apa yang telah dipersatukan Allah, tidak boleh diceraikan manusia.', 'caption' => '— Matius 19:6'],
+                    ],
+                    'invitation' => ['events' => [
+                        0 => ['name' => 'Pemberkatan Nikah', 'venue_name' => 'HKBP Medan Kota', 'address' => 'Jl. Sudirman No. 15, Medan', 'timezone' => 'Asia/Jakarta'],
+                        1 => ['name' => 'Ulaon Unjuk (Pesta Adat)', 'venue_name' => 'Gedung Serbaguna Pardede', 'address' => 'Jl. Juanda No. 22, Medan'],
+                    ]],
+                ],
+            ],
+            [
+                'design' => 'Betawi Ondel',
+                'tagline' => 'Oranye dan merah ceria khas Betawi',
+                'theme' => ['accent' => '#b4410f', 'soft' => '#fbe0cc', 'gradient' => ['#fff8f2', '#fde5d2', '#f3f0d2'], 'emoji' => '🎭', 'motif' => 'confetti', 'font' => 'modern'],
+                'tags' => ['Pernikahan', 'Adat Betawi'],
+                'sample' => [
+                    'components' => ['sampul' => ['title' => 'Kawinan Raka & Dinda', 'subtitle' => 'Mampir yuk, kite rayain bareng-bareng!']],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function ngunduhMantu(): array
+    {
+        $series = array_replace_recursive($this->weddingSeries(), [
+            'story' => 'Acara ngunduh mantu di keluarga mempelai pria: mempelai, detail acara, galeri, RSVP, dan ucapan & doa.',
+            'tags' => ['Ngunduh Mantu', 'Pernikahan'],
+            'highlight_icon' => 'home_work',
+            'highlight_label' => 'Ngunduh Mantu',
+            'price' => 59000,
+            'tier' => TemplateTier::Interaktif,
+            'sample' => [
+                'base' => ['sender_name' => 'Keluarga Bapak Hendra Pratama', 'occasion' => 'Ngunduh Mantu'],
+                'components' => [
+                    'sampul' => ['title' => 'Ngunduh Mantu Raka & Dinda', 'subtitle' => 'Menyambut menantu tercinta di keluarga kami'],
+                    'mempelai' => ['opening' => 'Dengan penuh syukur, kami keluarga mempelai pria mengundang Bapak/Ibu/Saudara/i dalam acara ngunduh mantu putra kami:'],
+                ],
+                'invitation' => ['events' => [
+                    0 => ['name' => 'Kirab & Penyambutan', 'venue_name' => 'Kediaman Bapak Hendra Pratama', 'address' => 'Jl. Anggrek No. 4, Solo', 'latitude' => null, 'longitude' => null],
+                    1 => ['name' => 'Resepsi Ngunduh Mantu', 'venue_name' => 'Pendapa Ndalem Pratama', 'address' => 'Jl. Anggrek No. 6, Solo', 'latitude' => null, 'longitude' => null],
+                ]],
+            ],
+        ]);
+
+        return $this->invitationDesigns('ngunduh-mantu', $series, [
+            [
+                'design' => 'Pendapa Klasik',
+                'tagline' => 'Hangat dan sederhana untuk sambutan keluarga',
+                'theme' => ['accent' => '#7c4a1d', 'soft' => '#f1dfc8', 'gradient' => ['#fcf6ee', '#f2e3cd', '#ebe4d6'], 'emoji' => '🏠', 'motif' => 'petals', 'font' => 'klasik'],
+            ],
+            [
+                'design' => 'Hijau Daun',
+                'tagline' => 'Segar dan teduh seperti halaman rumah',
+                'theme' => ['accent' => '#3d6b2e', 'soft' => '#dfecd6', 'gradient' => ['#f6faf2', '#e2efd9', '#f6f0dc'], 'emoji' => '🍃', 'motif' => 'petals', 'font' => 'modern'],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function menantiBuahHati(): array
+    {
+        $series = [
+            'category' => 'kehamilan',
+            'story' => 'Kabar bahagia calon orang tua, doa, detail acara, konfirmasi kehadiran, kirim hadiah, dan ucapan & doa.',
+            'description' => 'Undangan baby shower, gender reveal, atau tujuh bulanan (tingkeban/mitoni). Tamu konfirmasi kehadiran dan menitipkan doa untuk calon buah hati.',
+            'tier' => TemplateTier::Klasik,
+            'price' => 49000,
+            'highlight_icon' => 'pregnant_woman',
+            'highlight_label' => 'Calon Buah Hati',
+            'tags' => ['Kehamilan', 'Keluarga'],
+            'slots' => $this->celebrationSlots('Calon Orang Tua'),
+            'sample' => [
+                'occasions' => ['Baby Shower', 'Gender Reveal', 'Tujuh Bulanan', 'Tingkeban', 'Mitoni'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Fajar & Nadia', 'occasion' => 'Baby Shower'],
+                'components' => [
+                    'sampul' => ['title' => 'Baby Shower Nadia', 'subtitle' => 'Sebentar lagi keluarga kecil kami bertambah 🤍', 'photo' => $this->image('balon')],
+                    'profil' => ['label' => 'Calon Orang Tua', 'name' => 'Fajar & Nadia', 'description' => 'Menanti kelahiran anak pertama, insyaAllah Desember 2026', 'note' => 'Datang dan bawa doa terbaikmu untuk si kecil!'],
+                    'doa' => ['quote' => 'Semoga ibu dan bayi selalu sehat, persalinan lancar, dan si kecil lahir membawa kebahagiaan.', 'caption' => '— Fajar & Nadia'],
+                    'amplop' => ['title' => 'Kado untuk Si Kecil', 'note' => 'Bila ingin mengirim kado untuk calon bayi:'],
+                    'musik' => ['track' => $this->track('kotak_musik')],
+                    'penutup' => ['closing' => 'Terima kasih sudah ikut berbahagia bersama kami. Sampai jumpa!', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Baby Shower', '15:00', '18:00']], 'Kafe Taman Bunga', 'Jl. Dago No. 88, Bandung', 21),
+                    'gifts' => [['kind' => 'alamat', 'account_holder' => 'Nadia Rahma', 'address' => 'Jl. Dago Pojok No. 12, Bandung 40135']],
+                    'wishes' => [['name' => 'Sahabat Kuliah', 'message' => 'Sehat-sehat terus Nadia & dedek bayi! Nggak sabar ketemu 🥰']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('menanti-buah-hati', $series, [
+            [
+                'design' => 'Baby Shower Pastel',
+                'tagline' => 'Pastel lembut untuk pesta menyambut bayi',
+                'theme' => ['accent' => '#9a4a7d', 'soft' => '#f6dfee', 'gradient' => ['#fdf7fb', '#f5e3ef', '#e2eefb'], 'emoji' => '🍼', 'motif' => 'hearts', 'font' => 'tulisan'],
+            ],
+            [
+                'design' => 'Gender Reveal',
+                'tagline' => 'Pink atau biru? Rayakan kejutannya bersama',
+                'theme' => ['accent' => '#5b4bb5', 'soft' => '#e3defa', 'gradient' => ['#fdf2f8', '#ece6fb', '#e0eefc'], 'emoji' => '🎈', 'motif' => 'confetti', 'font' => 'modern'],
+                'tags' => ['Gender Reveal', 'Pesta'],
+                'sample' => [
+                    'base' => ['occasion' => 'Gender Reveal'],
+                    'components' => [
+                        'sampul' => ['title' => 'He or She? 💗💙', 'subtitle' => 'Ikut tebak dan rayakan bersama kami'],
+                        'profil' => ['note' => 'Dress code: pink kalau tim cewek, biru kalau tim cowok!'],
+                    ],
+                    'invitation' => ['events' => [0 => ['name' => 'Gender Reveal Party']]],
+                ],
+            ],
+            [
+                'design' => 'Tujuh Bulanan',
+                'tagline' => 'Tingkeban / mitoni dengan doa untuk ibu dan bayi',
+                'theme' => ['accent' => '#7a5426', 'soft' => '#f1e2cb', 'gradient' => ['#fcf7ef', '#f2e5d0', '#e7efe2'], 'emoji' => '🌼', 'motif' => 'petals', 'font' => 'klasik'],
+                'tags' => ['Tujuh Bulanan', 'Adat'],
+                'sample' => [
+                    'base' => ['sender_name' => 'Keluarga Fajar & Nadia', 'occasion' => 'Tujuh Bulanan'],
+                    'components' => [
+                        'sampul' => ['title' => 'Syukuran Tujuh Bulanan', 'subtitle' => 'Memohon doa untuk keselamatan ibu dan calon buah hati', 'photo' => $this->image('masjid')],
+                        'profil' => ['description' => 'Usia kandungan tujuh bulan'],
+                    ],
+                    'invitation' => ['events' => [0 => ['name' => 'Pengajian & Siraman Tujuh Bulanan', 'venue_name' => 'Kediaman Bapak Fajar', 'starts_at' => '+21 days 09:00', 'ends_at' => '+21 days 12:00']]],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function syukuranWisuda(): array
+    {
+        $series = [
+            'category' => 'wisuda',
+            'story' => 'Sang wisudawan, perjalanan studinya, detail acara syukuran, konfirmasi kehadiran, dan ucapan selamat.',
+            'description' => 'Undangan syukuran wisuda atau kelulusan untuk keluarga dan teman. Rekap tamu otomatis dan buku ucapan selamat digital.',
+            'tier' => TemplateTier::Klasik,
+            'price' => 49000,
+            'highlight_icon' => 'school',
+            'highlight_label' => 'Syukuran Wisuda',
+            'tags' => ['Wisuda', 'Syukuran'],
+            'slots' => $this->celebrationSlots('Sang Wisudawan'),
+            'sample' => [
+                'occasions' => ['Syukuran Wisuda', 'Syukuran Kelulusan', 'Pesta Kelulusan'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Keluarga Bapak Rahmat', 'occasion' => 'Syukuran Wisuda'],
+                'components' => [
+                    'sampul' => ['title' => 'Syukuran Wisuda Alya', 'subtitle' => 'Alhamdulillah, perjuangan empat tahun terbayar', 'photo' => $this->image('wisuda')],
+                    'profil' => ['label' => 'Sang Wisudawan', 'name' => 'Alya Rahmawati, S.Kom.', 'description' => 'Lulusan Teknik Informatika, Universitas Gadjah Mada', 'note' => 'Terima kasih untuk semua doa dan dukungan selama ini.'],
+                    'doa' => ['quote' => 'Semoga ilmunya bermanfaat, langkahnya dimudahkan, dan cita-citanya tercapai.', 'caption' => '— Keluarga Bapak Rahmat'],
+                    'galeri' => ['photos' => $this->photos([['kampus', 'Kampus tercinta'], ['wisuda', 'Hari wisuda'], ['keluarga-kini', 'Bersama keluarga']])],
+                    'musik' => ['track' => $this->track('langkah_baru')],
+                    'penutup' => ['closing' => 'Kehadiran Bapak/Ibu/Saudara/i melengkapi kebahagiaan kami. Terima kasih.', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Syukuran Wisuda', '12:00', '15:00']], 'Kediaman Bapak Rahmat', 'Jl. Kaliurang Km 5, Sleman, Yogyakarta', 14),
+                    'wishes' => [['name' => 'Om Bayu', 'message' => 'Selamat Alya! Bangga sekali, sukses untuk langkah berikutnya 🎓']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('syukuran-wisuda', $series, [
+            [
+                'design' => 'Toga Biru',
+                'tagline' => 'Biru akademik yang rapi dan bangga',
+                'theme' => ['accent' => '#1e3a8a', 'soft' => '#dce5fa', 'gradient' => ['#f5f8ff', '#e0e8fa', '#fbf1d8'], 'emoji' => '🎓', 'motif' => 'confetti', 'font' => 'modern'],
+            ],
+            [
+                'design' => 'Emas Prestasi',
+                'tagline' => 'Sentuhan emas untuk merayakan pencapaian',
+                'theme' => ['accent' => '#8a6516', 'soft' => '#f3e5c3', 'gradient' => ['#fdf9ef', '#f5eacd', '#ece6dc'], 'emoji' => '🏅', 'motif' => 'stars', 'font' => 'klasik'],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function ulangTahunPernikahan(): array
+    {
+        $series = [
+            'category' => 'pasangan',
+            'story' => 'Pasangan yang berbahagia, perjalanan tahun-tahun bersama, detail acara, konfirmasi kehadiran, dan ucapan.',
+            'description' => 'Undangan perayaan ulang tahun pernikahan (anniversary): 10, 25, sampai 50 tahun. Kisah perjalanan pasangan, rekap tamu, dan buku ucapan.',
+            'tier' => TemplateTier::Interaktif,
+            'price' => 59000,
+            'highlight_icon' => 'favorite',
+            'highlight_label' => 'Anniversary',
+            'tags' => ['Anniversary', 'Pasangan'],
+            'slots' => [
+                ['sampul', 'sampul'], ['mempelai', 'mempelai', true, 'Pasangan Kami'], ['kisah', 'linimasa', false, 'Perjalanan Kami'], ['acara', 'acara_undangan', true, 'Detail Acara'],
+                ['rsvp', 'rsvp', true, 'Konfirmasi Kehadiran'], ['ucapan', 'ucapan_doa', true, 'Ucapan & Doa'], ['musik', 'musik_latar', false], ['penutup', 'penutup'],
+            ],
+            'sample' => [
+                'occasions' => ['Ulang Tahun Pernikahan', 'Anniversary ke-25', 'Anniversary ke-50'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Anak & Cucu', 'occasion' => 'Ulang Tahun Pernikahan ke-25'],
+                'components' => [
+                    'sampul' => ['title' => '25 Tahun Bapak & Ibu', 'subtitle' => 'Perayaan pernikahan perak', 'photo' => $this->image('keluarga-lama')],
+                    'mempelai' => [
+                        'opening' => 'Dengan penuh syukur, kami anak dan cucu mengundang Anda merayakan 25 tahun pernikahan:',
+                        'groom_name' => 'Bapak Suryo Atmojo',
+                        'bride_name' => 'Ibu Endang Lestari',
+                    ],
+                    'kisah' => ['moments' => $this->photos([
+                        ['keluarga-lama', '2001 — Hari pernikahan'],
+                        ['kampus', '2010 — Anak pertama masuk sekolah'],
+                        ['keluarga-kini', '2026 — Keluarga besar kami'],
+                    ])],
+                    'musik' => ['track' => $this->track('akustik')],
+                    'penutup' => ['closing' => 'Terima kasih telah menjadi bagian dari perjalanan keluarga kami.', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Makan Malam Perayaan', '18:30', '21:00']], 'Restoran Taman Sari', 'Jl. Diponegoro No. 30, Surabaya', 21),
+                    'wishes' => [['name' => 'Keluarga Besar Atmojo', 'message' => 'Selamat 25 tahun! Semoga langgeng sampai kakek-nenek buyut 💛']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('ulang-tahun-pernikahan', $series, [
+            [
+                'design' => 'Perak 25',
+                'tagline' => 'Perak yang anggun untuk 25 tahun bersama',
+                'theme' => ['accent' => '#4b5563', 'soft' => '#e5e7eb', 'gradient' => ['#fafafa', '#eceef1', '#f4efe8'], 'emoji' => '🥈', 'motif' => 'stars', 'font' => 'klasik'],
+            ],
+            [
+                'design' => 'Emas 50',
+                'tagline' => 'Emas hangat untuk setengah abad cinta',
+                'theme' => ['accent' => '#8a6516', 'soft' => '#f3e5c3', 'gradient' => ['#fdf9ef', '#f5eacd', '#f3e6e0'], 'emoji' => '🥇', 'motif' => 'petals', 'font' => 'klasik'],
+                'sample' => [
+                    'base' => ['occasion' => 'Ulang Tahun Pernikahan ke-50'],
+                    'components' => [
+                        'sampul' => ['title' => '50 Tahun Eyang Kakung & Eyang Putri', 'subtitle' => 'Perayaan pernikahan emas'],
+                        'mempelai' => ['opening' => 'Dengan penuh syukur, kami anak, cucu, dan cicit mengundang Anda merayakan 50 tahun pernikahan:'],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function halalBihalal(): array
+    {
+        $series = [
+            'category' => 'hari-raya',
+            'story' => 'Salam Idulfitri dari tuan rumah, detail acara, konfirmasi kehadiran, dan ucapan maaf lahir batin dari tamu.',
+            'description' => 'Undangan halal bihalal keluarga besar, kantor, atau komunitas. Rekap jumlah yang hadir untuk hidangan, dan buku ucapan maaf lahir batin.',
+            'tier' => TemplateTier::Klasik,
+            'price' => 49000,
+            'highlight_icon' => 'diversity_3',
+            'highlight_label' => 'Halal Bihalal',
+            'tags' => ['Halal Bihalal', 'Hari Raya'],
+            'slots' => $this->celebrationSlots('Tuan Rumah', isHonoreeRequired: false),
+            'sample' => [
+                'occasions' => ['Halal Bihalal', 'Open House Lebaran', 'Silaturahmi Idulfitri'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Keluarga Besar Bani Salim', 'occasion' => 'Halal Bihalal'],
+                'components' => [
+                    'sampul' => ['title' => 'Halal Bihalal Keluarga Besar', 'subtitle' => 'Taqabbalallahu minna wa minkum. Mohon maaf lahir dan batin.', 'photo' => $this->image('masjid')],
+                    'profil' => ['label' => 'Tuan Rumah', 'name' => 'Keluarga Besar Bani Salim', 'description' => 'Mempererat silaturahmi setelah Ramadan'],
+                    'doa' => ['quote' => 'Semoga Allah menerima amal ibadah kita dan mempertemukan kita kembali dengan Ramadan berikutnya.', 'caption' => '— Keluarga Besar Bani Salim'],
+                    'musik' => ['track' => $this->track('takbir')],
+                    'penutup' => ['closing' => 'Sampai jumpa di acara halal bihalal. Mohon maaf lahir dan batin.', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Halal Bihalal & Makan Bersama', '10:00', '14:00']], 'Rumah Eyang Salim', 'Jl. Pahlawan No. 17, Malang', 30),
+                    'wishes' => [['name' => 'Keluarga Om Hadi', 'message' => 'Mohon maaf lahir batin semuanya, sampai ketemu di rumah Eyang!']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('halal-bihalal', $series, [
+            [
+                'design' => 'Ketupat Hijau',
+                'tagline' => 'Hijau ketupat dan emas yang meriah',
+                'theme' => ['accent' => '#166534', 'soft' => '#d9f0df', 'gradient' => ['#f4fbf6', '#dff1e4', '#f8f0d4'], 'emoji' => '🌙', 'motif' => 'stars', 'font' => 'klasik'],
+            ],
+            [
+                'design' => 'Silaturahmi Kantor',
+                'tagline' => 'Rapi dan hangat untuk halal bihalal kantor',
+                'theme' => ['accent' => '#0f5f73', 'soft' => '#d5ebf1', 'gradient' => ['#f4fafc', '#dcedf3', '#f6efdb'], 'emoji' => '🤝', 'motif' => 'none', 'font' => 'modern'],
+                'sample' => [
+                    'base' => ['sender_name' => 'PT Nusantara Jaya'],
+                    'components' => [
+                        'sampul' => ['title' => 'Halal Bihalal Keluarga Besar PT Nusantara Jaya', 'photo' => $this->image('kota-malam')],
+                        'profil' => ['name' => 'Seluruh Karyawan & Keluarga', 'description' => 'Bersama manajemen PT Nusantara Jaya'],
+                    ],
+                    'invitation' => ['events' => [0 => ['venue_name' => 'Aula Kantor Pusat', 'address' => 'Jl. Gatot Subroto Kav. 21, Jakarta Selatan']]],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function grandOpening(): array
+    {
+        $series = [
+            'category' => 'peresmian',
+            'story' => 'Tentang usaha baru, detail acara peresmian dengan peta, galeri, konfirmasi kehadiran, dan ucapan selamat.',
+            'description' => 'Undangan grand opening toko, kafe, kantor, atau peresmian gedung. Tamu konfirmasi kehadiran dan langsung dapat petunjuk arah ke lokasi.',
+            'tier' => TemplateTier::Interaktif,
+            'price' => 59000,
+            'highlight_icon' => 'storefront',
+            'highlight_label' => 'Grand Opening',
+            'tags' => ['Grand Opening', 'Usaha'],
+            'slots' => $this->celebrationSlots('Tentang Kami', isHonoreeRequired: false),
+            'sample' => [
+                'occasions' => ['Grand Opening', 'Peresmian', 'Soft Opening', 'Syukuran Usaha'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Kopi Senja', 'occasion' => 'Grand Opening'],
+                'components' => [
+                    'sampul' => ['title' => 'Grand Opening Kopi Senja', 'subtitle' => 'Ngopi gratis untuk 100 tamu pertama ☕', 'photo' => $this->image('kafe')],
+                    'profil' => ['label' => 'Tentang Kami', 'name' => 'Kopi Senja', 'description' => 'Kedai kopi lokal dengan biji pilihan dari petani Nusantara', 'note' => 'Ada live music akustik dan diskon 50% sepanjang hari!'],
+                    'galeri' => ['photos' => $this->photos([['kafe', 'Sudut favorit'], ['senja', 'Rooftop saat senja'], ['kota-malam', 'Suasana malam']])],
+                    'musik' => ['track' => $this->track('jazz')],
+                    'penutup' => ['closing' => 'Terima kasih atas dukungannya. Sampai jumpa di Kopi Senja!', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Grand Opening', '10:00', '21:00']], 'Kopi Senja', 'Jl. Braga No. 45, Bandung', 14),
+                    'wishes' => [['name' => 'Komunitas Kopi Bandung', 'message' => 'Selamat buka! Semoga laris manis dan jadi tempat nongkrong favorit 🙌']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('grand-opening', $series, [
+            [
+                'design' => 'Kedai Hangat',
+                'tagline' => 'Cokelat kopi dan krem untuk kafe atau toko',
+                'theme' => ['accent' => '#6f3d1f', 'soft' => '#efdccb', 'gradient' => ['#fcf6f0', '#f1e1d1', '#e8e4dc'], 'emoji' => '☕', 'motif' => 'confetti', 'font' => 'modern'],
+            ],
+            [
+                'design' => 'Peresmian Resmi',
+                'tagline' => 'Biru tegas untuk kantor atau gedung baru',
+                'theme' => ['accent' => '#1e3a5f', 'soft' => '#dbe4ef', 'gradient' => ['#f6f8fb', '#e0e7f0', '#f3eedf'], 'emoji' => '🏢', 'motif' => 'none', 'font' => 'klasik'],
+                'sample' => [
+                    'base' => ['sender_name' => 'PT Nusantara Jaya', 'occasion' => 'Peresmian'],
+                    'components' => [
+                        'sampul' => ['title' => 'Peresmian Kantor Cabang Surabaya', 'subtitle' => 'Bersama membuka babak baru pelayanan kami', 'photo' => $this->image('kota-malam')],
+                        'profil' => ['name' => 'PT Nusantara Jaya', 'description' => 'Kantor cabang ke-12 di Indonesia', 'note' => 'Acara dibuka dengan pemotongan pita oleh Direktur Utama.'],
+                    ],
+                    'invitation' => ['events' => [0 => ['name' => 'Peresmian & Ramah Tamah', 'starts_at' => '+14 days 09:00', 'ends_at' => '+14 days 12:00', 'venue_name' => 'Kantor Cabang Surabaya', 'address' => 'Jl. Basuki Rahmat No. 88, Surabaya']]],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function doaBersama(): array
+    {
+        $series = [
+            'category' => 'pengajian',
+            'story' => 'Tuan rumah, niat acara, doa, detail waktu & tempat, konfirmasi kehadiran, dan titipan doa dari tamu.',
+            'description' => 'Undangan pengajian, doa bersama, atau tahlilan dan haul. Tamu konfirmasi kehadiran agar konsumsi cukup, serta bisa menitipkan doa.',
+            'tier' => TemplateTier::Klasik,
+            'price' => 39000,
+            'highlight_icon' => 'menu_book',
+            'highlight_label' => 'Doa Bersama',
+            'tags' => ['Pengajian', 'Doa Bersama'],
+            'slots' => $this->celebrationSlots('Tuan Rumah', isHonoreeRequired: false),
+            'sample' => [
+                'occasions' => ['Pengajian', 'Doa Bersama', 'Tahlilan', 'Haul', 'Khataman Al-Qur’an'],
+                'base' => ['recipient_name' => 'Tamu Undangan', 'sender_name' => 'Keluarga Bapak Anwar', 'occasion' => 'Pengajian'],
+                'components' => [
+                    'sampul' => ['title' => 'Pengajian & Doa Bersama', 'subtitle' => 'Mengharap ridho dan keberkahan dari Allah SWT', 'photo' => $this->image('masjid')],
+                    'profil' => ['label' => 'Tuan Rumah', 'name' => 'Keluarga Bapak Anwar', 'description' => 'Bersama Ustadz Ahmad Fauzi'],
+                    'doa' => ['quote' => 'Semoga majelis ini menjadi jalan keberkahan, ampunan, dan ketenangan bagi kita semua.', 'caption' => '— Keluarga Bapak Anwar'],
+                    'musik' => ['track' => $this->track('teduh')],
+                    'penutup' => ['closing' => 'Atas kehadiran Bapak/Ibu/Saudara/i, kami ucapkan jazakumullah khairan katsiran.', 'allow_reply' => false],
+                ],
+                'invitation' => [
+                    'events' => $this->sampleEvents([['Pengajian', '19:30', '21:30']], 'Kediaman Bapak Anwar', 'Jl. Mawar No. 5, Tangerang Selatan', 10),
+                    'wishes' => [['name' => 'Jamaah Masjid Al-Ikhlas', 'message' => 'InsyaAllah hadir. Semoga acaranya lancar dan penuh berkah.']],
+                ],
+            ],
+        ];
+
+        return $this->invitationDesigns('doa-bersama', $series, [
+            [
+                'design' => 'Majelis Teduh',
+                'tagline' => 'Hijau tua yang tenang untuk pengajian',
+                'theme' => ['accent' => '#14532d', 'soft' => '#d8ebdd', 'gradient' => ['#f5faf6', '#e0eee4', '#f3eedb'], 'emoji' => '📿', 'motif' => 'stars', 'font' => 'klasik'],
+            ],
+            [
+                'design' => 'Haul & Tahlil',
+                'tagline' => 'Sederhana dan khidmat untuk mengenang orang tercinta',
+                'theme' => ['accent' => '#374151', 'soft' => '#e3e5e8', 'gradient' => ['#f8f9fa', '#eaecef', '#efede6'], 'emoji' => '🤲', 'motif' => 'none', 'font' => 'klasik'],
+                'sample' => [
+                    'base' => ['occasion' => 'Haul'],
+                    'components' => [
+                        'sampul' => ['title' => 'Haul ke-1 Almarhum Bapak Anwar', 'subtitle' => 'Mengenang dan mendoakan orang yang kami cintai'],
+                        'profil' => ['name' => 'Keluarga Almarhum Bapak Anwar', 'description' => 'Bersama Ustadz Ahmad Fauzi'],
+                        'doa' => ['quote' => 'Allahummaghfirlahu warhamhu wa ‘afihi wa’fu ‘anhu — Ya Allah, ampunilah ia, rahmatilah ia, maafkanlah ia.', 'caption' => '— Doa untuk almarhum'],
+                    ],
+                    'invitation' => ['events' => [0 => ['name' => 'Tahlil & Doa Bersama']]],
+                ],
+            ],
+        ]);
     }
 }

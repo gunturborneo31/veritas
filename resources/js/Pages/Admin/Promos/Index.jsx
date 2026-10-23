@@ -77,7 +77,33 @@ export default function Index({ promos, referralStats }) {
                     </button>
                 </form>
 
-                <div className="overflow-x-auto rounded-2xl bg-white shadow-card">
+                <div className="space-y-2 sm:hidden">
+                    {promos.length === 0 && <p className="rounded-2xl bg-white px-4 py-8 text-center text-body-sm text-on-surface-variant shadow-card">Belum ada kode promo.</p>}
+                    {promos.map((promo) => (
+                        <div key={promo.id} className="space-y-1 rounded-2xl bg-white p-4 shadow-card">
+                            <div className="flex items-center justify-between gap-2">
+                                <p className="truncate text-label-lg tracking-wider text-on-surface">{promo.code}</p>
+                                <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-label-sm ${promo.is_active ? 'bg-primary-fixed text-primary' : 'bg-surface-container text-on-surface-variant'}`}>
+                                    {promo.is_active ? 'Aktif' : 'Nonaktif'}
+                                </span>
+                            </div>
+                            {promo.label && <p className="text-label-sm text-on-surface-variant">{promo.label}</p>}
+                            <p className="text-body-sm text-on-surface">
+                                Potongan {promo.discount_type === 'percent' ? `${promo.discount_value}%` : `Rp${Number(promo.discount_value).toLocaleString('id-ID')}`}
+                                {promo.first_order_only && ' (pesanan pertama)'} • dipakai {promo.uses_count}
+                                {promo.max_uses ? ` / ${promo.max_uses}` : ''}
+                            </p>
+                            <p className="text-label-sm text-on-surface-variant">
+                                {promo.starts_at ? dateTime(promo.starts_at) : 'Sekarang'} – {promo.ends_at ? dateTime(promo.ends_at) : 'Tanpa batas'}
+                            </p>
+                            <button type="button" onClick={() => toggleActive(promo)} className="pt-1 text-label-md text-primary underline">
+                                {promo.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="hidden overflow-x-auto rounded-2xl bg-white shadow-card sm:block">
                     <table className="min-w-full text-left text-body-sm">
                         <thead className="bg-surface-container-low text-label-md text-on-surface-variant">
                             <tr>

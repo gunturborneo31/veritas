@@ -15,10 +15,11 @@ class StoreGreetingMedia
 {
     /**
      * Simpan file mentah secara privat lalu antrekan kompresi.
+     * Undangan dalam masa revisi boleh menambah foto (media lama tetap dipakai snapshot sebelumnya).
      */
     public function handle(Greeting $greeting, UploadedFile $file, MediaKind $kind): Media
     {
-        if (! $greeting->isEditable()) {
+        if (! $greeting->isEditable() && ! $greeting->isRevisable()) {
             throw GreetingLockedException::forGreeting($greeting);
         }
 

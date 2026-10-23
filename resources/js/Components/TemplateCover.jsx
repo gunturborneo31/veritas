@@ -1,4 +1,4 @@
-import Icon from '@/Components/Icon';
+import Illustration from '@/Components/Illustration';
 
 const FALLBACK_THEME = { accent: '#a83223', soft: '#ffdad4', gradient: ['#fff7f9', '#ffeff8', '#ffdff7'], emoji: '💌', motif: 'hearts' };
 
@@ -107,7 +107,7 @@ export function Motif({ motif, accent, opacity = 1 }) {
 }
 
 /**
- * Sampul template: gambar jika ada, selain itu ilustrasi bertema (gradien, motif, emoji, ikon interaksi).
+ * Sampul template: gambar jika ada, selain itu ilustrasi vektor bertema di atas gradien dan motif.
  */
 export default function TemplateCover({ template, size = 'md', className = '' }) {
     const theme = { ...FALLBACK_THEME, ...(template.theme ?? {}) };
@@ -116,25 +116,19 @@ export default function TemplateCover({ template, size = 'md', className = '' })
         return <img src={template.cover_url} alt={template.name} className={`h-full w-full object-cover ${className}`} />;
     }
 
-    const emojiSize = { sm: 'text-3xl', md: 'text-6xl', lg: 'text-8xl' }[size];
+    const illustrationSize = { sm: 'w-[88%]', md: 'w-[78%]', lg: 'w-[70%]' }[size];
 
     return (
         <div
             className={`relative flex h-full w-full items-center justify-center overflow-hidden ${className}`}
             style={{ background: `linear-gradient(160deg, ${theme.gradient.join(', ')})` }}
         >
-            <Motif motif={theme.motif} accent={theme.accent} />
-            <div className="absolute -bottom-10 left-1/2 h-2/3 w-2/3 -translate-x-1/2 rounded-full blur-2xl" style={{ backgroundColor: theme.accent, opacity: 0.18 }} />
-            <div className="relative flex flex-col items-center gap-2">
-                <span className={`${emojiSize} drop-shadow-[0_8px_16px_rgba(40,21,38,0.18)] transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-110`}>
-                    {theme.emoji}
-                </span>
-                {size !== 'sm' && template.highlight_icon && (
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/70 shadow-sm backdrop-blur" style={{ color: theme.accent }}>
-                        <Icon name={template.highlight_icon} size={20} />
-                    </span>
-                )}
-            </div>
+            <Motif motif={theme.motif} accent={theme.accent} opacity={0.45} />
+            <div className="absolute left-1/2 top-1/2 aspect-square w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/45" />
+            <Illustration
+                theme={theme}
+                className={`relative aspect-square max-h-[88%] ${illustrationSize} drop-shadow-[0_10px_18px_rgba(40,21,38,0.12)] transition-transform duration-500 group-hover:-rotate-3 group-hover:scale-105`}
+            />
         </div>
     );
 }

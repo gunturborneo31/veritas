@@ -1,9 +1,11 @@
 import Toggle from '@/Components/Toggle';
 import Inspiration from './Inspiration';
 import { QuizField, ListField } from './ListFields';
+import LocationsField from './LocationsField';
 import { AudioField, ImageField, ImagesField } from './MediaFields';
 import MusicField from './MusicField';
 import PinField from './PinField';
+import SongField from './SongField';
 
 const inputClass =
     'w-full rounded-2xl border-0 bg-surface-container-low px-4 py-3 text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40';
@@ -58,6 +60,10 @@ export default function FieldInput({ field, value, onChange, error, context }) {
                         )}
                     </div>
                 );
+            case 'song':
+                return <SongField value={value} onChange={onChange} />;
+            case 'locations':
+                return <LocationsField field={field} value={value} onChange={onChange} {...context} />;
             case 'quiz':
                 return <QuizField field={field} value={value} onChange={onChange} />;
             case 'pin':

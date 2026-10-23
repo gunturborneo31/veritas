@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Enums\GreetingStatus;
+use App\Enums\GreetingType;
 use App\Exceptions\GreetingLockedException;
+use Carbon\CarbonInterface;
 use Database\Factories\GreetingFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -21,9 +23,13 @@ use Illuminate\Support\Facades\Storage;
 /**
  * Satu ucapan untuk satu penerima.
  *
- * Isi ucapan dibekukan begitu bukti bayar dikirim (status `terkunci`) dan
+ * Isi ucapan dibekukan begitu pembayaran berhasil (status `terkunci`) dan
  * selamanya setelah `terbit`. Penjagaan ini dilakukan di level model agar
  * tidak ada jalur (controller, job, tinker) yang bisa mengubah isinya.
+ *
+ * Pengecualiannya undangan: isinya boleh direvisi sampai beberapa hari setelah
+ * acara terakhir (lihat {@see isRevisable()}), dengan template tetap terkunci.
+ * Setiap revisi menjadi snapshot baru; snapshot lama tidak pernah diubah.
  */
 #[Fillable([
     'user_id', 'draft_token_hash', 'template_id', 'type', 'referred_by_greeting_id', 'status', 'slug', 'contribution_token',
@@ -43,12 +49,19 @@ class Greeting extends Model
      */
     public const CONTENT_ATTRIBUTES = ['template_id', 'recipient_name', 'sender_name', 'occasion', 'content', 'opens_at'];
 
+    /**
+     * Undangan ditujukan ke banyak tamu; nama tamu asli diambil dari link pribadinya.
+     */
+    public const INVITATION_RECIPIENT_PLACEHOLDER = 'Tamu Undangan';
+
     protected static function booted(): void
     {
         static::updating(function (Greeting $greeting): void {
             $originalStatus = GreetingStatus::from($greeting->getRawOriginal('status'));
 
-            if (! $originalStatus->isEditable() && $greeting->isDirty(self::CONTENT_ATTRIBUTES)) {
+            $lockedAttributes = $greeting->isRevisable() ? ['template_id'] : self::CONTENT_ATTRIBUTES;
+
+            if (! $originalStatus->isEditable() && $greeting->isDirty($lockedAttributes)) {
                 throw GreetingLockedException::forGreeting($greeting);
             }
 
@@ -62,6 +75,7 @@ class Greeting extends Model
     {
         return [
             'status' => GreetingStatus::class,
+            'type' => GreetingType::class,
             'content' => 'array',
             'preview_expires_at' => 'datetime',
             'last_edited_at' => 'datetime',
@@ -127,11 +141,21 @@ class Greeting extends Model
     }
 
     /**
+     * Snapshot yang berlaku: revisi terakhir (ucapan selalu hanya punya satu).
+     *
      * @return HasOne<GreetingSnapshot, $this>
      */
     public function snapshot(): HasOne
     {
-        return $this->hasOne(GreetingSnapshot::class);
+        return $this->hasOne(GreetingSnapshot::class)->latestOfMany('revision');
+    }
+
+    /**
+     * @return HasMany<GreetingSnapshot, $this>
+     */
+    public function snapshots(): HasMany
+    {
+        return $this->hasMany(GreetingSnapshot::class);
     }
 
     /**
@@ -212,5 +236,103 @@ class Greeting extends Model
     public function replies(): HasMany
     {
         return $this->hasMany(Reply::class);
+    }
+
+    public function isInvitation(): bool
+    {
+        return $this->type === GreetingType::Undangan;
+    }
+
+    /**
+     * @return HasOne<Invitation, $this>
+     */
+    public function invitation(): HasOne
+    {
+        return $this->hasOne(Invitation::class);
+    }
+
+    /**
+     * @return HasMany<InvitationEvent, $this>
+     */
+    public function invitationEvents(): HasMany
+    {
+        return $this->hasMany(InvitationEvent::class)->orderBy('position')->orderBy('starts_at');
+    }
+
+    /**
+     * @return HasMany<Guest, $this>
+     */
+    public function guests(): HasMany
+    {
+        return $this->hasMany(Guest::class);
+    }
+
+    /**
+     * @return HasMany<Rsvp, $this>
+     */
+    public function rsvps(): HasMany
+    {
+        return $this->hasMany(Rsvp::class);
+    }
+
+    /**
+     * @return HasMany<Wish, $this>
+     */
+    public function wishes(): HasMany
+    {
+        return $this->hasMany(Wish::class);
+    }
+
+    /**
+     * @return HasMany<GiftAccount, $this>
+     */
+    public function giftAccounts(): HasMany
+    {
+        return $this->hasMany(GiftAccount::class)->orderBy('position');
+    }
+
+    /**
+     * Waktu selesai acara terakhir; acuan batas revisi dan masa aktif undangan.
+     */
+    public function lastEventFinishesAt(): ?CarbonInterface
+    {
+        if (! $this->isInvitation()) {
+            return null;
+        }
+
+        return $this->invitationEvents
+            ->map(fn (InvitationEvent $event): CarbonInterface => $event->finishesAt())
+            ->sortDesc()
+            ->first();
+    }
+
+    public function revisableUntil(): ?CarbonInterface
+    {
+        return $this->lastEventFinishesAt()?->copy()->addDays(config('kartukita.invitation.revision_grace_days'));
+    }
+
+    public function activeUntil(): ?CarbonInterface
+    {
+        return $this->lastEventFinishesAt()?->copy()->addDays(config('kartukita.invitation.active_days_after_event'));
+    }
+
+    /**
+     * Undangan terbit masih boleh direvisi (tanpa bayar ulang) sampai batas revisi lewat.
+     */
+    public function isRevisable(): bool
+    {
+        if (! $this->isInvitation() || GreetingStatus::from($this->getRawOriginal('status') ?? $this->status->value) !== GreetingStatus::Terbit) {
+            return false;
+        }
+
+        return $this->revisableUntil()?->isFuture() ?? false;
+    }
+
+    /**
+     * Masa aktif undangan habis: halaman tamu ditutup (410) dan data tamu tidak bisa diubah lagi.
+     */
+    public function hasExpired(): bool
+    {
+        return $this->status === GreetingStatus::Arsip || ($this->activeUntil()?->isPast() ?? false);
     }
 }

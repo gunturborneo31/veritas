@@ -21,6 +21,7 @@ export default function Show({ greeting, template, missing, quote, isOwner }) {
     return (
         <StudioLayout
             title="Pratinjau Kartu"
+            greetingId={isOwner ? greeting.id : null}
             step={3}
             onBack={() => (isOwner ? router.visit(route('studio.style', greeting.id)) : router.visit(route('home')))}
             actions={
@@ -67,7 +68,7 @@ export default function Show({ greeting, template, missing, quote, isOwner }) {
             </section>
 
             <section className="mb-6 flex justify-center px-margin">
-                <PhoneFrame>
+                <PhoneFrame bare>
                     <Player greeting={greeting} mode="preview" watermark />
                 </PhoneFrame>
             </section>

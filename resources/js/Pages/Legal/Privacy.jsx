@@ -24,8 +24,8 @@ export default function Privacy({ supportEmail, supportWhatsapp, draftRetentionD
                             bentuk hash, bukan teks asli), dan jadwal buka.
                         </li>
                         <li>
-                            <strong>Data pembayaran</strong>: kode pesanan, nominal, kode promo, foto bukti transfer, dan nama pemilik rekening pengirim bila kamu isi. Kami tidak
-                            menyimpan nomor kartu atau PIN rekening.
+                            <strong>Data pembayaran</strong>: kode pesanan, nominal, kode promo, nomor transaksi QRIS, serta nama pembayar dan aplikasi pembayaran yang
+                            dilaporkan penyedia QRIS. Kami tidak pernah menerima atau menyimpan nomor kartu, saldo, maupun PIN aplikasi pembayaranmu.
                         </li>
                         <li>
                             <strong>Data dari penerima</strong>: waktu ucapan dibuka, jenis perangkat/peramban, serta sidik acak (hash) dari alamat IP — dipakai untuk menghitung
@@ -101,6 +101,10 @@ export default function Privacy({ supportEmail, supportWhatsapp, draftRetentionD
                     <ul>
                         <li>Penerima ucapan (isi ucapan yang kamu buat untuknya) dan pengirim (reaksi, jawaban, balasan, dan video dari penerima).</li>
                         <li>Penyedia layanan yang membantu kami beroperasi, seperti penyimpanan berkas, server, dan pengiriman email, dengan kewajiban menjaga kerahasiaan.</li>
+                        <li>
+                            Penyedia pembayaran QRIS (InterActive QRIS) dan bank/e-wallet yang kamu pakai, sebatas kode transaksi dan nominal yang diperlukan untuk memproses
+                            pembayaran.
+                        </li>
                         <li>Pihak berwenang bila diwajibkan oleh hukum yang berlaku.</li>
                     </ul>
                 </>

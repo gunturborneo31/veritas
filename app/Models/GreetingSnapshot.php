@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Versi permanen ucapan setelah lunas. Hanya bisa dibuat, tidak bisa diubah atau dihapus.
+ * Revisi undangan menambah baris baru dengan nomor `revision` berikutnya.
  */
-#[Fillable(['greeting_id', 'template_id', 'recipient_name', 'sender_name', 'occasion', 'components', 'content', 'content_hash'])]
+#[Fillable(['greeting_id', 'template_id', 'revision', 'recipient_name', 'sender_name', 'occasion', 'components', 'content', 'content_hash'])]
 class GreetingSnapshot extends Model
 {
     public const UPDATED_AT = null;
@@ -31,6 +32,7 @@ class GreetingSnapshot extends Model
         return [
             'components' => 'array',
             'content' => 'array',
+            'revision' => 'integer',
         ];
     }
 

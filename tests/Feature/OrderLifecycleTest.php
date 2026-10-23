@@ -8,39 +8,18 @@ use App\Models\Greeting;
 use App\Models\Order;
 use App\Models\Template;
 use App\Models\User;
-use App\Notifications\PaymentProofSubmitted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
 use Tests\Concerns\CreatesGreetingTemplates;
 use Tests\TestCase;
 
 /**
- * Notifikasi admin saat bukti bayar masuk dan pembatalan otomatis pesanan yang tidak dibayar.
+ * Pembatalan otomatis pesanan yang tidak dibayar.
  */
 class OrderLifecycleTest extends TestCase
 {
     use CreatesGreetingTemplates, RefreshDatabase;
 
     private ?Template $template = null;
-
-    public function test_admins_are_notified_when_payment_proof_is_submitted(): void
-    {
-        Storage::fake('local');
-        Notification::fake();
-        $admin = User::factory()->admin()->create();
-        $customer = User::factory()->create();
-        $order = $this->pendingOrder();
-
-        $this->actingAs($order->user)->post(route('orders.proof.store', $order), [
-            'method' => 'transfer',
-            'proof' => UploadedFile::fake()->image('bukti.jpg'),
-        ]);
-
-        Notification::assertSentTo($admin, PaymentProofSubmitted::class);
-        Notification::assertNotSentTo($customer, PaymentProofSubmitted::class);
-    }
 
     public function test_unpaid_orders_expire_and_greeting_returns_to_draft(): void
     {
@@ -65,15 +44,15 @@ class OrderLifecycleTest extends TestCase
         $this->assertSame(OrderStatus::MenungguKonfirmasi, $order->refresh()->status);
     }
 
-    public function test_expired_order_rejects_late_payment_proof(): void
+    public function test_cancelled_order_cannot_get_a_new_qr(): void
     {
-        Storage::fake('local');
         $order = $this->pendingOrder();
         $order->update(['status' => OrderStatus::Batal]);
 
         $this->actingAs($order->user)
-            ->post(route('orders.proof.store', $order), ['method' => 'transfer', 'proof' => UploadedFile::fake()->image('bukti.jpg')])
-            ->assertSessionHasErrors(['proof' => 'Pesanan ini tidak sedang menunggu pembayaran.']);
+            ->post(route('orders.qris.refresh', $order))
+            ->assertSessionHasErrors(['order' => 'Pesanan ini tidak sedang menunggu pembayaran.']);
+        $this->assertDatabaseCount('payments', 0);
     }
 
     public function test_login_failure_message_is_in_indonesian(): void

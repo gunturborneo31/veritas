@@ -19,6 +19,7 @@ class ComponentRequest extends FormRequest
             ContentSchema::TYPE_TEXT, ContentSchema::TYPE_TEXTAREA, ContentSchema::TYPE_DATE, ContentSchema::TYPE_DATETIME,
             ContentSchema::TYPE_IMAGE, ContentSchema::TYPE_IMAGES, ContentSchema::TYPE_AUDIO, ContentSchema::TYPE_MUSIC,
             ContentSchema::TYPE_LIST, ContentSchema::TYPE_QUIZ, ContentSchema::TYPE_PIN, ContentSchema::TYPE_TOGGLE,
+            ContentSchema::TYPE_LOCATIONS, ContentSchema::TYPE_SONG,
         ];
 
         return [

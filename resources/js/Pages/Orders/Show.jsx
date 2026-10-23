@@ -1,162 +1,410 @@
 import Icon from '@/Components/Icon';
 import PublicLayout from '@/Layouts/PublicLayout';
-import { dateTime, rupiah } from '@/lib/format';
-import { Link, useForm, usePoll } from '@inertiajs/react';
-import { useState } from 'react';
+import { rupiah } from '@/lib/format';
+import { Link, router, useForm, usePoll } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
-function CopyRow({ label, value }) {
-    const [copied, setCopied] = useState(false);
+const APPS = ['GoPay', 'OVO', 'DANA', 'ShopeePay', 'LinkAja', 'm-banking'];
+
+function useCountdown(target) {
+    const [remaining, setRemaining] = useState(() => (target ? Math.max(0, new Date(target) - Date.now()) : 0));
+
+    useEffect(() => {
+        if (!target) {
+            return undefined;
+        }
+
+        const tick = () => setRemaining(Math.max(0, new Date(target) - Date.now()));
+        tick();
+        const timer = setInterval(tick, 1000);
+
+        return () => clearInterval(timer);
+    }, [target]);
+
+    return remaining;
+}
+
+function formatRemaining(milliseconds) {
+    const totalSeconds = Math.ceil(milliseconds / 1000);
+
+    return `${String(Math.floor(totalSeconds / 60)).padStart(2, '0')}:${String(totalSeconds % 60).padStart(2, '0')}`;
+}
+
+function NoticeCard({ icon, iconClass = 'text-primary', title, children }) {
+    return (
+        <section className="flex flex-col items-center gap-2 rounded-3xl bg-surface-container-lowest p-space-lg text-center shadow-card">
+            <Icon name={icon} size={32} className={iconClass} />
+            <p className="font-display text-headline-sm text-on-surface">{title}</p>
+            {children}
+        </section>
+    );
+}
+
+/**
+ * Unggah bukti bayar: screenshot/foto wajib (dengan pratinjau), nama pengirim opsional.
+ * Bukti diteruskan ke admin lewat Telegram agar konfirmasi cepat.
+ */
+function ProofForm({ orderCode, amount }) {
+    const { data, setData, post, processing, errors, progress } = useForm({ proof: null, sender_account_name: '' });
+    const [preview, setPreview] = useState(null);
+
+    useEffect(() => () => preview && URL.revokeObjectURL(preview), [preview]);
+
+    const pick = (file) => {
+        setData('proof', file ?? null);
+        setPreview(file ? URL.createObjectURL(file) : null);
+    };
+
+    const submit = (event) => {
+        event.preventDefault();
+        post(route('orders.manual.claim', orderCode), { forceFormData: true, preserveScroll: true });
+    };
 
     return (
-        <div className="flex items-center justify-between rounded-2xl bg-surface-container-low p-3">
-            <div>
-                <p className="text-label-sm text-on-surface-variant">{label}</p>
-                <p className="text-label-lg text-on-surface">{value}</p>
-            </div>
+        <form onSubmit={submit} className="flex w-full flex-col gap-3 rounded-2xl bg-surface-container-low p-space-sm">
+            <p className="text-label-lg text-on-surface">Sudah bayar {rupiah(amount)}? Kirim buktinya</p>
+
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-outline-variant bg-surface-container-lowest p-3 text-center hover:border-primary">
+                {preview ? (
+                    <img src={preview} alt="Pratinjau bukti pembayaran" className="max-h-64 rounded-xl object-contain" />
+                ) : (
+                    <>
+                        <Icon name="add_photo_alternate" size={32} className="text-primary" />
+                        <span className="text-label-md text-on-surface">Pilih screenshot / foto bukti bayar</span>
+                        <span className="text-label-sm font-normal text-on-surface-variant">JPG, PNG, atau WEBP • maks. 5 MB</span>
+                    </>
+                )}
+                <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={(event) => pick(event.target.files?.[0])} />
+            </label>
+            {preview && (
+                <button type="button" onClick={() => pick(null)} className="-mt-1 self-center text-label-sm text-primary underline underline-offset-2">
+                    Ganti gambar
+                </button>
+            )}
+            {errors.proof && <p className="text-label-sm text-error">{errors.proof}</p>}
+
+            <input
+                value={data.sender_account_name}
+                onChange={(event) => setData('sender_account_name', event.target.value)}
+                maxLength={80}
+                placeholder="Nama akun pengirim (opsional), mis. Budi S."
+                className="w-full rounded-xl border-0 bg-surface-container-lowest px-3 py-2.5 text-body-md focus:ring-2 focus:ring-primary/40"
+            />
+            {errors.order && <p className="text-label-sm text-error">{errors.order}</p>}
+
             <button
-                type="button"
-                onClick={() => {
-                    navigator.clipboard?.writeText(String(value));
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 2000);
-                }}
-                className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-label-sm text-on-primary"
+                type="submit"
+                disabled={processing || !data.proof}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary text-label-lg text-on-primary shadow-md active:scale-95 disabled:opacity-50"
             >
-                <Icon name={copied ? 'done' : 'content_copy'} size={14} />
-                {copied ? 'Tersalin' : 'Salin'}
+                <Icon name={processing ? 'progress_activity' : 'send'} size={20} className={processing ? 'animate-spin' : ''} />
+                {processing && progress ? `Mengunggah ${progress.percentage}%` : 'Kirim Bukti Pembayaran'}
             </button>
+        </form>
+    );
+}
+
+/**
+ * Mode sementara: bukti dikirim lewat WhatsApp admin. Tombol membuka chat dengan pesan yang sudah
+ * berisi kode pesanan & nominal, sekaligus menandai pesanan "sedang dicek" agar admin mendapat notifikasi.
+ */
+function WhatsAppProof({ orderCode, amount, whatsappUrl }) {
+    const claim = () => router.post(route('orders.manual.claim', orderCode), {}, { preserveScroll: true });
+
+    return (
+        <div className="flex w-full flex-col gap-2 rounded-2xl bg-surface-container-low p-space-sm text-center">
+            <p className="text-label-lg text-on-surface">Sudah bayar {rupiah(amount)}?</p>
+            <p className="text-body-sm text-on-surface-variant">Kirim screenshot bukti pembayaranmu ke admin lewat WhatsApp.</p>
+            <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={claim}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-whatsapp text-label-lg text-white shadow-md active:scale-95"
+            >
+                <Icon name="chat" size={20} />
+                Kirim Bukti via WhatsApp
+            </a>
+            <p className="text-label-sm font-normal text-on-surface-variant">Pesan berisi kode pesanan sudah disiapkan — tinggal lampirkan screenshot-nya.</p>
         </div>
     );
 }
 
 /**
- * Instruksi pembayaran manual (transfer / QRIS statis) + unggah bukti + status verifikasi admin.
+ * QRIS statis milik merchant: nominal harus diketik pembeli, jadi nominal unik ditonjolkan dan bisa disalin.
+ * Setelah pembeli mengirim bukti, admin mencocokkan mutasi lalu menekan Konfirmasi.
  */
-export default function Show({ order, greeting, paymentMethods }) {
-    const form = useForm({ method: 'transfer', sender_account_name: '', proof: null });
-    const isWaitingReview = order.status === 'menunggu_konfirmasi';
-    const wasRejected = order.latest_payment?.status === 'ditolak' && order.status === 'menunggu';
+function ManualPayment({ manual, orderCode }) {
+    const [copied, setCopied] = useState(false);
 
-    usePoll(15000, { only: ['order'] }, { autoStart: isWaitingReview });
-
-    const submit = (event) => {
-        event.preventDefault();
-        form.post(route('orders.proof.store', order.code), { forceFormData: true });
+    const copyAmount = () => {
+        navigator.clipboard?.writeText(String(manual.amount));
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     };
 
     return (
-        <PublicLayout title={`Pesanan ${order.code}`}>
-            <div className="flex flex-col gap-space-lg px-margin py-space-md">
-                <section className="flex flex-col items-center gap-2 text-center">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-surface-container-high shadow-lg">
-                        <Icon name={isWaitingReview ? 'hourglass_top' : 'account_balance_wallet'} size={40} className="text-primary" filled />
-                    </div>
-                    <span className="rounded-full bg-surface-container px-3 py-1 text-label-sm text-on-surface-variant">{order.status_label}</span>
-                    <h1 className="text-headline-lg-mobile text-on-surface">
-                        {isWaitingReview ? 'Bukti bayar sedang diperiksa' : `Bayar ${rupiah(order.amount)}`}
-                    </h1>
+        <>
+            <section className="flex flex-col items-center gap-3 rounded-3xl bg-surface-container-lowest p-space-md shadow-card">
+                <span className="flex items-center gap-1.5 self-start font-display text-headline-sm text-on-surface">
+                    <Icon name="qr_code_2" size={22} className="text-primary" />
+                    QRIS {manual.merchant_name}
+                </span>
+
+                <img src={manual.image_url} alt={`QRIS ${manual.merchant_name}`} className="w-full max-w-[280px] rounded-2xl bg-white p-2 shadow-inner" />
+
+                <a href={manual.image_url} download className="flex h-10 items-center gap-1.5 rounded-full bg-primary-fixed px-4 text-label-md text-on-primary-fixed active:scale-95">
+                    <Icon name="download" size={18} />
+                    Simpan gambar QR
+                </a>
+
+                <div className="flex w-full flex-col items-center gap-1 rounded-2xl bg-tertiary-fixed/60 p-space-sm text-center">
+                    <span className="text-label-sm text-on-tertiary-fixed">Bayar tepat sebesar</span>
+                    <button type="button" onClick={copyAmount} className="flex items-center gap-2 font-display text-headline-lg-mobile text-on-surface active:scale-95">
+                        {rupiah(manual.amount)}
+                        <Icon name={copied ? 'check' : 'content_copy'} size={20} className="text-primary" />
+                    </button>
+                    <span className="max-w-xs text-label-sm font-normal text-on-tertiary-fixed">
+                        {copied ? 'Nominal disalin!' : `Termasuk kode unik Rp${manual.unique_code} agar pembayaranmu langsung kami kenali. Jangan dibulatkan, ya.`}
+                    </span>
+                </div>
+
+                {manual.proof_channel === 'whatsapp' ? (
+                    <WhatsAppProof orderCode={orderCode} amount={manual.amount} whatsappUrl={manual.whatsapp_url} />
+                ) : (
+                    <ProofForm orderCode={orderCode} amount={manual.amount} />
+                )}
+            </section>
+
+            <section className="flex flex-col gap-2 rounded-3xl bg-surface-container-low p-space-md">
+                <p className="text-label-lg text-on-surface">Cara bayar</p>
+                <ol className="flex flex-col gap-2 text-body-sm text-on-surface-variant">
+                    {[
+                        ['Scan QR di atas', ' dari HP lain, atau simpan gambarnya lalu pilih dari galeri di aplikasi e-wallet / m-banking.'],
+                        [`Ketik nominal tepat ${rupiah(manual.amount)}`, ' — QRIS ini tidak mengisi nominal otomatis.'],
+                        [
+                            manual.proof_channel === 'whatsapp' ? 'Kirim screenshot bukti bayar lewat WhatsApp' : 'Kirim screenshot bukti bayar',
+                            '. Kami cek pembayaranmu, dan halaman ini otomatis berpindah ke kartumu begitu dikonfirmasi.',
+                        ],
+                    ].map(([title, body], index) => (
+                        <li key={title} className="flex gap-2">
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-label-sm text-on-primary">{index + 1}</span>
+                            <span>
+                                <strong className="text-on-surface">{title}</strong>
+                                {body}
+                            </span>
+                        </li>
+                    ))}
+                </ol>
+            </section>
+        </>
+    );
+}
+
+/**
+ * Bayar dengan QRIS dinamis. Pembayaran terdeteksi otomatis (webhook + cek berkala di server);
+ * halaman ini hanya memuat ulang status dari server kita, tidak pernah langsung ke penyedia QRIS.
+ */
+export default function Show({ order, greeting, isQrisReady, canSimulate }) {
+    const qris = order.qris;
+    const isWaiting = order.status === 'menunggu';
+    const manual = order.manual;
+    const isScannable = isWaiting && qris?.is_scannable;
+    const remaining = useCountdown(isScannable ? qris.expires_at : null);
+    const [isBusy, setIsBusy] = useState(false);
+
+    // QRIS dinamis: menunggu lunas otomatis. QRIS statis: menunggu konfirmasi admin setelah "Saya sudah bayar".
+    usePoll(5000, { only: ['order'] }, { autoStart: (isWaiting && Boolean(qris)) || order.is_awaiting_review });
+
+    useEffect(() => {
+        if (isScannable && remaining === 0) {
+            router.reload({ only: ['order'] });
+        }
+    }, [isScannable, remaining]);
+
+    // Tetap di posisi gulir bila masih di halaman ini; ke atas bila berpindah ke halaman kartu yang terbit.
+    const post = (name) =>
+        router.post(route(name, order.code), {}, { preserveScroll: (page) => page.component === 'Orders/Show', onStart: () => setIsBusy(true), onFinish: () => setIsBusy(false) });
+
+    return (
+        <PublicLayout title={`Bayar ${order.code}`} back={{ href: route('dashboard'), label: 'Kartu Saya' }}>
+            <div className="flex flex-col gap-space-md px-margin py-space-md">
+                <section className="flex flex-col items-center gap-1 text-center">
+                    <span className="rounded-full bg-surface-container px-3 py-1 text-label-sm text-on-surface-variant">
+                        {order.status_label} • {order.code}
+                    </span>
+                    <h1 className="mt-1 font-display text-display-hero-mobile text-on-surface">{rupiah(manual ? manual.amount : order.amount)}</h1>
                     <p className="max-w-sm text-body-sm text-on-surface-variant">
-                        Ucapan <strong className="text-on-surface">{greeting.template_name}</strong> untuk <strong className="text-on-surface">{greeting.recipient_name}</strong>.
-                        No. pesanan <span className="font-semibold text-on-surface">{order.code}</span>.
+                        Kartu <strong className="text-on-surface">{greeting.template_name}</strong> untuk <strong className="text-on-surface">{greeting.recipient_name}</strong>
                     </p>
-                    {order.status === 'menunggu' && (
-                        <p className="inline-flex items-center gap-1 rounded-full bg-error-container px-3 py-1 text-label-sm text-on-error-container">
-                            <Icon name="alarm" size={14} />
-                            Bayar sebelum {dateTime(order.expires_at)}
-                        </p>
-                    )}
                 </section>
 
+                {order.rejection_note && isWaiting && (
+                    <div role="alert" className="flex items-start gap-2 rounded-2xl bg-error-container px-4 py-3 text-on-error-container">
+                        <Icon name="error" size={20} className="mt-0.5 shrink-0" />
+                        <div className="text-body-sm">
+                            <p className="text-label-md">Pembayaran sebelumnya belum kami temukan</p>
+                            <p>{order.rejection_note}</p>
+                        </div>
+                    </div>
+                )}
+
                 {order.status === 'batal' ? (
-                    <section className="flex flex-col items-center gap-2 rounded-3xl bg-surface-container-lowest p-space-md text-center shadow-card">
-                        <Icon name="timer_off" size={28} className="text-error" />
-                        <p className="font-display text-headline-sm text-on-surface">Pesanan ini sudah kedaluwarsa</p>
+                    <NoticeCard icon="timer_off" iconClass="text-error" title="Pesanan ini sudah kedaluwarsa">
                         <p className="text-body-sm text-on-surface-variant">Ucapanmu aman dan kembali menjadi draf. Kamu bisa membuat pesanan baru kapan saja.</p>
                         <Link href={route('checkout.show', greeting.id)} className="mt-1 rounded-full bg-primary px-5 py-2.5 text-label-md text-on-primary">
                             Buat pesanan baru
                         </Link>
-                    </section>
-                ) : isWaitingReview ? (
-                    <section className="flex flex-col gap-2 rounded-3xl bg-surface-container-lowest p-space-md text-center shadow-card">
-                        <Icon name="schedule" size={28} className="mx-auto text-tertiary" />
+                    </NoticeCard>
+                ) : order.is_awaiting_review ? (
+                    <NoticeCard icon="hourglass_top" iconClass="text-tertiary" title="Pembayaranmu sedang dicek">
                         <p className="text-body-sm text-on-surface-variant">
-                            Dikirim {dateTime(order.latest_payment?.submitted_at)}. Halaman ini akan otomatis berpindah ke link & QR setelah admin mengonfirmasi.
+                            Kami sedang mencocokkan pembayaranmu. Biarkan halaman ini terbuka — begitu dikonfirmasi, kamu langsung diarahkan ke link & QR kartumu.
                         </p>
-                        <p className="text-label-sm text-on-surface-variant">Isi ucapan sudah terkunci dan tidak bisa diubah.</p>
-                    </section>
-                ) : (
-                    <>
-                        {wasRejected && (
-                            <div className="rounded-2xl bg-error-container p-space-md text-on-error-container">
-                                <p className="text-label-md font-bold">Bukti sebelumnya ditolak</p>
-                                <p className="text-body-sm">{order.latest_payment.review_note}</p>
-                            </div>
+                        <p className="flex items-center gap-1.5 text-label-sm font-normal text-on-surface-variant">
+                            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+                            Menunggu konfirmasi
+                        </p>
+                        {order.review_whatsapp_url && (
+                            <a
+                                href={order.review_whatsapp_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-1 flex h-11 items-center gap-1.5 rounded-full bg-whatsapp px-5 text-label-md text-white shadow-sm active:scale-95"
+                            >
+                                <Icon name="chat" size={18} />
+                                Belum kirim bukti? Buka WhatsApp lagi
+                            </a>
                         )}
-
-                        <section className="flex flex-col gap-space-sm rounded-3xl bg-surface-container-lowest p-space-md shadow-card">
-                            <h2 className="text-headline-sm text-on-surface">1. Transfer sesuai nominal</h2>
-                            <div className="flex gap-2">
-                                {Object.entries(paymentMethods).map(([key, method]) => (
-                                    <button
-                                        key={key}
-                                        type="button"
-                                        onClick={() => form.setData('method', key)}
-                                        className={`flex-1 rounded-full px-4 py-2 text-label-md ${form.data.method === key ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface'}`}
-                                    >
-                                        {method.label}
-                                    </button>
-                                ))}
+                    </NoticeCard>
+                ) : !isQrisReady ? (
+                    <NoticeCard icon="construction" iconClass="text-tertiary" title="Pembayaran belum aktif">
+                        <p className="text-body-sm text-on-surface-variant">Pembayaran QRIS sedang disiapkan. Pesananmu tersimpan — coba lagi nanti atau hubungi admin.</p>
+                    </NoticeCard>
+                ) : manual && isWaiting ? (
+                    <ManualPayment manual={manual} orderCode={order.code} />
+                ) : isScannable ? (
+                    <>
+                        <section className="flex flex-col items-center gap-3 rounded-3xl bg-surface-container-lowest p-space-md shadow-card">
+                            <div className="flex w-full items-center justify-between">
+                                <span className="flex items-center gap-1.5 font-display text-headline-sm text-on-surface">
+                                    <Icon name="qr_code_2" size={22} className="text-primary" />
+                                    QRIS
+                                </span>
+                                <span
+                                    className={`flex items-center gap-1 rounded-full px-3 py-1 text-label-md ${remaining < 5 * 60 * 1000 ? 'bg-error-container text-on-error-container' : 'bg-surface-container text-on-surface'}`}
+                                >
+                                    <Icon name="timer" size={16} />
+                                    {formatRemaining(remaining)}
+                                </span>
                             </div>
-                            {form.data.method === 'transfer' ? (
-                                <div className="flex flex-col gap-2">
-                                    <CopyRow label={`Bank ${paymentMethods.transfer.bank}`} value={paymentMethods.transfer.account_number} />
-                                    <p className="px-1 text-label-sm text-on-surface-variant">a.n. {paymentMethods.transfer.account_holder}</p>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center gap-2 rounded-2xl bg-surface-container-low p-4">
-                                    <img src={paymentMethods.qris.image_url} alt="QRIS" className="h-56 w-56 rounded-xl bg-white object-contain p-2" />
-                                    <p className="text-label-sm text-on-surface-variant">Scan dengan aplikasi bank / e-wallet apa pun.</p>
-                                </div>
-                            )}
-                            <CopyRow label="Nominal (tepat)" value={order.amount} />
+
+                            <div
+                                className="w-full max-w-[280px] rounded-2xl bg-white p-2 shadow-inner [&_svg]:h-auto [&_svg]:w-full"
+                                role="img"
+                                aria-label={`QRIS untuk membayar ${rupiah(order.amount)}`}
+                                dangerouslySetInnerHTML={{ __html: qris.svg }}
+                            />
+
+                            <p className="text-center text-body-sm text-on-surface-variant">
+                                Nominal <strong className="text-on-surface">{rupiah(order.amount)}</strong> sudah terisi otomatis. Bisa dibayar lewat {APPS.join(', ')}.
+                            </p>
+
+                            <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
+                                <a
+                                    href={route('orders.qris.image', order.code)}
+                                    className="flex h-12 items-center justify-center gap-2 rounded-full bg-primary-fixed text-label-lg text-on-primary-fixed active:scale-95"
+                                >
+                                    <Icon name="download" size={20} />
+                                    Simpan gambar QR
+                                </a>
+                                <button
+                                    type="button"
+                                    disabled={isBusy}
+                                    onClick={() => post('orders.qris.check')}
+                                    className="flex h-12 items-center justify-center gap-2 rounded-full bg-primary text-label-lg text-on-primary shadow-md active:scale-95 disabled:opacity-60"
+                                >
+                                    <Icon name={isBusy ? 'progress_activity' : 'task_alt'} size={20} className={isBusy ? 'animate-spin' : ''} />
+                                    Saya sudah bayar
+                                </button>
+                            </div>
+
+                            <p className="flex items-center gap-1.5 text-label-sm font-normal text-on-surface-variant">
+                                <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+                                Menunggu pembayaran — halaman ini berpindah otomatis setelah lunas.
+                            </p>
                         </section>
 
-                        <form onSubmit={submit} className="flex flex-col gap-space-sm rounded-3xl bg-surface-container-lowest p-space-md shadow-card">
-                            <h2 className="text-headline-sm text-on-surface">2. Unggah bukti transfer</h2>
-                            <input
-                                type="text"
-                                placeholder="Nama pemilik rekening pengirim (opsional)"
-                                value={form.data.sender_account_name}
-                                onChange={(event) => form.setData('sender_account_name', event.target.value)}
-                                className="w-full rounded-2xl border-0 bg-surface-container-low px-4 py-3 text-body-md focus:ring-2 focus:ring-primary/40"
-                            />
-                            <label className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl bg-surface-container-low py-5 text-center">
-                                <Icon name="upload_file" size={28} className="text-primary" />
-                                <span className="text-label-md text-primary">{form.data.proof ? form.data.proof.name : 'Pilih foto bukti transfer'}</span>
-                                <span className="text-label-sm text-on-surface-variant">JPG / PNG hingga 4MB</span>
-                                <input type="file" accept="image/*" className="hidden" onChange={(event) => form.setData('proof', event.target.files[0] ?? null)} />
-                            </label>
-                            {Object.values(form.errors).map((error) => (
-                                <p key={error} className="text-label-sm text-error">
-                                    {error}
-                                </p>
-                            ))}
-                            <button
-                                type="submit"
-                                disabled={!form.data.proof || form.processing}
-                                className="flex h-12 items-center justify-center gap-2 rounded-full bg-primary text-label-lg text-on-primary shadow-md disabled:opacity-50"
-                            >
-                                <Icon name="send" size={18} />
-                                Kirim Bukti Pembayaran
-                            </button>
-                            <p className="text-center text-label-sm text-on-surface-variant">Setelah dikirim, isi ucapan terkunci permanen.</p>
-                        </form>
+                        <section className="flex flex-col gap-2 rounded-3xl bg-surface-container-low p-space-md">
+                            <p className="text-label-lg text-on-surface">Cara bayar</p>
+                            <ol className="flex flex-col gap-2 text-body-sm text-on-surface-variant">
+                                <li className="flex gap-2">
+                                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-label-sm text-on-primary">1</span>
+                                    <span>
+                                        <strong className="text-on-surface">Dari HP lain:</strong> buka aplikasi e-wallet / m-banking → Scan / Bayar → arahkan ke QR di atas.
+                                    </span>
+                                </li>
+                                <li className="flex gap-2">
+                                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-label-sm text-on-primary">2</span>
+                                    <span>
+                                        <strong className="text-on-surface">Di HP ini:</strong> ketuk “Simpan gambar QR”, buka aplikasi e-wallet / m-banking → Scan → pilih gambar dari galeri.
+                                    </span>
+                                </li>
+                                <li className="flex gap-2">
+                                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-label-sm text-on-primary">3</span>
+                                    <span>Pastikan nama merchant dan nominal sesuai, lalu bayar. Kartu langsung terbit tanpa perlu kirim bukti.</span>
+                                </li>
+                            </ol>
+                        </section>
                     </>
+                ) : (
+                    <NoticeCard icon="qr_code_scanner" title={qris ? 'QR sudah kedaluwarsa' : 'Siapkan QR pembayaran'}>
+                        <p className="text-body-sm text-on-surface-variant">
+                            {qris
+                                ? 'QRIS hanya berlaku 30 menit. Jika kamu sudah membayar, tunggu sebentar — status akan diperbarui otomatis. Jika belum, buat QR baru.'
+                                : 'Buat QR untuk membayar pesanan ini.'}
+                        </p>
+                        <div className="mt-1 flex flex-wrap justify-center gap-2">
+                            <button
+                                type="button"
+                                disabled={isBusy}
+                                onClick={() => post('orders.qris.refresh')}
+                                className="flex h-11 items-center gap-1.5 rounded-full bg-primary px-5 text-label-md text-on-primary disabled:opacity-60"
+                            >
+                                <Icon name="refresh" size={18} />
+                                Buat QR baru
+                            </button>
+                            {qris && (
+                                <button
+                                    type="button"
+                                    disabled={isBusy}
+                                    onClick={() => post('orders.qris.check')}
+                                    className="flex h-11 items-center gap-1.5 rounded-full bg-surface-container px-5 text-label-md text-on-surface disabled:opacity-60"
+                                >
+                                    <Icon name="task_alt" size={18} />
+                                    Saya sudah bayar
+                                </button>
+                            )}
+                        </div>
+                    </NoticeCard>
                 )}
 
-                <Link href={route('dashboard')} className="text-center text-label-md text-primary hover:underline">
-                    Kembali ke Kartu Saya
-                </Link>
+                {canSimulate && isScannable && (
+                    <button
+                        type="button"
+                        onClick={() => post('orders.qris.simulate')}
+                        className="rounded-2xl border-2 border-dashed border-tertiary px-4 py-3 text-label-md text-tertiary"
+                    >
+                        🧪 Simulasikan pembayaran berhasil (mode pengembangan)
+                    </button>
+                )}
+
+                <p className="flex items-center justify-center gap-1.5 text-center text-label-sm font-normal text-on-surface-variant">
+                    <Icon name="lock" size={14} />
+                    {manual
+                        ? `Dibayar langsung ke merchant ${manual.merchant_name}. Bukti bayar hanya dipakai untuk mencocokkan pembayaranmu.`
+                        : 'Dibayar langsung ke merchant QRIS resmi. Kami tidak pernah meminta kirim bukti transfer.'}
+                </p>
             </div>
         </PublicLayout>
     );

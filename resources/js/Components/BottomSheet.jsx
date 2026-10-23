@@ -25,7 +25,7 @@ export default function BottomSheet({ open, onClose, title, icon = null, childre
             className="fixed inset-0 z-[70] flex items-end justify-center bg-inverse-surface/60 backdrop-blur-sm"
             onClick={(event) => event.target === event.currentTarget && onClose()}
         >
-            <div role="dialog" aria-modal="true" className="pb-safe flex w-full max-w-lg flex-col gap-space-md rounded-t-3xl bg-surface p-space-lg shadow-2xl">
+            <div role="dialog" aria-modal="true" className="flex w-full max-w-lg flex-col gap-space-md rounded-t-3xl bg-surface p-space-lg pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)] shadow-2xl">
                 <div className="mx-auto -mt-2 h-1.5 w-12 rounded-full bg-surface-container-high" />
                 <div className="flex items-start justify-between gap-space-sm">
                     <div className="flex items-center gap-3">

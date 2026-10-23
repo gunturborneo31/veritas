@@ -2,6 +2,7 @@
 
 namespace App\Support\Greetings;
 
+use App\Enums\GreetingType;
 use App\Models\Contribution;
 use App\Models\Gate;
 use App\Models\Greeting;
@@ -9,6 +10,7 @@ use App\Models\GreetingSnapshot;
 use App\Models\Media;
 use App\Models\MusicTrack;
 use App\Models\Template;
+use App\Support\Invitations\InvitationPresenter;
 use Illuminate\Support\Collection;
 
 /**
@@ -17,9 +19,14 @@ use Illuminate\Support\Collection;
  *
  * Referensi media (ULID) diubah menjadi URL bertanda tangan dan id musik
  * menjadi data trek; field PIN tidak pernah ikut dikirim.
+ *
+ * Untuk undangan, data hidup (acara, RSVP, amplop, ucapan & doa) ikut di kunci `invitation`
+ * agar blok undangan di pemutar mendapat datanya di semua mode.
  */
 class GreetingPresenter
 {
+    public function __construct(private InvitationPresenter $invitationPresenter) {}
+
     /**
      * @return array<string, mixed>
      */
@@ -50,7 +57,10 @@ class GreetingPresenter
             ],
             gate: $greeting->gate,
             theme: $greeting->template->resolvedTheme($greeting->content['style'] ?? null),
-        ), 'contributions' => $contributions];
+        ),
+            'contributions' => $contributions,
+            'invitation' => $greeting->isInvitation() ? $this->invitationPresenter->forGuest($greeting, null, null) : null,
+        ];
     }
 
     /**
@@ -109,6 +119,7 @@ class GreetingPresenter
             'gate' => null,
             'theme' => $template->resolvedTheme(),
             'contributions' => $sample['contributions'] ?? [],
+            'invitation' => $template->type === GreetingType::Undangan ? $this->invitationPresenter->forSample($template) : null,
         ];
     }
 
@@ -162,6 +173,10 @@ class GreetingPresenter
                         ->values()
                         ->all(),
                     ContentSchema::TYPE_PIN => ['is_set' => $gate !== null, 'length' => $gate?->answer_length],
+                    ContentSchema::TYPE_LOCATIONS => collect($value ?? [])
+                        ->map(fn (array $place): array => [...$place, 'media' => is_string($place['media'] ?? null) ? $media->get($place['media']) : null])
+                        ->values()
+                        ->all(),
                     default => $value,
                 };
             }
@@ -195,6 +210,10 @@ class GreetingPresenter
 
                 if ($field['type'] === ContentSchema::TYPE_IMAGES && is_array($value)) {
                     $ids = [...$ids, ...array_column($value, 'media')];
+                }
+
+                if ($field['type'] === ContentSchema::TYPE_LOCATIONS && is_array($value)) {
+                    $ids = [...$ids, ...array_filter(array_column($value, 'media'), 'is_string')];
                 }
             }
         }

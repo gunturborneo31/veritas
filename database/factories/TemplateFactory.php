@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\GreetingType;
 use App\Enums\TemplateTier;
 use App\Models\Category;
 use App\Models\Component;
@@ -34,6 +35,11 @@ class TemplateFactory extends Factory
             'is_published' => true,
             'sort_order' => 0,
         ];
+    }
+
+    public function invitation(): static
+    {
+        return $this->state(fn (array $attributes) => ['type' => GreetingType::Undangan]);
     }
 
     public function unpublished(): static

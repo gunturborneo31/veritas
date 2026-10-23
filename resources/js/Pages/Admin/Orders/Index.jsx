@@ -1,3 +1,4 @@
+import Icon from '@/Components/Icon';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { dateTime, rupiah } from '@/lib/format';
 import { Head, Link } from '@inertiajs/react';
@@ -19,7 +20,32 @@ export default function Index({ orders, status, statuses }) {
                     ))}
                 </div>
 
-                <div className="overflow-x-auto rounded-2xl bg-white shadow-card">
+                <div className="space-y-2 sm:hidden">
+                    {orders.data.length === 0 && <p className="rounded-2xl bg-white px-4 py-8 text-center text-body-sm text-on-surface-variant shadow-card">Tidak ada pesanan dengan status ini.</p>}
+                    {orders.data.map((order) => (
+                        <Link
+                            key={order.code}
+                            href={route('admin.orders.show', order.code)}
+                            className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card active:scale-[0.99]"
+                        >
+                            <div className="min-w-0 flex-1">
+                                <p className="flex items-center justify-between gap-2">
+                                    <span className="text-label-lg text-on-surface">{order.code}</span>
+                                    <span className="text-label-lg text-primary">{rupiah(order.amount)}</span>
+                                </p>
+                                <p className="truncate text-body-sm text-on-surface">
+                                    {order.customer} → {order.recipient_name}
+                                </p>
+                                <p className="truncate text-label-sm text-on-surface-variant">
+                                    {order.template_name} • {dateTime(order.created_at)}
+                                </p>
+                            </div>
+                            <Icon name="chevron_right" size={22} className="text-on-surface-variant" />
+                        </Link>
+                    ))}
+                </div>
+
+                <div className="hidden overflow-x-auto rounded-2xl bg-white shadow-card sm:block">
                     <table className="min-w-full text-left text-body-sm">
                         <thead className="bg-surface-container-low text-label-md text-on-surface-variant">
                             <tr>
