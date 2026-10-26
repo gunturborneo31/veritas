@@ -7,6 +7,7 @@
         <meta name="theme-color" content="#fff7f9">
 
         <title inertia>{{ config('kartukita.brand') }}</title>
+        @include('partials.share-meta')
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">

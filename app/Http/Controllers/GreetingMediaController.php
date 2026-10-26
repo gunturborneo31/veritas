@@ -22,12 +22,18 @@ class GreetingMediaController extends Controller
 
     public function store(StoreGreetingMediaRequest $request, Greeting $greeting, StoreGreetingMedia $storeMedia): JsonResponse
     {
-        $this->ownership->authorize($request, $greeting);
+        // Kartu terbit: unggahan untuk revisi (pemilik undangan atau admin).
+        if ($greeting->isEditable()) {
+            $this->ownership->authorize($request, $greeting);
+        } else {
+            $this->ownership->authorizeRevision($request, $greeting);
+        }
 
         $media = $storeMedia->handle(
             $greeting,
             $request->file('file'),
             MediaKind::from($request->validated('kind')),
+            $request->user(),
         );
 
         return response()->json(['media' => $media->refresh()->toClientArray()], 201);

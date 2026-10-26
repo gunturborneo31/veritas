@@ -9,6 +9,7 @@ use App\Models\Greeting;
 use App\Models\Reply;
 use App\Models\Template;
 use App\Support\Greetings\GreetingPresenter;
+use Illuminate\Database\Eloquent\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,17 +25,8 @@ class HomeController extends Controller
      */
     public function __invoke(GreetingPresenter $presenter): Response
     {
-        // Beranda menonjolkan kartu ucapan; undangan punya katalognya sendiri.
-        $featured = Template::query()
-            ->published()
-            ->where('type', GreetingType::Ucapan)
-            ->with('category', 'series', 'components.component')
-            ->orderBy('sort_order')
-            ->get()
-            ->unique(fn (Template $template): string => $template->catalogGroupKey())
-            ->take(3)
-            ->values();
-
+        // Hero & "Kartu Paling Disukai" menonjolkan kartu ucapan; undangan mendapat bagiannya sendiri di bawahnya.
+        $featured = $this->featuredOf(GreetingType::Ucapan);
         $showcase = $featured->first();
 
         return Inertia::render('Home', [
@@ -49,12 +41,31 @@ class HomeController extends Controller
                     'jenis' => $category->greeting_templates_count === 0 && $category->invitation_templates_count > 0 ? GreetingType::Undangan->value : null,
                 ]),
             'featured' => $featured->map(fn (Template $template): array => $template->toCardArray()),
+            'invitations' => $this->featuredOf(GreetingType::Undangan)->map(fn (Template $template): array => $template->toCardArray()),
             'showcase' => $showcase ? [
                 'template' => $showcase->toCardArray(),
                 'greeting' => $presenter->forTemplateSample($showcase),
             ] : null,
             'stats' => $this->socialProof(),
         ]);
+    }
+
+    /**
+     * Tiga template unggulan sesuai urutan katalog, satu desain per seri.
+     *
+     * @return Collection<int, Template>
+     */
+    private function featuredOf(GreetingType $type): Collection
+    {
+        return Template::query()
+            ->published()
+            ->where('type', $type)
+            ->with('category', 'series', 'components.component')
+            ->orderBy('sort_order')
+            ->get()
+            ->unique(fn (Template $template): string => $template->catalogGroupKey())
+            ->take(3)
+            ->values();
     }
 
     /**

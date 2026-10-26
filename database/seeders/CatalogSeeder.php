@@ -327,10 +327,17 @@ class CatalogSeeder extends Seeder
                     'highlight_icon' => $data['highlight_icon'],
                     'highlight_label' => $data['highlight_label'],
                     'tags' => $data['tags'],
-                    'sample_content' => $data['sample'],
+                    'sample_content' => $this->withGeneratedImages($data['slug'], $data['sample']),
                     'is_published' => true,
                     'sort_order' => $sortOrder++,
                 ]);
+
+                // Sampul bawaan hanya dipasang bila belum ada, agar sampul unggahan admin tidak tertimpa.
+                $cover = "/images/templates/{$data['slug']}.webp";
+
+                if ($template->cover_path === null && is_file(public_path($cover))) {
+                    $template->update(['cover_path' => $cover]);
+                }
 
                 $slots = $this->withOptionalExtras($data['slots']);
 
@@ -376,6 +383,34 @@ class CatalogSeeder extends Seeder
         }
 
         return $slots;
+    }
+
+    /**
+     * Ganti ilustrasi contoh generik dengan foto khusus template bila sudah dibuat
+     * (public/images/samples/<slug>/<n>.webp, n = urutan kemunculan di isi contoh).
+     * Foto yang belum ada tetap memakai ilustrasi SVG bawaan.
+     *
+     * @param  array<string, mixed>  $sample
+     * @return array<string, mixed>
+     */
+    private function withGeneratedImages(string $slug, array $sample): array
+    {
+        $index = 0;
+        $replace = function (array $value) use (&$replace, &$index, $slug): array {
+            if (isset($value['url']) && is_string($value['url']) && str_starts_with($value['url'], '/images/samples/')) {
+                $generated = '/images/samples/'.$slug.'/'.(++$index).'.webp';
+
+                return is_file(public_path($generated)) ? ['url' => $generated] : $value;
+            }
+
+            return array_map(fn (mixed $child): mixed => is_array($child) ? $replace($child) : $child, $value);
+        };
+
+        if (isset($sample['components'])) {
+            $sample['components'] = $replace($sample['components']);
+        }
+
+        return $sample;
     }
 
     /**

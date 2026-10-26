@@ -7,6 +7,7 @@ use App\Http\Controllers\ContributionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GreetingMediaController;
 use App\Http\Controllers\GreetingQrController;
+use App\Http\Controllers\GreetingRevisionController;
 use App\Http\Controllers\GreetingSlugController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InvitationCheckInController;
@@ -14,7 +15,6 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\InvitationEventController;
 use App\Http\Controllers\InvitationGiftController;
 use App\Http\Controllers\InvitationGuestController;
-use App\Http\Controllers\InvitationRevisionController;
 use App\Http\Controllers\InvitationWishController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\LocationController;
@@ -81,6 +81,7 @@ Route::middleware('throttle:30,1')->prefix('lagu')->name('songs.')->group(functi
 Route::prefix('studio/{greeting}')->name('studio.')->group(function () {
     Route::get('/', [StudioController::class, 'edit'])->name('edit');
     Route::put('/', [StudioController::class, 'update'])->name('update');
+    Route::put('revisi', GreetingRevisionController::class)->name('revise');
     Route::get('gaya', [StudioStyleController::class, 'show'])->name('style');
     Route::put('gaya', [StudioStyleController::class, 'update'])->name('style.update');
     Route::post('media', [GreetingMediaController::class, 'store'])->middleware('throttle:30,1')->name('media.store');
@@ -104,7 +105,6 @@ Route::get('media/{media}', MediaFileController::class)->middleware('signed')->n
 Route::prefix('undangan/{greeting}')->name('invitations.')->scopeBindings()->group(function () {
     Route::get('/', [InvitationController::class, 'show'])->name('show');
     Route::put('pengaturan', [InvitationController::class, 'update'])->name('settings.update');
-    Route::put('revisi', InvitationRevisionController::class)->name('revise');
 
     Route::post('acara', [InvitationEventController::class, 'store'])->name('events.store');
     Route::put('acara/{invitationEvent}', [InvitationEventController::class, 'update'])->name('events.update');
@@ -213,6 +213,9 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->name('ad
     Route::get('pesanan/{order}', [Admin\OrderController::class, 'show'])->name('orders.show');
     Route::post('pesanan/{order}/konfirmasi', [Admin\PaymentReviewController::class, 'confirm'])->name('orders.confirm');
     Route::post('pesanan/{order}/tolak', [Admin\PaymentReviewController::class, 'reject'])->name('orders.reject');
+
+    // Revisi isinya lewat Studio (studio.edit) yang membuka mode revisi untuk admin.
+    Route::get('kartu', [Admin\GreetingController::class, 'index'])->name('greetings.index');
 
     Route::resource('kategori', Admin\CategoryController::class)
         ->only(['index', 'store', 'update', 'destroy'])

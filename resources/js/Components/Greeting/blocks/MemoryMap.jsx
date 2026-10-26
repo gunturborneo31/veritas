@@ -48,6 +48,7 @@ export default function MemoryMap({ slot, values, mode }) {
     const leafletRef = useRef(null);
     const layerRef = useRef(null);
     const frameRef = useRef(null);
+    const resizeTimerRef = useRef(null);
     const placesKey = places.map((place) => `${place.lat},${place.lng}`).join('|');
 
     useEffect(() => {
@@ -72,13 +73,17 @@ export default function MemoryMap({ slot, values, mode }) {
             layerRef.current = L.layerGroup().addTo(map);
             mapRef.current = map;
             // Adegan masuk dengan animasi skala; ukur ulang setelahnya agar ubin tidak terpotong.
-            setTimeout(() => map.invalidateSize(), 500);
+            resizeTimerRef.current = setTimeout(() => mapRef.current === map && map.invalidateSize(), 500);
             setIsReady(true);
         });
 
+        // Penerima bisa pindah adegan saat peta masih beranimasi: hentikan semuanya sebelum peta dihapus,
+        // agar Leaflet tidak mengukur elemen yang sudah hilang (error `_leaflet_pos`).
         return () => {
             isMounted = false;
+            clearTimeout(resizeTimerRef.current);
             cancelAnimationFrame(frameRef.current);
+            mapRef.current?.stop();
             mapRef.current?.remove();
             mapRef.current = null;
         };
@@ -141,9 +146,18 @@ export default function MemoryMap({ slot, values, mode }) {
         const traveler = L.marker(from, { icon: travelerIcon(L), interactive: false }).addTo(layerRef.current);
 
         afterMove(map, () => {
+            // Adegan sudah ditutup sebelum animasi selesai.
+            if (mapRef.current !== map) {
+                return;
+            }
+
             const startedAt = performance.now();
 
             const tick = (now) => {
+                if (mapRef.current !== map) {
+                    return;
+                }
+
                 const progress = easeInOut(Math.min((now - startedAt) / TRAVEL_MS, 1));
                 const position = [from[0] + (to[0] - from[0]) * progress, from[1] + (to[1] - from[1]) * progress];
                 traveler.setLatLng(position);
@@ -155,7 +169,7 @@ export default function MemoryMap({ slot, values, mode }) {
                     return;
                 }
 
-                afterMove(map, arrive);
+                afterMove(map, () => mapRef.current === map && arrive());
                 map.flyTo(to, PLACE_ZOOM, { duration: 1 });
             };
 

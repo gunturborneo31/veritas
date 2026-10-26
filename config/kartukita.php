@@ -118,11 +118,13 @@ return [
     */
 
     /*
-    | Harga promo untuk semua template (ucapan & undangan). Harga asli tiap template tetap
-    | tersimpan dan tampil dicoret; kosongkan KARTUKITA_PROMO_PRICE untuk mengakhiri promo.
+    | Harga promo untuk semua template. Undangan boleh punya harga promo sendiri
+    | (KARTUKITA_PROMO_PRICE_UNDANGAN); bila kosong, undangan ikut harga promo umum.
+    | Harga asli tiap template tetap tersimpan dan tampil dicoret; kosongkan keduanya untuk mengakhiri promo.
     */
     'promo' => [
         'price' => filled(env('KARTUKITA_PROMO_PRICE')) ? (int) env('KARTUKITA_PROMO_PRICE') : null,
+        'invitation_price' => filled(env('KARTUKITA_PROMO_PRICE_UNDANGAN')) ? (int) env('KARTUKITA_PROMO_PRICE_UNDANGAN') : null,
         'label' => env('KARTUKITA_PROMO_LABEL', 'Harga Promo'),
     ],
 

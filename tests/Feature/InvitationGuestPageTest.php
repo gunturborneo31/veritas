@@ -42,6 +42,16 @@ class InvitationGuestPageTest extends TestCase
                 ->where('recipient_name', 'Bapak Budi'));
     }
 
+    public function test_personal_link_preview_greets_the_guest_by_name(): void
+    {
+        $greeting = $this->publishedInvitation();
+        $guest = Guest::factory()->for($greeting)->create(['name' => 'Bapak Budi']);
+
+        $this->get(route('recipient.show', ['slug' => $greeting->slug, 'tamu' => $guest->code]))
+            ->assertSee('<meta property="og:title" content="'.e(trim("Undangan {$greeting->snapshot->occasion} {$greeting->snapshot->sender_name}")).'">', false)
+            ->assertSee('Kepada Yth. Bapak Budi', false);
+    }
+
     public function test_unknown_guest_code_falls_back_to_generic_recipient(): void
     {
         $greeting = $this->publishedInvitation();

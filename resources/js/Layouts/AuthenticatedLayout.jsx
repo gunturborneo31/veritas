@@ -10,6 +10,7 @@ const navigation = (user) => [
     ...(user.is_admin
         ? [
               { label: 'Pesanan', route: 'admin.orders.index', active: 'admin.orders.*' },
+              { label: 'Kartu', route: 'admin.greetings.index', active: 'admin.greetings.*' },
               { label: 'Template', route: 'admin.templates.index', active: 'admin.templates.*' },
               { label: 'Komponen', route: 'admin.components.index', active: 'admin.components.*' },
               { label: 'Kategori', route: 'admin.categories.index', active: 'admin.categories.*' },

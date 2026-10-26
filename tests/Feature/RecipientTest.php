@@ -34,6 +34,17 @@ class RecipientTest extends TestCase
         $this->assertDatabaseCount('open_events', 0);
     }
 
+    public function test_shared_link_preview_names_the_recipient_without_revealing_locked_content(): void
+    {
+        $greeting = $this->publishedGreetingWithGate();
+
+        $this->get(route('recipient.show', $greeting->slug))
+            ->assertOk()
+            ->assertSee('<meta property="og:title" content="Ada ucapan untukmu, '.e($greeting->snapshot->recipient_name).' 🎁">', false)
+            ->assertSee('property="og:description"', false)
+            ->assertDontSee('Semoga panjang umur.');
+    }
+
     public function test_wrong_pin_is_rejected_and_content_stays_locked(): void
     {
         $greeting = $this->publishedGreetingWithGate();

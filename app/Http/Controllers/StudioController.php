@@ -39,13 +39,22 @@ class StudioController extends Controller
     }
 
     /**
-     * Langkah 1 & 2: data dasar dan isi per komponen. Undangan terbit yang masih dalam masa
-     * revisi dibuka dalam mode revisi: tanpa autosave, disimpan sekaligus sebagai snapshot baru.
+     * Langkah 1 & 2: data dasar dan isi per komponen. Kartu terbit yang boleh direvisi (undangan
+     * dalam masa revisi, atau kartu apa pun bila yang membuka admin) dibuka dalam mode revisi:
+     * tanpa autosave, disimpan sekaligus sebagai snapshot baru.
      */
     public function edit(Request $request, Greeting $greeting, GreetingPresenter $presenter, ContentSchema $schema): Response|RedirectResponse
     {
-        $this->ownership->authorize($request, $greeting);
-        $isRevision = $greeting->isRevisable();
+        $isRevision = ! $greeting->isEditable() && $greeting->isRevisableBy($request->user());
+
+        if ($isRevision) {
+            $this->ownership->authorizeRevision($request, $greeting);
+        } else {
+            $this->ownership->authorize($request, $greeting);
+        }
+
+        // Admin merevisi kartu milik orang lain.
+        $isAdminEdit = $isRevision && ! $this->ownership->owns($request, $greeting);
 
         if (! $greeting->isEditable() && ! $isRevision) {
             return $greeting->status === GreetingStatus::Terbit
@@ -80,7 +89,15 @@ class StudioController extends Controller
             'musicTracks' => MusicTrack::query()->active()->orderBy('title')->get()
                 ->map(fn (MusicTrack $track): array => $track->toPlayerArray()),
             'revision' => $isRevision ? [
-                'revisable_until' => $greeting->isOwnedByAdmin() ? null : $greeting->revisableUntil()?->toIso8601String(),
+                'revisable_until' => $isAdminEdit || $greeting->isOwnedByAdmin() ? null : $greeting->revisableUntil()?->toIso8601String(),
+                'is_admin_edit' => $isAdminEdit,
+                'owner' => $isAdminEdit ? $greeting->user?->only('name', 'email') : null,
+                'public_url' => route('recipient.show', $greeting->slug),
+                'back_url' => match (true) {
+                    $isAdminEdit => route('admin.greetings.index'),
+                    $greeting->isInvitation() => route('invitations.show', $greeting),
+                    default => route('result.show', $greeting),
+                },
             ] : null,
         ]);
     }

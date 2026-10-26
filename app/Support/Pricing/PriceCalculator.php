@@ -22,7 +22,7 @@ class PriceCalculator
             ['label' => "Paket 1 • {$greeting->template->name}", 'amount' => $originalPrice],
         ];
 
-        $promoPrice = PromoPrice::apply($originalPrice);
+        $promoPrice = PromoPrice::apply($originalPrice, $greeting->template->type);
 
         if ($promoPrice < $originalPrice) {
             $lines[] = ['label' => PromoPrice::label(), 'amount' => $promoPrice - $originalPrice];

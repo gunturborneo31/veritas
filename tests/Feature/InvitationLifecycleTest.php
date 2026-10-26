@@ -67,7 +67,7 @@ class InvitationLifecycleTest extends TestCase
         $slug = $greeting->slug;
 
         $this->actingAs($greeting->user)
-            ->put(route('invitations.revise', $greeting), [
+            ->put(route('studio.revise', $greeting), [
                 'sender_name' => 'Raka & Dinda Pratama',
                 'content' => ['components' => ['surat' => ['body' => 'Dengan memohon rahmat Allah SWT.']]],
             ])
@@ -85,7 +85,7 @@ class InvitationLifecycleTest extends TestCase
     public function test_guests_see_the_latest_revision(): void
     {
         $greeting = $this->publishedInvitation();
-        $this->actingAs($greeting->user)->put(route('invitations.revise', $greeting), ['sender_name' => 'Nama Baru']);
+        $this->actingAs($greeting->user)->put(route('studio.revise', $greeting), ['sender_name' => 'Nama Baru']);
         auth()->logout();
 
         $this->post(route('recipient.open', $greeting->slug));
@@ -148,8 +148,8 @@ class InvitationLifecycleTest extends TestCase
         $greeting = $this->publishedInvitation(eventFinishedDaysAgo: config('kartukita.invitation.revision_grace_days') + 1);
 
         $this->actingAs($greeting->user)
-            ->put(route('invitations.revise', $greeting), ['sender_name' => 'Terlambat'])
-            ->assertSessionHasErrors(['greeting' => 'Masa revisi undangan ini sudah berakhir.']);
+            ->put(route('studio.revise', $greeting), ['sender_name' => 'Terlambat'])
+            ->assertSessionHasErrors(['greeting' => 'Masa revisi kartu ini sudah berakhir.']);
 
         $this->assertSame(1, $greeting->snapshots()->count());
     }
@@ -159,7 +159,7 @@ class InvitationLifecycleTest extends TestCase
         $greeting = $this->publishedInvitation();
 
         $this->actingAs($greeting->user)
-            ->put(route('invitations.revise', $greeting), ['sender_name' => ''])
+            ->put(route('studio.revise', $greeting), ['sender_name' => ''])
             ->assertSessionHasErrors(['greeting' => 'Lengkapi dulu: Nama mempelai / tuan rumah.']);
     }
 
@@ -172,13 +172,56 @@ class InvitationLifecycleTest extends TestCase
         $greeting->update(['template_id' => Template::factory()->invitation()->create()->id]);
     }
 
-    public function test_greeting_revision_endpoint_is_not_available_for_regular_greetings(): void
+    public function test_shared_invitation_keeps_its_link_and_template_through_every_edit_route(): void
+    {
+        $greeting = $this->publishedInvitation();
+        $otherTemplate = Template::factory()->invitation()->create();
+        [$slug, $templateId] = [$greeting->slug, $greeting->template_id];
+        $this->actingAs($greeting->user);
+
+        // Revisi isi: kolom link & template yang ikut dikirim diabaikan, isinya tetap tersimpan.
+        $this->put(route('studio.revise', $greeting), ['sender_name' => 'Raka & Dinda Baru', 'slug' => 'link-baru', 'template_id' => $otherTemplate->id])
+            ->assertSessionHasNoErrors();
+        // Simpan draf (autosave), ganti gaya, dan checkout ulang ditolak untuk undangan yang sudah terbit.
+        $this->put(route('studio.update', $greeting), ['sender_name' => 'Lewat autosave', 'template_id' => $otherTemplate->id])->assertSessionHas('error');
+        $this->get(route('studio.style', $greeting))->assertNotFound();
+        $this->post(route('checkout.store', $greeting), ['confirm_data' => true, 'slug' => 'link-baru']);
+
+        $greeting->refresh();
+        $this->assertSame($slug, $greeting->slug);
+        $this->assertSame($templateId, $greeting->template_id);
+        $this->assertSame($templateId, $greeting->snapshot->template_id);
+        $this->assertSame('Raka & Dinda Baru', $greeting->snapshot->sender_name);
+        $this->assertDatabaseCount('orders', 0);
+        $this->get(route('recipient.show', $slug))->assertOk();
+    }
+
+    public function test_events_edited_after_sharing_show_up_on_the_guest_page(): void
+    {
+        $greeting = $this->publishedInvitation();
+        $event = $greeting->invitationEvents()->sole();
+
+        $this->actingAs($greeting->user)
+            ->put(route('invitations.events.update', [$greeting, $event]), [
+                'name' => 'Resepsi', 'starts_at' => now()->addMonth()->format('Y-m-d H:i'), 'timezone' => 'Asia/Jakarta', 'venue_name' => 'Gedung Baru',
+            ])
+            ->assertSessionHasNoErrors();
+        auth()->logout();
+
+        $this->post(route('recipient.open', $greeting->slug));
+        $this->get(route('recipient.show', $greeting->slug))
+            ->assertInertia(fn (Assert $page) => $page->where('greeting.invitation.events.0.venue_name', 'Gedung Baru'));
+    }
+
+    public function test_owner_cannot_revise_a_published_regular_greeting(): void
     {
         $greeting = Greeting::factory()->for($this->createTemplate())->published()->create(['content' => $this->completeContent()]);
 
         $this->actingAs($greeting->user)
-            ->put(route('invitations.revise', $greeting), ['sender_name' => 'Lain'])
-            ->assertNotFound();
+            ->put(route('studio.revise', $greeting), ['sender_name' => 'Lain'])
+            ->assertSessionHasErrors(['greeting' => 'Masa revisi kartu ini sudah berakhir.']);
+
+        $this->assertSame(1, $greeting->snapshots()->count());
     }
 
     public function test_guest_page_returns_410_after_the_active_period(): void
@@ -277,7 +320,7 @@ class InvitationLifecycleTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page->component('Studio/Edit')->where('revision.revisable_until', null));
 
         $this->actingAs($greeting->user)
-            ->put(route('invitations.revise', $greeting), ['sender_name' => 'Nama Baru'])
+            ->put(route('studio.revise', $greeting), ['sender_name' => 'Nama Baru'])
             ->assertSessionHasNoErrors();
 
         $this->assertSame('Nama Baru', $greeting->refresh()->snapshot->sender_name);

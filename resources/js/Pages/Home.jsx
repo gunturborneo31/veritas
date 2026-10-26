@@ -18,6 +18,16 @@ const STEPS = [
     ['send', 'bg-secondary-fixed text-on-surface', '3. Bagikan Sekejap', 'Kirim tautan via WhatsApp atau QR Code. Penerima langsung membuka tanpa install aplikasi.'],
 ];
 
+// Fitur yang benar-benar tersedia di Kelola Undangan & halaman tamu.
+const INVITATION_FEATURES = [
+    ['person_pin', 'Link pribadi per tamu', 'Nama tamu muncul sendiri di undangannya'],
+    ['event_available', 'RSVP & rekap kehadiran', 'Lihat siapa yang hadir dan berapa orang'],
+    ['redeem', 'Amplop digital', 'Rekening, e-wallet & alamat kado siap disalin'],
+    ['forum', 'Ucapan & doa', 'Buku tamu digital untuk semua tamu'],
+    ['qr_code_scanner', 'Check-in QR', 'Pindai QR tamu di pintu masuk acara'],
+    ['map', 'Peta & hitung mundur', 'Lokasi acara dan waktu yang tersisa'],
+];
+
 const numberFormatter = new Intl.NumberFormat('id-ID');
 
 /**
@@ -41,9 +51,70 @@ function ShowcasePhone({ showcase }) {
 }
 
 /**
+ * Undangan digital: satu link untuk semua tamu, lengkap dengan RSVP, amplop, dan check-in.
+ */
+function InvitationSection({ invitations }) {
+    if (invitations.length === 0) {
+        return null;
+    }
+
+    const catalogUrl = route('catalog.index', { jenis: 'undangan' });
+
+    return (
+        <section className="my-space-md flex flex-col gap-space-lg bg-tertiary-fixed/35 px-margin py-space-xl md:rounded-[2rem]">
+            <div className="grid gap-space-lg md:grid-cols-[1fr_1.2fr] md:items-start">
+                <div className="flex flex-col gap-space-md">
+                    <div>
+                        <p className="text-label-sm uppercase tracking-wider text-tertiary">Undangan Digital</p>
+                        <h2 className="text-headline-md text-on-surface md:text-headline-lg">Satu link untuk semua tamu</h2>
+                        <p className="mt-2 max-w-md text-body-md text-on-surface-variant">
+                            Pernikahan, aqiqah, khitanan, syukuran, hingga grand opening. Sebar lewat WhatsApp, kehadiran tamu terekap otomatis.
+                        </p>
+                    </div>
+
+                    <ul className="grid gap-3 sm:grid-cols-2">
+                        {INVITATION_FEATURES.map(([icon, title, body]) => (
+                            <li key={title} className="flex items-start gap-3">
+                                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-surface-container-lowest text-tertiary shadow-sm">
+                                    <Icon name={icon} size={20} />
+                                </span>
+                                <span className="min-w-0">
+                                    <span className="block text-label-md text-on-surface">{title}</span>
+                                    <span className="block text-body-sm text-on-surface-variant">{body}</span>
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+
+                    <Link
+                        href={catalogUrl}
+                        className="inline-flex h-12 items-center justify-center gap-2 self-start rounded-full bg-tertiary px-space-lg text-label-lg text-on-tertiary shadow-md transition-all active:scale-95"
+                    >
+                        Lihat Katalog Undangan
+                        <Icon name="arrow_forward" size={20} />
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                    {invitations.map((template, index) => {
+                        const isOrphan = invitations.length % 2 === 1 && index === invitations.length - 1;
+
+                        return (
+                            <div key={template.slug} className={isOrphan ? 'col-span-2 md:col-span-1' : ''}>
+                                <TemplateCard template={template} wide={isOrphan} />
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+/**
  * Beranda (desain promptgayaumum / Jelajah).
  */
-export default function Home({ categories, featured, showcase, stats }) {
+export default function Home({ categories, featured, invitations = [], showcase, stats }) {
     const { brand } = usePage().props;
 
     return (
@@ -151,6 +222,8 @@ export default function Home({ categories, featured, showcase, stats }) {
                 </div>
             </section>
 
+            <InvitationSection invitations={invitations} />
+
             <section className="my-space-md flex flex-col gap-space-md bg-surface-container-low/70 px-margin py-space-xl md:rounded-[2rem]">
                 <div className="text-center">
                     <p className="text-label-sm uppercase tracking-wider text-primary">Mudah & Menyenangkan</p>
@@ -185,7 +258,8 @@ export default function Home({ categories, featured, showcase, stats }) {
                 </div>
                 <div className="flex flex-col gap-2 text-body-sm text-on-surface-variant">
                     <p className="text-label-sm font-bold uppercase tracking-wider text-primary">Navigasi</p>
-                    <Link href={route('catalog.index')}>Katalog</Link>
+                    <Link href={route('catalog.index')}>Katalog Ucapan</Link>
+                    <Link href={route('catalog.index', { jenis: 'undangan' })}>Katalog Undangan</Link>
                     <Link href={route('dashboard')}>Kartu Saya</Link>
                 </div>
                 <div className="flex flex-col gap-2 text-body-sm text-on-surface-variant">

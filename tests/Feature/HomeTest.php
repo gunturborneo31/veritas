@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Controllers\HomeController;
 use App\Models\Greeting;
+use App\Models\Series;
 use App\Models\Template;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -26,6 +27,23 @@ class HomeTest extends TestCase
                 ->where('showcase.template.slug', $template->slug)
                 ->where('showcase.greeting.values.sampul.title', 'Selamat Ulang Tahun, Rina!')
                 ->where('showcase.greeting.gate', null));
+    }
+
+    public function test_invitation_section_lists_published_invitations_one_per_series_while_hero_stays_on_greetings(): void
+    {
+        $greeting = Template::factory()->create(['sort_order' => 0]);
+        $wedding = Series::factory()->create();
+        $first = Template::factory()->invitation()->for($wedding)->create(['sort_order' => 1]);
+        Template::factory()->invitation()->for($wedding)->create(['sort_order' => 2]);
+        $aqiqah = Template::factory()->invitation()->create(['sort_order' => 3]);
+        Template::factory()->invitation()->unpublished()->create(['sort_order' => 4]);
+
+        $this->get(route('home'))->assertInertia(fn (Assert $page) => $page
+            ->where('showcase.template.slug', $greeting->slug)
+            ->has('featured', 1)
+            ->has('invitations', 2)
+            ->where('invitations.0.slug', $first->slug)
+            ->where('invitations.1.slug', $aqiqah->slug));
     }
 
     public function test_hero_has_no_showcase_without_published_templates(): void

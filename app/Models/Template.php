@@ -119,6 +119,12 @@ class Template extends Model
             return $this->cover_path;
         }
 
+        // Sampul bawaan katalog berupa file statis di public/ (mis. /images/templates/tiup-lilin.webp);
+        // sampul unggahan admin tersimpan di disk publik tanpa garis miring di depan.
+        if (str_starts_with($this->cover_path, '/')) {
+            return asset(ltrim($this->cover_path, '/'));
+        }
+
         return Storage::disk('public')->url($this->cover_path);
     }
 
@@ -170,9 +176,9 @@ class Template extends Model
             'story' => $this->story,
             'tier' => $this->tier->label(),
             // Harga yang dibayar (sudah termasuk harga promo bila aktif); harga asli untuk ditampilkan dicoret.
-            'price' => PromoPrice::apply($this->price),
+            'price' => PromoPrice::apply($this->price, $this->type),
             'original_price' => $this->price,
-            'promo_label' => PromoPrice::apply($this->price) < $this->price ? PromoPrice::label() : null,
+            'promo_label' => PromoPrice::apply($this->price, $this->type) < $this->price ? PromoPrice::label() : null,
             'duration_minutes' => $this->duration_minutes,
             'theme' => $this->resolvedTheme(),
             'flow' => $flow,
@@ -210,6 +216,7 @@ class Template extends Model
             'slug' => $card['slug'],
             'name' => $card['name'],
             'design_name' => $card['design_name'],
+            'cover_url' => $card['cover_url'],
             'price' => $card['price'],
             'original_price' => $card['original_price'],
             'duration_minutes' => $card['duration_minutes'],

@@ -93,6 +93,15 @@ class CatalogTest extends TestCase
             ->has('templates.0.flow', 3));
     }
 
+    public function test_bundled_cover_from_public_folder_and_uploaded_cover_both_resolve_to_urls(): void
+    {
+        $bundled = Template::factory()->create(['cover_path' => '/images/templates/tiup-lilin.webp']);
+        $uploaded = Template::factory()->create(['cover_path' => 'templates/unggahan-admin.jpg']);
+
+        $this->assertSame(asset('images/templates/tiup-lilin.webp'), $bundled->coverUrl());
+        $this->assertSame(asset('storage/templates/unggahan-admin.jpg'), $uploaded->coverUrl());
+    }
+
     public function test_demo_resolves_relative_sample_dates_so_countdowns_never_expire(): void
     {
         $this->freezeTime();
@@ -136,12 +145,13 @@ class CatalogTest extends TestCase
     {
         $series = Series::factory()->create();
         $template = Template::factory()->for($series)->create(['sort_order' => 0]);
-        Template::factory()->for($series)->create(['slug' => 'desain-lain', 'sort_order' => 1]);
+        Template::factory()->for($series)->create(['slug' => 'desain-lain', 'sort_order' => 1, 'cover_path' => '/images/templates/desain-lain.webp']);
         Template::factory()->for($series)->unpublished()->create();
 
         $this->get(route('catalog.show', $template))->assertInertia(fn (Assert $page) => $page
             ->has('template.designs', 2)
-            ->where('template.designs.1.slug', 'desain-lain'));
+            ->where('template.designs.1.slug', 'desain-lain')
+            ->where('template.designs.1.cover_url', asset('images/templates/desain-lain.webp')));
     }
 
     public function test_search_matches_series_name(): void

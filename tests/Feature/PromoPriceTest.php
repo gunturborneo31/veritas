@@ -56,6 +56,38 @@ class PromoPriceTest extends TestCase
                 ->where('templates.0.designs.0.price', 15000));
     }
 
+    public function test_invitations_use_their_own_promo_price_while_greetings_keep_the_general_one(): void
+    {
+        config(['kartukita.promo.price' => 15000, 'kartukita.promo.invitation_price' => 35000]);
+        $invitation = Greeting::factory()->invitation()->for($this->createInvitationTemplate())->create(['content' => $this->completeContent()]);
+        $invitation->template->update(['price' => 79000]);
+        $invitation->invitationEvents()->create(['name' => 'Resepsi', 'starts_at' => now()->addMonth(), 'timezone' => 'Asia/Jakarta', 'venue_name' => 'Gedung', 'position' => 0]);
+
+        $this->actingAs($invitation->user)->post(route('checkout.store', $invitation), ['confirm_data' => true]);
+
+        $this->assertSame(35000, Order::sole()->amount);
+        $this->get(route('catalog.index', ['jenis' => 'undangan']))
+            ->assertInertia(fn (Assert $page) => $page->where('templates.0.price', 35000)->where('templates.0.original_price', 79000));
+    }
+
+    public function test_greetings_keep_the_general_promo_price_when_invitations_have_their_own(): void
+    {
+        config(['kartukita.promo.price' => 15000, 'kartukita.promo.invitation_price' => 35000]);
+        $this->createTemplate(price: 29000);
+
+        $this->get(route('catalog.index'))
+            ->assertInertia(fn (Assert $page) => $page->where('templates.0.price', 15000));
+    }
+
+    public function test_invitations_fall_back_to_the_general_promo_price_without_their_own(): void
+    {
+        config(['kartukita.promo.price' => 15000, 'kartukita.promo.invitation_price' => null]);
+        $this->createInvitationTemplate()->update(['price' => 79000]);
+
+        $this->get(route('catalog.index', ['jenis' => 'undangan']))
+            ->assertInertia(fn (Assert $page) => $page->where('templates.0.price', 15000));
+    }
+
     public function test_without_promo_the_original_price_applies(): void
     {
         config(['kartukita.promo.price' => null]);

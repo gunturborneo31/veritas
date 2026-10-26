@@ -1,0 +1,4 @@
+# Hasil sementara uji browser (database, data kartu, audio uji)
+*.sqlite
+*.json
+*.mp3

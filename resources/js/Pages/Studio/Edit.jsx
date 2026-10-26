@@ -97,8 +97,9 @@ function SectionCard({ id, number, icon, title, isComplete, missingCount = 0, op
 export default function Edit({ greeting, template, occasions, missing, musicTracks, collaboration, revision = null }) {
     const { errors } = usePage().props;
     const isInvitation = template.type === 'undangan';
-    // Revisi undangan terbit: tanpa autosave, karena setiap simpan menjadi versi baru yang langsung dilihat tamu.
+    // Revisi kartu terbit: tanpa autosave, karena setiap simpan menjadi versi baru yang langsung dilihat penerima/tamu.
     const isRevising = revision !== null;
+    const isAdminEdit = Boolean(revision?.is_admin_edit);
     const [hasUnsavedRevision, setHasUnsavedRevision] = useState(false);
     const initial = useMemo(() => toRawValues(greeting.components, greeting.values), []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -124,7 +125,7 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
     );
 
     const saveRevision = () =>
-        router.put(route('invitations.revise', greeting.id), payload(), {
+        router.put(route('studio.revise', greeting.id), payload(), {
             preserveScroll: true,
             preserveState: true,
             onStart: () => setSaveState({ tone: 'saving', label: 'Menyimpan revisi…' }),
@@ -230,14 +231,14 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
 
     return (
         <StudioLayout
-            title={isRevising ? 'Revisi Undangan' : 'Kustomisasi Kartu'}
+            title={isRevising ? (isInvitation ? 'Revisi Undangan' : 'Revisi Kartu') : 'Kustomisasi Kartu'}
             greetingId={greeting.id}
             beforeLeave={isRevising ? leaveRevision : (go) => (saveState.tone === 'saving' ? save({ onSuccess: go }) : go())}
             wide
             showStepper={!isRevising}
             step={(isInvitation ? base.sender_name : base.recipient_name) ? 1 : 0}
             saveState={saveState}
-            onBack={() => router.visit(isRevising ? route('invitations.show', greeting.id) : route('catalog.show', template.slug))}
+            onBack={() => router.visit(isRevising ? revision.back_url : route('catalog.show', template.slug))}
             actions={
                 <>
                     <button
@@ -284,24 +285,32 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
                             </span>
                         </div>
                         <h2 className="pt-1 text-headline-lg-mobile font-bold tracking-tight text-on-surface">
-                            {isRevising ? 'Revisi Isi Undangan' : isInvitation ? 'Personalisasi Isi Undangan' : 'Personalisasi Isi Kartu'}
+                            {isRevising ? (isInvitation ? 'Revisi Isi Undangan' : 'Revisi Isi Kartu') : isInvitation ? 'Personalisasi Isi Undangan' : 'Personalisasi Isi Kartu'}
                         </h2>
                         <p className="text-body-sm text-on-surface-variant">
                             {isRevising
-                                ? 'Ubah nama, foto, atau cerita, lalu tekan Simpan Revisi. Link undangan tetap sama dan tamu langsung melihat versi terbaru.'
+                                ? 'Ubah nama, foto, atau kalimat, lalu tekan Simpan Revisi. Link kartu tetap sama dan penerima langsung melihat versi terbaru.'
                                 : 'Tuliskan kata terindah dan pilih momen tak terlupakan. Semua tersimpan otomatis.'}
                         </p>
                     </div>
 
                     {isRevising && (
-                        <div className="flex items-start gap-3 rounded-2xl bg-tertiary-fixed px-4 py-3 text-on-tertiary-fixed">
-                            <Icon name="history_edu" size={22} className="shrink-0" />
+                        <div className={`flex items-start gap-3 rounded-2xl px-4 py-3 ${isAdminEdit ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed'}`}>
+                            <Icon name={isAdminEdit ? 'admin_panel_settings' : 'history_edu'} size={22} className="shrink-0" />
                             <div className="text-body-sm">
-                                <p className="text-label-md">Mode revisi — tanpa biaya tambahan</p>
+                                <p className="text-label-md">{isAdminEdit ? 'Mode admin — mengedit kartu milik pelanggan' : 'Mode revisi — tanpa biaya tambahan'}</p>
                                 <p className="opacity-80">
-                                    {revision.revisable_until ? `Bisa direvisi sampai ${dateTime(revision.revisable_until)}.` : 'Bisa direvisi kapan saja (undangan admin).'} Template dan gaya
-                                    tidak bisa diganti.
+                                    {isAdminEdit
+                                        ? `Pemilik: ${revision.owner?.name ?? 'tanpa akun'}${revision.owner?.email ? ` (${revision.owner.email})` : ''}. Simpanan langsung tampil di link penerima.`
+                                        : revision.revisable_until
+                                          ? `Bisa direvisi sampai ${dateTime(revision.revisable_until)}.`
+                                          : 'Bisa direvisi kapan saja.'}{' '}
+                                    Template dan gaya tidak bisa diganti.
                                 </p>
+                                <a href={revision.public_url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 font-semibold underline">
+                                    <Icon name="open_in_new" size={14} />
+                                    Lihat kartu
+                                </a>
                                 {errors.greeting && <p className="mt-1 font-semibold text-error">{errors.greeting}</p>}
                             </div>
                         </div>
@@ -429,7 +438,8 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
                         )}
                     </SectionCard>
 
-                    {isInvitation && greeting.invitation && (
+                    {/* Acara, amplop & tamu dikelola pemilik di Kelola Undangan; admin hanya merevisi isi kartu. */}
+                    {isInvitation && greeting.invitation && !isAdminEdit && (
                         <button
                             id="isian-acara"
                             type="button"

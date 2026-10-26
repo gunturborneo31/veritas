@@ -89,6 +89,10 @@ class CatalogController extends Controller
                     'required' => $slot->is_required,
                 ]),
             ],
-        ]);
+        ])->withViewData(['share' => [
+            'title' => ($template->series?->name ?? $template->name).' — '.($template->type === GreetingType::Undangan ? 'Undangan' : 'Kartu Ucapan').' Digital | '.config('kartukita.brand'),
+            'description' => $template->tagline,
+            'image' => $template->coverUrl(),
+        ]]);
     }
 }

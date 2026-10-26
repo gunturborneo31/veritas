@@ -25,3 +25,6 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Gambar mentah dari aplikasi Gemini (yang di-commit hanya hasil WebP di public/images)
+/gambar-gemini

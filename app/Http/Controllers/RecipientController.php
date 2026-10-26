@@ -6,6 +6,7 @@ use App\Actions\Recipients\RecordOpenEvent;
 use App\Enums\GreetingStatus;
 use App\Http\Requests\UnlockGreetingRequest;
 use App\Models\Greeting;
+use App\Models\Guest;
 use App\Models\Reaction;
 use App\Support\Greetings\GreetingPresenter;
 use App\Support\Invitations\GuestSession;
@@ -35,6 +36,7 @@ class RecipientController extends Controller
     {
         $greeting = $this->findPublished($slug);
         $guest = $greeting->isInvitation() ? $this->guestSession->resolve($request, $greeting) : null;
+        $share = $this->shareMeta($greeting, $guest);
 
         if (! $this->isUnlocked($request, $greeting)) {
             return Inertia::render('Recipient/Gate', [
@@ -47,7 +49,7 @@ class RecipientController extends Controller
                 'theme' => $greeting->template->resolvedTheme(),
                 'opens_at' => $greeting->isScheduledForLater() ? $greeting->opens_at->toIso8601String() : null,
                 'music' => $presenter->backgroundMusic($greeting->snapshot),
-            ]);
+            ])->withViewData(['share' => $share]);
         }
 
         return Inertia::render('Recipient/Play', [
@@ -63,7 +65,32 @@ class RecipientController extends Controller
             'answers' => $request->session()->get($this->sessionKey($greeting, 'answers'), []),
             'reactionEmojis' => Reaction::EMOJIS,
             'videoSent' => (bool) $request->session()->get($this->sessionKey($greeting, 'video_sent')),
-        ]);
+        ])->withViewData(['share' => $share]);
+    }
+
+    /**
+     * Pratinjau link di WhatsApp: hanya nama & momen yang memang tampil di halaman gerbang,
+     * tidak pernah isi kartu (yang bisa saja dilindungi PIN).
+     *
+     * @return array{title: string, description: string, image: ?string}
+     */
+    private function shareMeta(Greeting $greeting, ?Guest $guest): array
+    {
+        $snapshot = $greeting->snapshot;
+
+        if ($greeting->isInvitation()) {
+            return [
+                'title' => trim("Undangan {$snapshot->occasion} {$snapshot->sender_name}"),
+                'description' => ($guest ? "Kepada Yth. {$guest->name}, " : '').'kami mengundang Anda untuk hadir. Buka undangan untuk detail acara dan konfirmasi kehadiran.',
+                'image' => $greeting->template->coverUrl(),
+            ];
+        }
+
+        return [
+            'title' => "Ada ucapan untukmu, {$snapshot->recipient_name} 🎁",
+            'description' => ($snapshot->sender_name ? "Dari {$snapshot->sender_name}. " : '')."Kartu {$snapshot->occasion} interaktif. Buka untuk melihat kejutannya.",
+            'image' => $greeting->template->coverUrl(),
+        ];
     }
 
     public function open(UnlockGreetingRequest $request, string $slug, RecordOpenEvent $recordOpen): RedirectResponse

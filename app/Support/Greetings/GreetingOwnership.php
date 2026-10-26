@@ -35,6 +35,15 @@ class GreetingOwnership
     }
 
     /**
+     * Revisi kartu terbit: pemilik (selama masa revisi) atau admin (kartu siapa pun, kapan saja).
+     * Orang lain tetap mendapat 404 seolah kartu tidak ada.
+     */
+    public function authorizeRevision(Request $request, Greeting $greeting): void
+    {
+        abort_unless($this->owns($request, $greeting) || $request->user()?->is_admin, 404);
+    }
+
+    /**
      * Kelola undangan: hanya pemilik, hanya ucapan bertipe undangan. Perubahan data
      * (acara, tamu, rekening) ditolak setelah masa aktif undangan berakhir.
      */

@@ -54,12 +54,17 @@ class Greeting extends Model
      */
     public const INVITATION_RECIPIENT_PLACEHOLDER = 'Tamu Undangan';
 
+    /**
+     * Dibuka oleh {@see unlockForRevision()} saat admin merevisi kartu terbit yang biasanya terkunci permanen.
+     */
+    private bool $isUnlockedForRevision = false;
+
     protected static function booted(): void
     {
         static::updating(function (Greeting $greeting): void {
             $originalStatus = GreetingStatus::from($greeting->getRawOriginal('status'));
 
-            $lockedAttributes = $greeting->isRevisable() ? ['template_id'] : self::CONTENT_ATTRIBUTES;
+            $lockedAttributes = $greeting->isRevisable() || $greeting->isUnlockedForRevision ? ['template_id'] : self::CONTENT_ATTRIBUTES;
 
             if (! $originalStatus->isEditable() && $greeting->isDirty($lockedAttributes)) {
                 throw GreetingLockedException::forGreeting($greeting);
@@ -339,6 +344,30 @@ class Greeting extends Model
         }
 
         return $this->revisableUntil()?->isFuture() ?? false;
+    }
+
+    /**
+     * Admin boleh merevisi isi kartu apa pun yang sudah terbit (ucapan maupun undangan, kapan saja);
+     * pemilik hanya selama {@see isRevisable()}.
+     */
+    public function isRevisableBy(?User $user): bool
+    {
+        if ($this->isRevisable()) {
+            return true;
+        }
+
+        return (bool) $user?->is_admin && GreetingStatus::from($this->getRawOriginal('status') ?? $this->status->value) === GreetingStatus::Terbit;
+    }
+
+    /**
+     * Izinkan isi kartu terbit diubah pada instance ini saja (template tetap terkunci).
+     * Hanya dipanggil oleh alur revisi setelah {@see isRevisableBy()} lolos.
+     */
+    public function unlockForRevision(): static
+    {
+        $this->isUnlockedForRevision = true;
+
+        return $this;
     }
 
     /**

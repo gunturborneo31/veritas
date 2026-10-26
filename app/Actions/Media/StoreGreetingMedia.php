@@ -8,6 +8,7 @@ use App\Exceptions\GreetingLockedException;
 use App\Jobs\ProcessGreetingMedia;
 use App\Models\Greeting;
 use App\Models\Media;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
@@ -15,11 +16,12 @@ class StoreGreetingMedia
 {
     /**
      * Simpan file mentah secara privat lalu antrekan kompresi.
-     * Undangan dalam masa revisi boleh menambah foto (media lama tetap dipakai snapshot sebelumnya).
+     * Kartu yang sedang direvisi (undangan dalam masa revisi, atau kartu apa pun oleh admin) boleh
+     * menambah foto; media lama tetap dipakai snapshot sebelumnya.
      */
-    public function handle(Greeting $greeting, UploadedFile $file, MediaKind $kind): Media
+    public function handle(Greeting $greeting, UploadedFile $file, MediaKind $kind, ?User $uploader = null): Media
     {
-        if (! $greeting->isEditable() && ! $greeting->isRevisable()) {
+        if (! $greeting->isEditable() && ! $greeting->isRevisableBy($uploader)) {
             throw GreetingLockedException::forGreeting($greeting);
         }
 

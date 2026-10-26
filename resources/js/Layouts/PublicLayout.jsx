@@ -4,17 +4,22 @@ import Icon from '@/Components/Icon';
 import { Head, Link, usePage } from '@inertiajs/react';
 
 /**
- * Empat bagian utama aplikasi. `sections` menentukan tab mana yang menyala, termasuk saat berada di sub-halaman
- * (mis. detail template tetap menyalakan "Katalog").
+ * Bagian utama aplikasi. `sections` menentukan tab mana yang menyala, termasuk saat berada di sub-halaman
+ * (mis. detail template tetap menyalakan katalognya). Katalog ucapan & undangan berbagi route yang sama;
+ * `catalogType` membedakannya lewat `?jenis=` di katalog atau jenis template di halaman detail/demo.
  */
 const NAV_ITEMS = [
     { label: 'Jelajah', icon: 'explore', route: 'home', sections: ['home'] },
-    { label: 'Katalog', icon: 'style', route: 'catalog.index', sections: ['catalog.*'] },
+    { label: 'Ucapan', icon: 'style', route: 'catalog.index', sections: ['catalog.*'], catalogType: 'ucapan' },
+    { label: 'Undangan', icon: 'celebration', route: 'catalog.index', params: { jenis: 'undangan' }, sections: ['catalog.*'], catalogType: 'undangan' },
     { label: 'Kartu Saya', icon: 'mark_email_read', route: 'dashboard', sections: ['dashboard', 'orders.*', 'result.*', 'invitations.*'] },
     { label: 'Profil', icon: 'face', route: 'profile.edit', sections: ['profile.*'] },
 ];
 
-const isSectionActive = (item) => item.sections.some((pattern) => route().current(pattern));
+const currentCatalogType = (props) => props.filters?.jenis ?? props.template?.type ?? 'ucapan';
+
+const isSectionActive = (item, props) =>
+    item.sections.some((pattern) => route().current(pattern)) && (!item.catalogType || item.catalogType === currentCatalogType(props));
 
 /**
  * Kerangka halaman publik. Navigasi selalu sama di semua halaman jelajah:
@@ -24,7 +29,8 @@ const isSectionActive = (item) => item.sections.some((pattern) => route().curren
  * - `wide` melebarkan konten untuk halaman etalase.
  */
 export default function PublicLayout({ title, back = null, actionBar = null, wide = false, children }) {
-    const { auth, resume_draft } = usePage().props;
+    const pageProps = usePage().props;
+    const { auth, resume_draft } = pageProps;
     const containerWidth = wide ? 'max-w-3xl lg:max-w-5xl' : 'max-w-3xl';
 
     return (
@@ -36,12 +42,12 @@ export default function PublicLayout({ title, back = null, actionBar = null, wid
                     <Brand />
                     <nav aria-label="Menu utama" className="hidden items-center gap-1 md:flex">
                         {NAV_ITEMS.map((item) => {
-                            const isActive = isSectionActive(item);
+                            const isActive = isSectionActive(item, pageProps);
 
                             return (
                                 <Link
-                                    key={item.route}
-                                    href={route(item.route)}
+                                    key={item.label}
+                                    href={route(item.route, item.params)}
                                     aria-current={isActive ? 'page' : undefined}
                                     className={`flex h-10 items-center rounded-full px-space-md text-label-md transition-colors ${
                                         isActive ? 'bg-primary-fixed text-on-primary-fixed' : 'text-on-surface-variant hover:bg-surface-container'
@@ -139,14 +145,14 @@ export default function PublicLayout({ title, back = null, actionBar = null, wid
             <nav aria-label="Menu utama" className="pb-safe fixed bottom-0 z-50 w-full bg-surface/95 shadow-bar backdrop-blur-xl md:hidden">
                 <div className="mx-auto flex h-16 max-w-3xl items-center justify-around px-margin">
                     {NAV_ITEMS.map((item) => {
-                        const isActive = isSectionActive(item);
+                        const isActive = isSectionActive(item, pageProps);
 
                         return (
                             <Link
-                                key={item.route}
-                                href={route(item.route)}
+                                key={item.label}
+                                href={route(item.route, item.params)}
                                 aria-current={isActive ? 'page' : undefined}
-                                className={`relative flex min-h-[44px] min-w-[64px] flex-col items-center justify-center gap-0.5 transition-colors ${
+                                className={`relative flex min-h-[44px] min-w-[56px] flex-col items-center justify-center gap-0.5 transition-colors ${
                                     isActive ? 'text-label-md text-primary' : 'text-label-sm text-on-surface-variant'
                                 }`}
                             >
