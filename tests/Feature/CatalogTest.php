@@ -93,6 +93,22 @@ class CatalogTest extends TestCase
             ->has('templates.0.flow', 3));
     }
 
+    public function test_category_filters_count_stories_across_the_whole_catalog_even_when_one_is_selected(): void
+    {
+        $birthday = Category::factory()->create(['slug' => 'ulang-tahun']);
+        $family = Category::factory()->create(['slug' => 'keluarga']);
+        $series = Series::factory()->create();
+        Template::factory()->for($birthday)->for($series)->count(3)->create();
+        Template::factory()->for($birthday)->create();
+        Template::factory()->for($family)->create();
+
+        $this->get(route('catalog.index', ['kategori' => 'keluarga']))->assertInertia(fn (Assert $page) => $page
+            ->has('templates', 1)
+            ->where('categories', fn ($categories) => collect($categories)->firstWhere('slug', 'ulang-tahun')['stories_count'] === 2
+                && collect($categories)->firstWhere('slug', 'ulang-tahun')['templates_count'] === 4
+                && collect($categories)->firstWhere('slug', 'keluarga')['stories_count'] === 1));
+    }
+
     public function test_bundled_cover_from_public_folder_and_uploaded_cover_both_resolve_to_urls(): void
     {
         $bundled = Template::factory()->create(['cover_path' => '/images/templates/tiup-lilin.webp']);

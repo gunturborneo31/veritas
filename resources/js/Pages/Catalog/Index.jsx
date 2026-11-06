@@ -188,9 +188,26 @@ export default function Index({ categories, templates, filters }) {
     const totalTemplates = categories.reduce((sum, category) => sum + category.templates_count, 0);
     const totalSeries = templates.length;
 
+    const totalStories = categories.reduce((sum, category) => sum + category.stories_count, 0);
+
+    // Tampilan "Semua": momen dengan beberapa cerita mendapat bagian sendiri; momen lain digabung dalam satu grid
+    // (tiap kartu sudah berlabel momennya), agar tidak ada bagian yang hanya berisi satu kartu.
+    const groups = categories
+        .map((category) => ({ category, templates: gridTemplates.filter((template) => template.category?.slug === category.slug) }))
+        .filter((group) => group.templates.length >= 2);
+    const groupedSlugs = new Set(groups.map((group) => group.category.slug));
+    const ungrouped = gridTemplates.filter((template) => !groupedSlugs.has(template.category?.slug));
+
     const chipClass = (isActive) =>
-        `flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-label-md transition-all active:scale-95 ${
-            isActive ? 'bg-on-surface text-surface-container-lowest shadow-md' : 'bg-surface-container-lowest text-on-surface shadow-sm hover:bg-surface-container'
+        `flex h-10 shrink-0 items-center gap-2 rounded-full border-2 pl-4 pr-2 text-label-md transition-all active:scale-95 ${
+            isActive
+                ? 'border-primary bg-primary text-on-primary shadow-md shadow-primary/25'
+                : 'border-outline-variant/60 bg-surface-container-lowest text-on-surface hover:border-primary/50'
+        }`;
+
+    const countClass = (isActive) =>
+        `flex h-6 min-w-6 items-center justify-center rounded-full border px-1.5 text-[12px] font-bold tabular-nums ${
+            isActive ? 'border-on-primary/70 text-on-primary' : 'border-outline-variant text-on-surface-variant'
         }`;
 
     return (
@@ -239,18 +256,30 @@ export default function Index({ categories, templates, filters }) {
             <section className="sticky top-16 z-30 bg-surface/90 py-2 backdrop-blur-xl">
                 <div className="no-scrollbar flex items-center gap-2 overflow-x-auto px-margin py-1">
                     <button type="button" onClick={() => visit({ kategori: undefined })} className={chipClass(!filters.kategori)}>
-                        ✨ Semua
+                        Semua
+                        <span className={countClass(!filters.kategori)}>{totalStories}</span>
                     </button>
-                    {categories.map((category) => (
-                        <button key={category.slug} type="button" onClick={() => visit({ kategori: category.slug })} className={chipClass(filters.kategori === category.slug)}>
-                            <span>{category.emoji}</span>
-                            <span>{category.name}</span>
-                            {category.templates_count === 0 && (
-                                <span className="rounded-full bg-tertiary-fixed px-1.5 text-[11px] font-bold uppercase text-on-tertiary-fixed">Segera</span>
-                            )}
-                        </button>
-                    ))}
+                    {categories.map((category) => {
+                        const isActive = filters.kategori === category.slug;
+
+                        return (
+                            <button key={category.slug} type="button" onClick={() => visit({ kategori: category.slug })} className={chipClass(isActive)}>
+                                <span>{category.emoji}</span>
+                                <span>{category.name}</span>
+                                {category.stories_count > 0 ? (
+                                    <span className={countClass(isActive)}>{category.stories_count}</span>
+                                ) : (
+                                    <span className="rounded-full bg-tertiary-fixed px-1.5 text-[11px] font-bold uppercase text-on-tertiary-fixed">Segera</span>
+                                )}
+                            </button>
+                        );
+                    })}
                 </div>
+                <p className="px-margin pt-1 text-body-sm text-on-surface-variant">
+                    {activeCategory
+                        ? `${activeCategory.stories_count} cerita untuk momen ${activeCategory.name}, masing-masing dengan beberapa pilihan desain.`
+                        : `Semua momen: ${totalStories} cerita dari ${categories.filter((category) => category.stories_count > 0).length} momen.`}
+                </p>
             </section>
 
             {!isFiltered && spotlight && (
@@ -259,7 +288,61 @@ export default function Index({ categories, templates, filters }) {
                 </section>
             )}
 
-            {gridTemplates.length > 0 && (
+            {!isFiltered &&
+                groups.map(({ category, templates: groupTemplates }) => (
+                    <section key={category.slug} aria-labelledby={`momen-${category.slug}`} className="px-margin pb-space-lg">
+                        <div className="mb-space-sm flex items-end justify-between gap-3 border-b border-outline-variant/40 pb-2">
+                            <div className="min-w-0">
+                                <p className="text-label-sm uppercase tracking-wider text-primary">
+                                    {category.stories_count} cerita • {category.templates_count} desain
+                                </p>
+                                <h2 id={`momen-${category.slug}`} className="flex items-center gap-2 font-display text-headline-sm text-on-surface">
+                                    <span aria-hidden="true">{category.emoji}</span>
+                                    {category.name}
+                                </h2>
+                            </div>
+                            <button type="button" onClick={() => visit({ kategori: category.slug })} className="flex shrink-0 items-center gap-0.5 text-label-md text-primary">
+                                Lihat semua
+                                <Icon name="chevron_right" size={18} />
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:gap-4">
+                            {groupTemplates.map((template, index) => {
+                                const isOrphan = groupTemplates.length % 2 === 1 && index === groupTemplates.length - 1;
+
+                                return (
+                                    <div key={template.slug} className={isOrphan ? 'col-span-2 sm:col-span-1' : ''}>
+                                        <TemplateCard template={template} wide={isOrphan} />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </section>
+                ))}
+
+            {!isFiltered && ungrouped.length > 0 && (
+                <section aria-labelledby="momen-lainnya" className="px-margin pb-space-lg">
+                    <div className="mb-space-sm border-b border-outline-variant/40 pb-2">
+                        <p className="text-label-sm uppercase tracking-wider text-primary">Pilih momen yang mau kamu rayakan</p>
+                        <h2 id="momen-lainnya" className="font-display text-headline-sm text-on-surface">
+                            {groups.length > 0 ? 'Momen lainnya' : 'Semua momen'}
+                        </h2>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:gap-4">
+                        {ungrouped.map((template, index) => {
+                            const isOrphan = ungrouped.length % 2 === 1 && index === ungrouped.length - 1;
+
+                            return (
+                                <div key={template.slug} className={isOrphan ? 'col-span-2 sm:col-span-1' : ''}>
+                                    <TemplateCard template={template} wide={isOrphan} />
+                                </div>
+                            );
+                        })}
+                    </div>
+                </section>
+            )}
+
+            {isFiltered && gridTemplates.length > 0 && (
                 <section className="px-margin pb-space-lg">
                     <div className="mb-space-sm flex items-end justify-between">
                         <h2 className="font-display text-headline-sm text-on-surface">
@@ -271,7 +354,7 @@ export default function Index({ categories, templates, filters }) {
                             </button>
                         )}
                     </div>
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:gap-4">
                         {gridTemplates.map((template, index) => {
                             const isOrphan = gridTemplates.length % 2 === 1 && index === gridTemplates.length - 1;
 
