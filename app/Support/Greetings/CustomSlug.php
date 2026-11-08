@@ -22,7 +22,7 @@ class CustomSlug
      *
      * @var list<string>
      */
-    public const RESERVED = ['admin', 'administrator', 'kartukita', 'official', 'resmi', 'support', 'bantuan', 'cs', 'promo', 'gratis', 'login', 'masuk', 'daftar'];
+    public const RESERVED = ['admin', 'administrator', 'kartukita', 'kitoo', 'official', 'resmi', 'support', 'bantuan', 'cs', 'promo', 'gratis', 'login', 'masuk', 'daftar'];
 
     /**
      * Rapikan masukan bebas menjadi kandidat slug: huruf kecil, spasi jadi tanda hubung.

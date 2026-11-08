@@ -57,6 +57,18 @@ class MediaFileTest extends TestCase
         $this->get($url)->assertForbidden();
     }
 
+    public function test_media_url_stays_the_same_across_page_loads_so_browsers_can_cache_it(): void
+    {
+        $this->travelTo(now()->startOfHour());
+        $media = $this->uploadedJpeg();
+        $firstUrl = $media->temporaryUrl();
+
+        $this->travel(5)->minutes();
+
+        $this->assertSame($firstUrl, $media->temporaryUrl());
+        $this->get($firstUrl)->assertOk();
+    }
+
     private function uploadedJpeg(): Media
     {
         $greeting = Greeting::factory()->for($this->createTemplate())->create();

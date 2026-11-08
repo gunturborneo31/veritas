@@ -19,7 +19,7 @@ class MusicTrackFactory extends Factory
     {
         return [
             'title' => fake()->words(3, true),
-            'artist' => 'Pustaka KartuKita',
+            'artist' => 'Pustaka '.config('kartukita.brand'),
             'mood' => 'Hangat',
             'duration_seconds' => 150,
             'path' => 'music/'.fake()->slug().'.mp3',

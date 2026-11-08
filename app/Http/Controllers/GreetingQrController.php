@@ -18,7 +18,7 @@ class GreetingQrController extends Controller
     {
         abort_unless($greeting->user_id === $request->user()->id && $greeting->status === GreetingStatus::Terbit, 404);
 
-        $filename = 'qr-kartukita-'.Str::slug($greeting->recipient_name ?: 'ucapan').'.png';
+        $filename = 'qr-'.Str::slug(config('kartukita.brand')).'-'.Str::slug($greeting->recipient_name ?: 'ucapan').'.png';
 
         return response($qr->png(route('recipient.show', $greeting->slug)), 200, [
             'Content-Type' => 'image/png',

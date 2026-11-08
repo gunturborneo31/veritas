@@ -258,7 +258,7 @@ class CatalogSeeder extends Seeder
         return collect($rows)->mapWithKeys(fn (array $row, string $key): array => [
             $key => MusicTrack::updateOrCreate(['path' => $row[3]], [
                 'title' => $row[0],
-                'artist' => 'Pustaka KartuKita',
+                'artist' => 'Pustaka '.config('kartukita.brand'),
                 'mood' => $row[1],
                 'duration_seconds' => $row[2],
                 'license_note' => 'Bebas royalti (ganti dengan lisensi resmi)',

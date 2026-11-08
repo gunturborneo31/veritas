@@ -137,7 +137,7 @@ async function downloadPng(svg, filename) {
  * QR dengan beberapa model bingkai (Klasik, Love, Kado, Undangan, Polaroid) untuk dibagikan
  * atau dicetak. QR aslinya tetap dari server; bingkai hanya hiasan di sekelilingnya.
  */
-export default function QrStyler({ svg, theme, title, caption, filename = 'qr-kartukita', defaultStyle = 'classic', plainDownloadUrl = null }) {
+export default function QrStyler({ svg, theme, title, caption, filename = 'qr-kitoo', defaultStyle = 'classic', plainDownloadUrl = null }) {
     const [styleKey, setStyleKey] = useState(defaultStyle in STYLES ? defaultStyle : 'classic');
     const [isSaving, setIsSaving] = useState(false);
     const props = { qr: svg, accent: theme?.accent ?? '#a83223', soft: theme?.soft ?? '#ffdad4', title, caption };

@@ -1,8 +1,52 @@
 import { requestJson } from '@/lib/http';
 
+const MAX_IMAGE_DIMENSION = 1600;
+const IMAGE_QUALITY = 0.82;
+
+function canvasToBlob(canvas, type) {
+    return new Promise((resolve) => canvas.toBlob(resolve, type, IMAGE_QUALITY));
+}
+
+/**
+ * Perkecil foto di browser sebelum diunggah (foto HP bisa 5–10MB, hasilnya biasanya < 400KB),
+ * sehingga unggahan di jaringan seluler jauh lebih cepat. Jika gagal atau tidak lebih kecil, file asli dipakai.
+ */
+async function compressImage(file) {
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || typeof createImageBitmap !== 'function') {
+        return file;
+    }
+
+    try {
+        const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+        const ratio = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(bitmap.width, bitmap.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(bitmap.width * ratio);
+        canvas.height = Math.round(bitmap.height * ratio);
+        canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        bitmap.close?.();
+
+        // Safari lama tidak bisa membuat WebP (hasilnya PNG), jadi pakai JPEG sebagai cadangan.
+        let blob = await canvasToBlob(canvas, 'image/webp');
+        if (blob?.type !== 'image/webp') {
+            blob = await canvasToBlob(canvas, 'image/jpeg');
+        }
+
+        if (!blob || blob.size >= file.size) {
+            return file;
+        }
+
+        const extension = blob.type === 'image/webp' ? 'webp' : 'jpg';
+        const baseName = file.name.replace(/\.[^.]+$/, '') || 'foto';
+
+        return new File([blob], `${baseName}.${extension}`, { type: blob.type });
+    } catch {
+        return file;
+    }
+}
+
 export async function uploadMedia(greetingId, file, kind) {
     const body = new FormData();
-    body.append('file', file);
+    body.append('file', kind === 'image' ? await compressImage(file) : file);
     body.append('kind', kind);
 
     const { media } = await requestJson(route('studio.media.store', greetingId), { method: 'POST', body });

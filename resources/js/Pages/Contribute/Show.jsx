@@ -2,7 +2,7 @@ import FlashToast from '@/Components/FlashToast';
 import Icon from '@/Components/Icon';
 import Illustration from '@/Components/Illustration';
 import { resolveTheme, themeVars } from '@/lib/theme';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 const inputClass = 'w-full rounded-2xl border-0 bg-white/80 px-4 py-3 text-body-md text-on-surface shadow-sm focus:ring-2 focus:ring-primary/40';
@@ -11,6 +11,7 @@ const inputClass = 'w-full rounded-2xl border-0 bg-white/80 px-4 py-3 text-body-
  * Halaman patungan: teman pengirim menitip pesan (dan foto) tanpa membuat akun.
  */
 export default function Show({ token, isOpen, greeting, template }) {
+    const { brand } = usePage().props;
     const theme = resolveTheme(template.theme);
     const [sent, setSent] = useState(false);
     const form = useForm({ contributor_name: '', message: '', photo: null });
@@ -110,7 +111,7 @@ export default function Show({ token, isOpen, greeting, template }) {
                     </form>
                 )}
 
-                <p className="text-center text-label-sm text-on-surface-variant">Dibuat dengan KartuKita • Ucapan digital interaktif</p>
+                <p className="text-center text-label-sm text-on-surface-variant">Dibuat dengan {brand} • Ucapan digital interaktif</p>
             </div>
         </div>
     );

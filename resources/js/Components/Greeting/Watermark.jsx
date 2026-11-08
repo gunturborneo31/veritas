@@ -1,9 +1,12 @@
+import { usePage } from '@inertiajs/react';
+
 /**
  * Watermark diagonal untuk pratinjau & demo (desain pratinjauwatermark).
  * Cukup jelas untuk mencegah dipakai sebagai versi final, tapi isi tetap terbaca.
  */
 export default function Watermark({ recipientName }) {
-    const line = `PRATINJAU KARTUKITA • UNTUK ${(recipientName || 'PENERIMA').toUpperCase()} • BUKAN VERSI FINAL`;
+    const brand = usePage().props.brand ?? 'Kitoo';
+    const line = `PRATINJAU ${brand.toUpperCase()} • UNTUK ${(recipientName || 'PENERIMA').toUpperCase()} • BUKAN VERSI FINAL`;
 
     return (
         <div

@@ -1,5 +1,5 @@
 /**
- * Logo KartuKita: amplop terbuka dengan hati (coral, plum, emas).
+ * Logo aplikasi: amplop terbuka dengan hati (coral, plum, emas).
  */
 export default function ApplicationLogo(props) {
     return (

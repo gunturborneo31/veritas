@@ -51,10 +51,20 @@ class Media extends Model
     /**
      * URL bertanda tangan berbasis ID media (bukan path), agar tetap berlaku setelah file
      * dikompres dan berganti nama di latar belakang.
+     *
+     * Waktu kedaluwarsa dibulatkan ke bawah per setengah masa berlaku, sehingga URL yang sama dipakai
+     * berulang kali (cache browser bekerja) dan tetap berlaku paling sedikit separuh dari $minutes.
      */
     public function temporaryUrl(int $minutes = 120): string
     {
-        return URL::temporarySignedRoute('media.file', now()->addMinutes($minutes), ['media' => $this->public_id]);
+        $bucketSeconds = max(1, intdiv($minutes * 60, 2));
+        $expiresAt = now()->addMinutes($minutes)->getTimestamp();
+
+        return URL::temporarySignedRoute(
+            'media.file',
+            now()->setTimestamp($expiresAt - ($expiresAt % $bucketSeconds)),
+            ['media' => $this->public_id],
+        );
     }
 
     /**

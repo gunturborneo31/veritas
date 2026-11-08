@@ -106,7 +106,7 @@ class DashboardController extends Controller
                 'discount' => $referral->describe(),
                 'reward' => 'Rp'.number_format(config('kartukita.referral.referrer_reward'), 0, ',', '.'),
                 'uses' => $referral->uses_count,
-                'share_text' => "Pakai kode {$referral->code} di KartuKita untuk potongan {$referral->describe()} bikin kartu ucapan interaktif! ".route('catalog.index'),
+                'share_text' => "Pakai kode {$referral->code} di ".config('kartukita.brand')." untuk potongan {$referral->describe()} bikin kartu ucapan interaktif! ".route('catalog.index'),
                 'vouchers' => PromoCode::query()
                     ->where('restricted_to_user_id', $user->id)
                     ->where('kind', PromoKind::Reward)

@@ -2,7 +2,7 @@ import BottomSheet from '@/Components/BottomSheet';
 import Icon from '@/Components/Icon';
 import InputError from '@/Components/InputError';
 import Field, { EmptyState, inputClass, Suggestions, SubmitButton } from '@/Components/Invitation/Field';
-import { router, useForm } from '@inertiajs/react';
+import { router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 const MAX_ACCOUNTS = 6;
@@ -87,6 +87,7 @@ function GiftFormSheet({ invitation, account, open, onClose }) {
  * Rekening, e-wallet, dan alamat kado. Tamu menyalin nomornya lalu transfer sendiri.
  */
 export default function GiftsPanel({ invitation, readOnly }) {
+    const { brand } = usePage().props;
     const [editing, setEditing] = useState(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -111,7 +112,7 @@ export default function GiftsPanel({ invitation, readOnly }) {
             )}
 
             {invitation.gifts.length === 0 ? (
-                <EmptyState icon="redeem" title="Belum ada amplop digital" body="Tamu yang berhalangan hadir tetap bisa mengirim hadiah. Uang langsung masuk ke rekeningmu, tidak lewat KartuKita." />
+                <EmptyState icon="redeem" title="Belum ada amplop digital" body={`Tamu yang berhalangan hadir tetap bisa mengirim hadiah. Uang langsung masuk ke rekeningmu, tidak lewat ${brand}.`} />
             ) : (
                 <ul className="flex flex-col gap-space-sm">
                     {invitation.gifts.map((account) => (
