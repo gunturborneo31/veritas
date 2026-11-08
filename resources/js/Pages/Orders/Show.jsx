@@ -3,6 +3,7 @@ import PublicLayout from '@/Layouts/PublicLayout';
 import { rupiah } from '@/lib/format';
 import { Link, router, useForm, usePoll } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import { copyText } from '@/lib/clipboard';
 
 const APPS = ['GoPay', 'OVO', 'DANA', 'ShopeePay', 'LinkAja', 'm-banking'];
 
@@ -161,7 +162,7 @@ function ManualPayment({ manual, orderCode }) {
     const [copied, setCopied] = useState(false);
 
     const copyAmount = () => {
-        navigator.clipboard?.writeText(String(manual.amount));
+        copyText(String(manual.amount));
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };

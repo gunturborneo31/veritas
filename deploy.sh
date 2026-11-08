@@ -32,6 +32,9 @@ step 'Tautan storage (musik, sampul unggahan)'
 step 'Sampul katalog bawaan'
 php artisan kartukita:install-covers
 
+step 'Pustaka musik latar (aman diulang)'
+php artisan db:seed --class=MusicLibrarySeeder --force
+
 step 'Bersihkan & bangun ulang cache'
 php artisan optimize:clear
 php artisan optimize

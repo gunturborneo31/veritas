@@ -113,6 +113,19 @@ class RecipientTest extends TestCase
         $this->get(route('recipient.show', $greeting->slug))->assertNotFound();
     }
 
+    public function test_bundled_library_music_is_served_from_public_with_its_category_and_license_credit(): void
+    {
+        $track = MusicTrack::factory()->create([
+            'path' => '/audio/latar/carefree.mp3',
+            'category' => 'Ceria',
+            'license_note' => '"Carefree" Kevin MacLeod (incompetech.com) — CC BY 4.0',
+        ]);
+
+        $this->assertSame(asset('audio/latar/carefree.mp3'), $track->url());
+        $this->assertSame('Ceria', $track->toPlayerArray()['category']);
+        $this->assertSame('"Carefree" Kevin MacLeod (incompetech.com) — CC BY 4.0', $track->toPlayerArray()['credit']);
+    }
+
     public function test_gate_screen_includes_background_music_so_it_can_start_before_the_card_is_opened(): void
     {
         $track = MusicTrack::factory()->create(['path' => 'music/kotak-musik-ajaib.mp3']);

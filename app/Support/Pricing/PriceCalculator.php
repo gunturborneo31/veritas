@@ -40,7 +40,8 @@ class PriceCalculator
             return new PriceQuote($lines, $subtotal);
         }
 
-        $minimum = min((int) config('kartukita.payment.minimum_payable'), $subtotal);
+        // Minimum pembayaran ada karena QRIS tidak bisa menagih nominal sangat kecil; kode 100% melewati QRIS sepenuhnya.
+        $minimum = $promo->makesOrderFree() ? 0 : min((int) config('kartukita.payment.minimum_payable'), $subtotal);
         $discount = min($promo->discountFor($subtotal), $subtotal - $minimum);
         $lines[] = ['label' => "Kode {$promo->code}", 'amount' => -$discount];
 

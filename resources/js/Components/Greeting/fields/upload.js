@@ -11,7 +11,7 @@ function canvasToBlob(canvas, type) {
  * Perkecil foto di browser sebelum diunggah (foto HP bisa 5–10MB, hasilnya biasanya < 400KB),
  * sehingga unggahan di jaringan seluler jauh lebih cepat. Jika gagal atau tidak lebih kecil, file asli dipakai.
  */
-async function compressImage(file) {
+export async function compressImage(file) {
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || typeof createImageBitmap !== 'function') {
         return file;
     }

@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([CatalogSeeder::class, PromoSeeder::class]);
+        $this->call([CatalogSeeder::class, MusicLibrarySeeder::class, PromoSeeder::class]);
 
         User::factory()->admin()->create([
             'name' => 'Admin KartuKita',

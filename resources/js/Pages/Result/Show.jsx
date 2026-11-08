@@ -2,6 +2,7 @@ import Icon from '@/Components/Icon';
 import QrStyler from '@/Components/QrStyler';
 import TemplateCover from '@/Components/TemplateCover';
 import PublicLayout from '@/Layouts/PublicLayout';
+import { copyText } from '@/lib/clipboard';
 import { dateTime } from '@/lib/format';
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
@@ -13,15 +14,15 @@ import { useState } from 'react';
  */
 export default function Show({ greeting, template, orderCode }) {
     const isInvitation = greeting.type === 'undangan';
-    const [copied, setCopied] = useState(false);
+    // 'link' | 'text' | 'failed' — penanda tombol salin mana yang baru dipakai.
+    const [copied, setCopied] = useState(null);
     const [shareMode, setShareMode] = useState('link');
     const displayUrl = greeting.url.replace(/^https?:\/\//, '');
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(greeting.whatsapp_text)}`;
 
-    const copy = () => {
-        navigator.clipboard?.writeText(greeting.url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2400);
+    const copy = async (text, kind) => {
+        setCopied((await copyText(text)) ? kind : 'failed');
+        setTimeout(() => setCopied(null), 2400);
     };
 
     const share = (url) => window.open(url, '_blank', 'noopener');
@@ -137,13 +138,14 @@ export default function Show({ greeting, template, orderCode }) {
                         <span className="min-w-0 select-all truncate pl-space-sm text-label-md text-on-surface">{displayUrl}</span>
                         <button
                             type="button"
-                            onClick={copy}
+                            onClick={() => copy(greeting.url, 'link')}
                             className="flex shrink-0 items-center gap-1 rounded-full bg-primary px-space-md py-2 text-label-sm font-semibold text-on-primary shadow-sm active:scale-95"
                         >
-                            <Icon name={copied ? 'done' : 'content_copy'} size={16} />
-                            {copied ? 'Tersalin!' : 'Salin Link'}
+                            <Icon name={copied === 'link' ? 'done' : 'content_copy'} size={16} />
+                            {copied === 'link' ? 'Tersalin!' : 'Salin Link'}
                         </button>
                     </div>
+                    {copied === 'failed' && <p className="text-label-sm text-error">Browser ini menolak menyalin otomatis. Tekan lama teksnya lalu pilih Salin.</p>}
                     <span className="mb-space-xs text-label-sm text-secondary">Atau bagikan melalui:</span>
                     <div className="grid grid-cols-3 gap-space-xs">
                         {[
@@ -154,13 +156,13 @@ export default function Show({ greeting, template, orderCode }) {
                             <button
                                 key={label}
                                 type="button"
-                                onClick={() => (url ? share(url) : navigator.clipboard?.writeText(greeting.whatsapp_text))}
+                                onClick={() => (url ? share(url) : copy(greeting.whatsapp_text, 'text'))}
                                 className="flex flex-col items-center justify-center gap-1 rounded-2xl bg-surface p-2 hover:bg-surface-container"
                             >
-                                <span className="flex h-9 w-9 items-center justify-center rounded-full text-white" style={{ backgroundColor: color }}>
-                                    <Icon name={icon} size={18} />
+                                <span className="flex h-9 w-9 items-center justify-center rounded-full text-white" style={{ backgroundColor: !url && copied === 'text' ? '#1da851' : color }}>
+                                    <Icon name={!url && copied === 'text' ? 'done' : icon} size={18} />
                                 </span>
-                                <span className="text-label-sm text-on-surface-variant">{label}</span>
+                                <span className="text-label-sm text-on-surface-variant">{!url && copied === 'text' ? 'Tersalin!' : label}</span>
                             </button>
                         ))}
                     </div>

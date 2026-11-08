@@ -102,14 +102,72 @@ class PromoCodeTest extends TestCase
             ->assertSessionHasErrors(['promo_code' => 'Kode ini khusus untuk akun lain.']);
     }
 
-    public function test_dashboard_creates_a_personal_referral_code_once(): void
+    public function test_full_discount_code_publishes_the_card_for_free_without_qris(): void
     {
-        $user = User::factory()->create(['name' => 'Nadia Putri']);
+        $greeting = $this->completeDraft(price: 30000);
+        $promo = PromoCode::factory()->percent(100)->create(['code' => 'GRATIS', 'max_uses' => 1]);
 
-        $this->actingAs($user)->get(route('dashboard'))->assertInertia(fn (Assert $page) => $page->where('referral.code', fn (string $code) => str_starts_with($code, 'NADIA')));
-        $this->actingAs($user)->get(route('dashboard'));
+        $this->actingAs($greeting->user)->post(route('checkout.promo.apply', $greeting), ['promo_code' => 'GRATIS']);
+        $this->actingAs($greeting->user)->get(route('checkout.show', $greeting))
+            ->assertInertia(fn (Assert $page) => $page->where('quote.total', 0)->where('quote.discount', 30000));
 
-        $this->assertSame(1, PromoCode::query()->where('owner_user_id', $user->id)->count());
+        $this->actingAs($greeting->user)->post(route('checkout.store', $greeting), ['confirm_data' => true])
+            ->assertRedirect(route('result.show', $greeting));
+
+        $order = Order::sole();
+        $this->assertSame(0, $order->amount);
+        $this->assertSame(OrderStatus::Lunas, $order->status);
+        $this->assertSame(0, $order->payments()->count());
+        $this->assertSame(GreetingStatus::Terbit, $greeting->fresh()->status);
+        $this->assertSame(1, $promo->fresh()->uses_count);
+    }
+
+    public function test_admin_can_edit_a_promo_code(): void
+    {
+        $promo = PromoCode::factory()->create(['code' => 'LAMA', 'discount_value' => 5000]);
+
+        $this->actingAs(User::factory()->admin()->create())
+            ->put(route('admin.promos.update', $promo), [
+                'code' => 'baru',
+                'label' => 'Promo baru',
+                'discount_type' => PromoCode::TYPE_PERCENT,
+                'discount_value' => 50,
+                'max_uses' => 1,
+                'first_order_only' => false,
+                'is_active' => true,
+            ])
+            ->assertSessionHasNoErrors();
+
+        $promo->refresh();
+        $this->assertSame('BARU', $promo->code);
+        $this->assertSame(PromoCode::TYPE_PERCENT, $promo->discount_type);
+        $this->assertSame(50, $promo->discount_value);
+        $this->assertSame(1, $promo->max_uses);
+    }
+
+    public function test_admin_can_delete_a_used_promo_and_past_orders_keep_their_discount(): void
+    {
+        $promo = PromoCode::factory()->create(['code' => 'HAPUS']);
+        $order = Order::factory()->create(['promo_code_id' => $promo->id, 'discount' => 5000, 'amount' => 24000]);
+
+        $this->actingAs(User::factory()->admin()->create())->delete(route('admin.promos.destroy', $promo))->assertRedirect();
+
+        $this->assertModelMissing($promo);
+        $order->refresh();
+        $this->assertNull($order->promo_code_id);
+        $this->assertSame(5000, $order->discount);
+    }
+
+    public function test_promo_codes_cannot_be_deleted_by_non_admins_and_referral_codes_cannot_be_deleted_at_all(): void
+    {
+        $promo = PromoCode::factory()->create();
+        $referral = PromoCode::factory()->referralOf(User::factory()->create())->create();
+
+        $this->actingAs(User::factory()->create())->delete(route('admin.promos.destroy', $promo))->assertForbidden();
+        $this->actingAs(User::factory()->admin()->create())->delete(route('admin.promos.destroy', $referral))->assertNotFound();
+
+        $this->assertModelExists($promo);
+        $this->assertModelExists($referral);
     }
 
     private function completeDraft(int $price = 29000): Greeting

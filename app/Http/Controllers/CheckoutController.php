@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Orders\FulfillOrder;
 use App\Actions\Orders\PlaceComplimentaryOrder;
 use App\Actions\Orders\PlaceOrder;
 use App\Actions\Orders\StartManualPayment;
@@ -11,6 +12,7 @@ use App\Enums\MediaKind;
 use App\Http\Requests\ApplyPromoRequest;
 use App\Http\Requests\PlaceOrderRequest;
 use App\Models\Greeting;
+use App\Models\Order;
 use App\Models\PromoCode;
 use App\Models\User;
 use App\Support\Greetings\ContentSchema;
@@ -24,6 +26,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -109,6 +112,7 @@ class CheckoutController extends Controller
         ManualQris $manualQris,
         StartManualPayment $startManual,
         ContentSchema $schema,
+        FulfillOrder $fulfillOrder,
     ): RedirectResponse {
         $this->ownership->authorize($request, $greeting);
 
@@ -124,6 +128,13 @@ class CheckoutController extends Controller
 
         $order = $placeOrder->handle($greeting, $request->user(), $request->session()->get($this->promoSessionKey($greeting)));
         $request->session()->forget($this->promoSessionKey($greeting));
+
+        // Kode promo 100%: tidak ada yang dibayar, jadi langsung lunas & terbit tanpa QRIS.
+        if ($order->amount === 0) {
+            DB::transaction(fn (): Order => $fulfillOrder->handle($order));
+
+            return to_route('result.show', $greeting)->with('success', 'Kartu terbit gratis dengan kode promo. 🎉');
+        }
 
         if ($manualQris->isEnabled()) {
             $startManual->handle($order);

@@ -115,6 +115,12 @@ class SongController extends Controller
 
             $next = (string) $response->header('Location');
 
+            // Sebagian link pendek membalas halaman HTML (bukan redirect) yang memuat alamat lagunya.
+            if (! $response->redirect() && $response->successful()
+                && preg_match('#https://open\.spotify\.com/track/[A-Za-z0-9]{22}#', $response->body(), $match)) {
+                return $match[0];
+            }
+
             if (! $response->redirect() || $next === '' || ! in_array(Str::lower((string) parse_url($next, PHP_URL_HOST)), self::SPOTIFY_HOSTS, true)) {
                 return $url;
             }

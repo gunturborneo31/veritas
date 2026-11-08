@@ -74,6 +74,8 @@ export default function Show({ greeting, template, quote, missing, referralHint,
     const form = useForm({ confirm_data: false, slug: link?.slug ?? '', name: '', email: '', phone: '', password: '' });
     const isComplete = missing.length === 0;
     const hasAccountData = !needsAccount || (form.data.name && form.data.email && form.data.phone && form.data.password);
+    // Kode promo 100%: total Rp0, kartu langsung terbit tanpa QRIS (diproses di checkout.store).
+    const isFreeByPromo = !canPublishFree && quote.total === 0;
 
     const submit = () => form.post(route(canPublishFree ? 'checkout.complimentary' : 'checkout.store', greeting.id), { preserveScroll: true });
 
@@ -86,7 +88,7 @@ export default function Show({ greeting, template, quote, missing, referralHint,
             actions={
                 <div className="flex w-full items-center justify-between gap-space-md">
                     <div className="flex flex-col">
-                        <span className="text-label-sm text-on-surface-variant">{canPublishFree ? 'Admin • tanpa bayar' : 'Total Pembayaran'}</span>
+                        <span className="text-label-sm text-on-surface-variant">{canPublishFree ? 'Admin • tanpa bayar' : isFreeByPromo ? 'Gratis dengan kode promo' : 'Total Pembayaran'}</span>
                         <span className="text-headline-lg-mobile font-bold text-primary">{rupiah(canPublishFree ? 0 : quote.total)}</span>
                     </div>
                     <button
@@ -95,8 +97,8 @@ export default function Show({ greeting, template, quote, missing, referralHint,
                         disabled={!form.data.confirm_data || !isComplete || !hasAccountData || form.processing}
                         className="flex h-12 max-w-[220px] flex-1 items-center justify-center gap-2 rounded-full bg-primary text-label-lg font-bold text-on-primary shadow-md shadow-primary/25 transition-all hover:bg-primary-container active:scale-95 disabled:opacity-50"
                     >
-                        <Icon name={form.processing ? 'progress_activity' : canPublishFree ? 'rocket_launch' : 'lock'} size={18} className={form.processing ? 'animate-spin' : ''} />
-                        <span>{canPublishFree ? 'Terbitkan Gratis' : 'Bayar dengan QRIS'}</span>
+                        <Icon name={form.processing ? 'progress_activity' : canPublishFree || isFreeByPromo ? 'rocket_launch' : 'lock'} size={18} className={form.processing ? 'animate-spin' : ''} />
+                        <span>{canPublishFree || isFreeByPromo ? 'Terbitkan Gratis' : 'Bayar dengan QRIS'}</span>
                     </button>
                 </div>
             }
@@ -182,14 +184,16 @@ export default function Show({ greeting, template, quote, missing, referralHint,
                 <section className="flex gap-3 rounded-2xl bg-primary-fixed/40 p-space-md">
                     <Icon name="info" size={22} className="mt-0.5 shrink-0 text-primary" />
                     <div>
-                        <h4 className="mb-1 text-label-lg font-bold text-on-primary-fixed">Catatan Penting Sebelum Bayar</h4>
+                        <h4 className="mb-1 text-label-lg font-bold text-on-primary-fixed">{isFreeByPromo ? 'Catatan Penting Sebelum Terbit' : 'Catatan Penting Sebelum Bayar'}</h4>
                         <p className="text-body-sm leading-relaxed text-on-surface-variant">
-                            Begitu pembayaran QRIS berhasil, kartu langsung terbit dan nama penerima, foto, pesan, musik, serta gembok di dalamnya terkunci permanen. Satu
-                            pembayaran berlaku untuk satu penerima.
+                            {isFreeByPromo
+                                ? 'Kode promomu menggratiskan kartu ini. Begitu kamu menekan Terbitkan Gratis, kartu langsung terbit dan nama penerima, foto, pesan, musik, serta gembok di dalamnya terkunci permanen.'
+                                : 'Begitu pembayaran QRIS berhasil, kartu langsung terbit dan nama penerima, foto, pesan, musik, serta gembok di dalamnya terkunci permanen. Satu pembayaran berlaku untuk satu penerima.'}
                         </p>
                     </div>
                 </section>
 
+                {!isFreeByPromo && (
                 <section className="flex flex-col gap-space-sm">
                     <div className="flex items-center justify-between">
                         <h2 className="text-headline-sm text-on-surface">Metode Pembayaran</h2>
@@ -212,6 +216,7 @@ export default function Show({ greeting, template, quote, missing, referralHint,
                         </p>
                     </div>
                 </section>
+                )}
 
                 <section className="flex flex-col gap-space-sm rounded-3xl bg-surface-container-lowest p-space-md shadow-sm">
                     <h2 className="text-headline-sm text-on-surface">Rincian Pembayaran</h2>

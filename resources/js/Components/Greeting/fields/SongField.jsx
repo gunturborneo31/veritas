@@ -11,6 +11,22 @@ const PROVIDERS = {
     youtube: { label: 'YouTube', color: '#FF0000' },
 };
 
+const SONG_LINK_PATTERN = /(?:https?:\/\/)?(?:open\.spotify\.com|spotify\.link|spoti\.fi|(?:www\.|m\.|music\.)?youtube\.com|youtu\.be)\/[^\s"'<>]+/i;
+
+/**
+ * Ambil link Spotify/YouTube dari teks apa pun, termasuk teks bagikan aplikasi
+ * ("Dengarkan lagu ini di Spotify: https://…"). Null bila tidak ada link.
+ */
+export function extractSongLink(text) {
+    const match = String(text ?? '').match(SONG_LINK_PATTERN);
+
+    if (!match) {
+        return null;
+    }
+
+    return match[0].startsWith('http') ? match[0] : `https://${match[0]}`;
+}
+
 function SongRow({ song, action }) {
     const provider = PROVIDERS[song.provider];
 
@@ -47,8 +63,8 @@ export default function SongField({ value, onChange }) {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const submit = async () => {
-        const text = query.trim();
+    const submit = async (input = query) => {
+        const text = input.trim();
         setError(null);
         setResults(null);
 
@@ -56,7 +72,8 @@ export default function SongField({ value, onChange }) {
             return;
         }
 
-        const isLink = /^https?:\/\//i.test(text) || /^(open\.spotify\.com|youtu\.?be)/i.test(text);
+        const link = extractSongLink(text);
+        const isLink = link !== null;
 
         if (!isLink && !isSearchEnabled) {
             setError('Tempel link lagu dari Spotify atau YouTube (tombol "Bagikan" → "Salin link").');
@@ -68,7 +85,7 @@ export default function SongField({ value, onChange }) {
 
         try {
             if (isLink) {
-                const { song } = await requestJson(route('songs.link', { url: text.startsWith('http') ? text : `https://${text}` }));
+                const { song } = await requestJson(route('songs.link', { url: link }));
                 onChange(song);
                 setQuery('');
             } else {
@@ -109,6 +126,16 @@ export default function SongField({ value, onChange }) {
                     value={query}
                     placeholder={isSearchEnabled ? 'Judul lagu / penyanyi, atau tempel link' : 'Tempel link Spotify atau YouTube'}
                     onChange={(event) => setQuery(event.target.value)}
+                    onPaste={(event) => {
+                        // Link yang ditempel langsung dipakai, tanpa perlu menekan tombol.
+                        const pasted = event.clipboardData?.getData('text') ?? '';
+
+                        if (extractSongLink(pasted)) {
+                            event.preventDefault();
+                            setQuery(pasted.trim());
+                            submit(pasted);
+                        }
+                    }}
                     onKeyDown={(event) => {
                         if (event.key === 'Enter') {
                             event.preventDefault();
@@ -119,7 +146,7 @@ export default function SongField({ value, onChange }) {
                 />
                 <button
                     type="button"
-                    onClick={submit}
+                    onClick={() => submit()}
                     disabled={isLoading}
                     aria-label={isSearchEnabled ? 'Cari lagu' : 'Pakai link'}
                     className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-on-primary disabled:opacity-60"

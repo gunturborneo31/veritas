@@ -26,12 +26,30 @@ class GreetingReplied extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        $mail = (new MailMessage)
             ->subject("Balasan dari {$this->greeting->recipient_name} 💬")
-            ->greeting("Halo {$notifiable->name}!")
-            ->line("“{$this->reply->message}”")
+            ->greeting("Halo {$notifiable->name}!");
+
+        if (filled($this->reply->message)) {
+            $mail->line("“{$this->reply->message}”");
+        }
+
+        if ($this->attachmentLabel() !== null) {
+            $mail->line("Balasan ini disertai {$this->attachmentLabel()}. Buka Kartu Saya untuk melihatnya.");
+        }
+
+        return $mail
             ->line('— '.($this->reply->sender_name ?: $this->greeting->recipient_name))
             ->action('Buka Kartu Saya', route('dashboard'));
+    }
+
+    private function attachmentLabel(): ?string
+    {
+        return match ($this->reply->attachment_type) {
+            Reply::ATTACHMENT_IMAGE => 'foto',
+            Reply::ATTACHMENT_VIDEO => 'video',
+            default => null,
+        };
     }
 
     /**
@@ -42,7 +60,9 @@ class GreetingReplied extends Notification implements ShouldQueue
         return [
             'icon' => 'forum',
             'title' => "{$this->greeting->recipient_name} membalas ucapanmu",
-            'body' => Str::limit($this->reply->message, 90),
+            'body' => filled($this->reply->message)
+                ? Str::limit($this->reply->message, 90).($this->attachmentLabel() ? " (+ {$this->attachmentLabel()})" : '')
+                : 'Mengirim '.$this->attachmentLabel().' 📎',
             'greeting_id' => $this->greeting->public_id,
         ];
     }

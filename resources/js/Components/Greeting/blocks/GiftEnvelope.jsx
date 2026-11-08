@@ -2,6 +2,7 @@ import Icon from '@/Components/Icon';
 import { useState } from 'react';
 import { ManagedHint } from './invitationShared';
 import { SceneCard, SceneLabel } from './shared';
+import { copyText } from '@/lib/clipboard';
 
 const ICONS = { bank: 'account_balance', ewallet: 'account_balance_wallet', alamat: 'local_shipping' };
 
@@ -13,7 +14,7 @@ export default function GiftEnvelope({ slot, values, mode, invitation }) {
     const gifts = invitation?.gifts ?? [];
 
     const copy = (key, text) => {
-        navigator.clipboard?.writeText(text);
+        copyText(text);
         setCopiedId(key);
         setTimeout(() => setCopiedId(null), 2000);
     };

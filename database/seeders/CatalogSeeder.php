@@ -245,14 +245,14 @@ class CatalogSeeder extends Seeder
     private function seedMusic(): array
     {
         $rows = [
-            'akustik' => ['Selamat Ulang Tahun (Akustik)', 'Hangat', 195, 'music/selamat-ulang-tahun-akustik.mp3'],
-            'kotak_musik' => ['Kotak Musik Ajaib', 'Melodis', 105, 'music/kotak-musik-ajaib.mp3'],
-            'jazz' => ['Jazz Kafe Sore', 'Santai', 150, 'music/jazz-kafe-sore.mp3'],
-            'takbir' => ['Gema Takbir Instrumental', 'Khidmat', 180, 'music/gema-takbir-instrumental.mp3'],
-            'teduh' => ['Gerimis Teduh (Piano)', 'Teduh', 160, 'music/gerimis-teduh-piano.mp3'],
-            'rindu' => ['Rindu Lo-fi', 'Rindu', 170, 'music/rindu-lofi.mp3'],
-            'langkah_baru' => ['Langkah Baru (Orkestra Ringan)', 'Bangga', 185, 'music/langkah-baru-orkestra.mp3'],
-            'terima_kasih' => ['Terima Kasih (Akustik Hangat)', 'Hangat', 160, 'music/terima-kasih-akustik.mp3'],
+            'akustik' => ['Selamat Ulang Tahun (Akustik)', 'Hangat', 195, 'music/selamat-ulang-tahun-akustik.mp3', 'Ceria'],
+            'kotak_musik' => ['Kotak Musik Ajaib', 'Melodis', 105, 'music/kotak-musik-ajaib.mp3', 'Ceria'],
+            'jazz' => ['Jazz Kafe Sore', 'Santai', 150, 'music/jazz-kafe-sore.mp3', 'Santai & Jazz'],
+            'takbir' => ['Gema Takbir Instrumental', 'Khidmat', 180, 'music/gema-takbir-instrumental.mp3', 'Khidmat & Religi'],
+            'teduh' => ['Gerimis Teduh (Piano)', 'Teduh', 160, 'music/gerimis-teduh-piano.mp3', 'Teduh & Piano'],
+            'rindu' => ['Rindu Lo-fi', 'Rindu', 170, 'music/rindu-lofi.mp3', 'Haru & Rindu'],
+            'langkah_baru' => ['Langkah Baru (Orkestra Ringan)', 'Bangga', 185, 'music/langkah-baru-orkestra.mp3', 'Semangat & Bangga'],
+            'terima_kasih' => ['Terima Kasih (Akustik Hangat)', 'Hangat', 160, 'music/terima-kasih-akustik.mp3', 'Romantis'],
         ];
 
         return collect($rows)->mapWithKeys(fn (array $row, string $key): array => [
@@ -260,8 +260,9 @@ class CatalogSeeder extends Seeder
                 'title' => $row[0],
                 'artist' => 'Pustaka '.config('kartukita.brand'),
                 'mood' => $row[1],
+                'category' => $row[4],
                 'duration_seconds' => $row[2],
-                'license_note' => 'Bebas royalti (ganti dengan lisensi resmi)',
+                'license_note' => null,
                 'is_active' => true,
             ]),
         ])->all();

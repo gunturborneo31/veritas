@@ -57,6 +57,14 @@ class PromoCode extends Model
         return min($discount, $subtotal);
     }
 
+    /**
+     * Kode 100% menggratiskan pesanan sepenuhnya (tanpa minimum pembayaran, terbit tanpa QRIS).
+     */
+    public function makesOrderFree(): bool
+    {
+        return $this->discount_type === self::TYPE_PERCENT && $this->discount_value >= 100;
+    }
+
     public function describe(): string
     {
         return $this->discount_type === self::TYPE_PERCENT ? "{$this->discount_value}%" : 'Rp'.number_format($this->discount_value, 0, ',', '.');

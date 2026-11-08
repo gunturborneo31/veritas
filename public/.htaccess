@@ -1,3 +1,8 @@
+# Musik latar pustaka (public/audio/latar) memakai AAC .m4a
+<IfModule mod_mime.c>
+    AddType audio/mp4 .m4a
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

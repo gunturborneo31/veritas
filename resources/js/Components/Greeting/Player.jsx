@@ -177,9 +177,16 @@ export default function Player({
                 </div>
                 <div className="flex items-center justify-between">
                     {track ? (
-                        <div className="flex items-center gap-2 rounded-full bg-surface-container-lowest/85 px-3 py-1.5 shadow-sm backdrop-blur-md">
+                        <div
+                            title={track.credit ?? undefined}
+                            className="flex min-w-0 items-center gap-2 rounded-full bg-surface-container-lowest/85 px-3 py-1.5 shadow-sm backdrop-blur-md"
+                        >
                             <Icon name="music_note" size={14} className="text-primary" />
-                            <span className="max-w-[150px] truncate text-label-sm text-on-surface-variant">{track.title}</span>
+                            {/* Atribusi lisensi (CC BY): judul + pembuat selalu terlihat, keterangan lengkap di tooltip. */}
+                            <span className="max-w-[180px] truncate text-label-sm text-on-surface-variant">
+                                {track.title}
+                                {track.artist && <span className="opacity-70"> · {track.artist}</span>}
+                            </span>
                         </div>
                     ) : (
                         <span />

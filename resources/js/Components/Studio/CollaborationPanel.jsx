@@ -2,6 +2,7 @@ import Icon from '@/Components/Icon';
 import Toggle from '@/Components/Toggle';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
+import { copyText } from '@/lib/clipboard';
 
 /**
  * Mode patungan di Studio: buka link untuk teman, pantau dan saring tulisan yang masuk.
@@ -19,7 +20,7 @@ export default function CollaborationPanel({ greetingId, recipientName, collabor
               router.delete(route('studio.contributions.disable', greetingId), { preserveScroll: true, preserveState: true, only: ['collaboration', 'flash'] });
 
     const copy = () => {
-        navigator.clipboard?.writeText(collaboration.url);
+        copyText(collaboration.url);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };

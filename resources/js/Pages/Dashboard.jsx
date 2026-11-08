@@ -5,11 +5,11 @@ import QrCode from '@/Components/QrCode';
 import TemplateCover from '@/Components/TemplateCover';
 import ActivityFeed from '@/Components/Dashboard/ActivityFeed';
 import MomentReminders from '@/Components/Dashboard/MomentReminders';
-import ReferralCard from '@/Components/Dashboard/ReferralCard';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { dateTime, rupiah, time } from '@/lib/format';
 import { Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import { copyText } from '@/lib/clipboard';
 
 const FILTERS = [
     ['all', 'Semua'],
@@ -146,7 +146,15 @@ function GreetingCard({ greeting, onCopy, onShowQr }) {
                 <div className="flex flex-col gap-2">
                     {greeting.replies.map((reply) => (
                         <div key={reply.id} className="rounded-2xl bg-primary-fixed/40 p-3">
-                            <p className="text-body-sm text-on-surface">{reply.message}</p>
+                            {reply.message && <p className="text-body-sm text-on-surface">{reply.message}</p>}
+                            {reply.attachment_type === 'image' && reply.attachment_url && (
+                                <a href={reply.attachment_url} target="_blank" rel="noopener" className="mt-2 block overflow-hidden rounded-xl">
+                                    <img src={reply.attachment_url} alt={`Foto dari ${reply.sender_name || 'penerima'}`} loading="lazy" className="max-h-80 w-full object-cover" />
+                                </a>
+                            )}
+                            {reply.attachment_type === 'video' && reply.attachment_url && (
+                                <video src={reply.attachment_url} controls playsInline preload="metadata" className="mt-2 max-h-80 w-full rounded-xl bg-black" />
+                            )}
                             <p className="mt-1 text-label-sm text-on-surface-variant">
                                 — {reply.sender_name || 'Penerima'}, {dateTime(reply.created_at)}
                             </p>
@@ -228,7 +236,7 @@ function GreetingCard({ greeting, onCopy, onShowQr }) {
 /**
  * Dashboard akun: daftar ucapan, status, link/QR, balasan (desain dashboardakun).
  */
-export default function Dashboard({ greetings, activities, reminders, referral }) {
+export default function Dashboard({ greetings, activities, reminders }) {
     const { auth } = usePage().props;
     const [filter, setFilter] = useState('all');
     const [qrGreeting, setQrGreeting] = useState(null);
@@ -238,7 +246,7 @@ export default function Dashboard({ greetings, activities, reminders, referral }
     const visible = filter === 'all' ? greetings : greetings.filter((greeting) => filterOf(greeting) === filter);
 
     const copy = (url) => {
-        navigator.clipboard?.writeText(url);
+        copyText(url);
         setToast(`Tautan disalin! ${Date.now()}`);
     };
 
@@ -275,8 +283,6 @@ export default function Dashboard({ greetings, activities, reminders, referral }
             <ActivityFeed activities={activities} />
 
             <MomentReminders reminders={reminders} />
-
-            <ReferralCard referral={referral} />
 
             <h2 className="px-margin pb-space-sm font-display text-headline-sm text-on-surface">Kartu kamu</h2>
             <section className="px-margin pb-space-md">

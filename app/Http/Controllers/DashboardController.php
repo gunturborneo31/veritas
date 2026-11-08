@@ -4,15 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Actions\Greetings\DuplicateGreeting;
 use App\Enums\OrderStatus;
-use App\Enums\PromoKind;
 use App\Models\Greeting;
 use App\Models\Media;
-use App\Models\PromoCode;
 use App\Models\Reaction;
 use App\Models\Reminder;
 use App\Models\Reply;
 use App\Support\Greetings\QrCodeGenerator;
-use App\Support\Pricing\PromoCodes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
@@ -25,10 +22,9 @@ class DashboardController extends Controller
     /**
      * Daftar ucapan, aktivitas terbaru (dibuka/reaksi/balasan), dan pengingat momen.
      */
-    public function index(Request $request, PromoCodes $promoCodes, QrCodeGenerator $qr): Response
+    public function index(Request $request, QrCodeGenerator $qr): Response
     {
         $user = $request->user();
-        $referral = $promoCodes->referralFor($user);
 
         $greetings = $user->greetings()
             ->with(['template.category', 'latestOrder', 'replies' => fn ($query) => $query->latest(), 'reactions'])
@@ -76,6 +72,8 @@ class DashboardController extends Controller
                     'id' => $reply->id,
                     'sender_name' => $reply->sender_name,
                     'message' => $reply->message,
+                    'attachment_type' => $reply->attachment_type,
+                    'attachment_url' => $reply->attachmentUrl(),
                     'created_at' => $reply->created_at->toIso8601String(),
                 ]),
             ]),
@@ -101,24 +99,6 @@ class DashboardController extends Controller
                 ])
                 ->sortBy('days_until')
                 ->values(),
-            'referral' => [
-                'code' => $referral->code,
-                'discount' => $referral->describe(),
-                'reward' => 'Rp'.number_format(config('kartukita.referral.referrer_reward'), 0, ',', '.'),
-                'uses' => $referral->uses_count,
-                'share_text' => "Pakai kode {$referral->code} di ".config('kartukita.brand')." untuk potongan {$referral->describe()} bikin kartu ucapan interaktif! ".route('catalog.index'),
-                'vouchers' => PromoCode::query()
-                    ->where('restricted_to_user_id', $user->id)
-                    ->where('kind', PromoKind::Reward)
-                    ->whereColumn('uses_count', '<', 'max_uses')
-                    ->where(fn ($query) => $query->whereNull('ends_at')->orWhere('ends_at', '>', now()))
-                    ->get()
-                    ->map(fn (PromoCode $voucher): array => [
-                        'code' => $voucher->code,
-                        'value' => $voucher->describe(),
-                        'ends_at' => $voucher->ends_at?->toIso8601String(),
-                    ]),
-            ],
         ]);
     }
 

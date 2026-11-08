@@ -4,12 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\Component;
 use App\Models\Greeting;
+use App\Models\Reply;
 use App\Models\Template;
 use App\Notifications\GreetingOpened;
 use App\Notifications\GreetingReacted;
 use App\Notifications\GreetingReplied;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Concerns\CreatesGreetingTemplates;
 use Tests\TestCase;
@@ -109,6 +112,55 @@ class RecipientEngagementTest extends TestCase
         $this->post(route('recipient.reply', $greeting->slug), ['message' => 'Makasih banyak!']);
 
         Notification::assertSentTo($greeting->user, GreetingReplied::class);
+    }
+
+    public function test_reply_can_carry_a_photo_that_the_sender_sees_on_the_dashboard(): void
+    {
+        Storage::fake(config('kartukita.media.disk'));
+        $greeting = $this->publishedGreeting();
+        $this->post(route('recipient.open', $greeting->slug));
+
+        $this->post(route('recipient.reply', $greeting->slug), [
+            'message' => 'Ini foto kita!',
+            'attachment' => UploadedFile::fake()->image('kita.jpg', 800, 600),
+        ])->assertSessionHasNoErrors();
+
+        $reply = Reply::sole();
+        $this->assertSame(Reply::ATTACHMENT_IMAGE, $reply->attachment_type);
+        Storage::disk(config('kartukita.media.disk'))->assertExists($reply->attachment_path);
+
+        $this->actingAs($greeting->user)->get(route('dashboard'))->assertInertia(fn (Assert $page) => $page
+            ->where('greetings.0.replies.0.attachment_type', 'image')
+            ->where('greetings.0.replies.0.attachment_url', fn (?string $url) => $url !== null));
+    }
+
+    public function test_reply_can_be_only_a_video_without_text(): void
+    {
+        Storage::fake(config('kartukita.media.disk'));
+        $greeting = $this->publishedGreeting();
+        $this->post(route('recipient.open', $greeting->slug));
+
+        $this->post(route('recipient.reply', $greeting->slug), [
+            'attachment' => UploadedFile::fake()->create('balasan.mp4', 2048, 'video/mp4'),
+        ])->assertSessionHasNoErrors();
+
+        $reply = Reply::sole();
+        $this->assertNull($reply->message);
+        $this->assertSame(Reply::ATTACHMENT_VIDEO, $reply->attachment_type);
+    }
+
+    public function test_empty_reply_and_unsupported_files_are_rejected(): void
+    {
+        Storage::fake(config('kartukita.media.disk'));
+        $greeting = $this->publishedGreeting();
+        $this->post(route('recipient.open', $greeting->slug));
+
+        $this->post(route('recipient.reply', $greeting->slug), ['message' => ''])->assertSessionHasErrors('message');
+        $this->post(route('recipient.reply', $greeting->slug), [
+            'attachment' => UploadedFile::fake()->create('virus.exe', 10, 'application/octet-stream'),
+        ])->assertSessionHasErrors('attachment');
+
+        $this->assertSame(0, Reply::count());
     }
 
     /**

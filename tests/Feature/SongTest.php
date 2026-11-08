@@ -42,6 +42,16 @@ class SongTest extends TestCase
         $this->getJson(route('songs.link', ['url' => 'https://spotify.link/xYz123']))->assertOk()->assertJsonPath('song.id', self::SPOTIFY_ID);
     }
 
+    public function test_spotify_short_link_answering_with_an_html_page_is_still_resolved(): void
+    {
+        Http::fake([
+            'spotify.link/*' => Http::response('<html><a href="https://open.spotify.com/track/'.self::SPOTIFY_ID.'?si=x">Buka</a></html>'),
+            'open.spotify.com/oembed*' => Http::response(['title' => 'Sial']),
+        ]);
+
+        $this->getJson(route('songs.link', ['url' => 'https://spotify.link/xYz123']))->assertOk()->assertJsonPath('song.id', self::SPOTIFY_ID);
+    }
+
     public function test_youtube_links_in_any_common_form_are_recognised(): void
     {
         Http::fake(['www.youtube.com/oembed*' => Http::response(['title' => 'Sheila On 7 - Dan', 'author_name' => 'Sheila On 7'])]);

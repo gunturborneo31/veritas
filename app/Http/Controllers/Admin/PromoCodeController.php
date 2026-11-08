@@ -42,4 +42,16 @@ class PromoCodeController extends Controller
 
         return back()->with('success', 'Kode promo diperbarui.');
     }
+
+    /**
+     * Pesanan yang pernah memakai kode ini tetap menyimpan nilai potongannya (promo_code_id menjadi null).
+     */
+    public function destroy(PromoCode $promoCode): RedirectResponse
+    {
+        abort_unless($promoCode->kind === PromoKind::Promo, 404);
+
+        $promoCode->delete();
+
+        return back()->with('success', "Kode {$promoCode->code} dihapus.");
+    }
 }

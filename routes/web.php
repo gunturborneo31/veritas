@@ -228,7 +228,7 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->name('ad
         ->names('components');
 
     Route::resource('promo', Admin\PromoCodeController::class)
-        ->only(['index', 'store', 'update'])
+        ->only(['index', 'store', 'update', 'destroy'])
         ->parameters(['promo' => 'promoCode'])
         ->names('promos');
 

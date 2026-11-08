@@ -10,6 +10,7 @@ import PublicLayout from '@/Layouts/PublicLayout';
 import { dateTime } from '@/lib/format';
 import { Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import { copyText } from '@/lib/clipboard';
 
 const TABS = [
     ['ringkasan', 'Ringkasan', 'insights'],
@@ -108,7 +109,7 @@ export default function Manage({ invitation }) {
     }, [tab]);
 
     const copy = (url) => {
-        navigator.clipboard?.writeText(url);
+        copyText(url);
         setCopiedAt(Date.now());
     };
 

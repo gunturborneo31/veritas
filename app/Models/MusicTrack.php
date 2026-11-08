@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 /**
  * Musik latar dari pustaka internal berlisensi. Pengguna tidak bisa mengunggah lagu sendiri.
  */
-#[Fillable(['title', 'artist', 'mood', 'duration_seconds', 'path', 'license_note', 'is_active'])]
+#[Fillable(['title', 'artist', 'mood', 'category', 'duration_seconds', 'path', 'license_note', 'is_active'])]
 class MusicTrack extends Model
 {
     /** @use HasFactory<MusicTrackFactory> */
@@ -32,13 +32,23 @@ class MusicTrack extends Model
         $query->where('is_active', true);
     }
 
+    /**
+     * Pustaka bawaan berupa file statis di public/ (mis. /audio/latar/carefree.mp3) agar ikut ter-deploy lewat git;
+     * path tanpa garis miring di depan berada di disk public (storage).
+     */
     public function url(): string
     {
+        if (str_starts_with($this->path, '/')) {
+            return asset(ltrim($this->path, '/'));
+        }
+
         return Storage::disk('public')->url($this->path);
     }
 
     /**
-     * @return array{id: int, title: string, artist: ?string, mood: ?string, duration: int, url: string}
+     * `credit` = keterangan lisensi yang wajib ditampilkan (mis. atribusi CC BY untuk musik Kevin MacLeod).
+     *
+     * @return array{id: int, title: string, artist: ?string, mood: ?string, category: ?string, duration: int, url: string, credit: ?string}
      */
     public function toPlayerArray(): array
     {
@@ -47,8 +57,10 @@ class MusicTrack extends Model
             'title' => $this->title,
             'artist' => $this->artist,
             'mood' => $this->mood,
+            'category' => $this->category,
             'duration' => $this->duration_seconds,
             'url' => $this->url(),
+            'credit' => $this->license_note,
         ];
     }
 }
