@@ -36,7 +36,7 @@ const numberFormatter = new Intl.NumberFormat('id-ID');
 function ShowcasePhone({ showcase }) {
     return (
         <div className="relative flex w-full flex-col items-center gap-3">
-            <PhoneFrame className="max-w-[300px]" screenClassName="h-[540px] lg:h-[600px]">
+            <PhoneFrame maxWidth={300} offset="8rem">
                 <Player greeting={showcase.greeting} mode="demo" watermark />
             </PhoneFrame>
             <div className="flex items-center gap-1.5 text-label-md text-on-surface-variant">

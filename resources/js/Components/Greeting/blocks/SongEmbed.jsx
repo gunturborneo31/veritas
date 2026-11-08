@@ -6,7 +6,7 @@ import { SceneLabel } from './shared';
  */
 export function embedUrl(song) {
     if (song.provider === 'spotify') {
-        return `https://open.spotify.com/embed/track/${song.id}?utm_source=kartukita&theme=0`;
+        return `https://open.spotify.com/embed/track/${song.id}?utm_source=kitoo&theme=0`;
     }
 
     return `https://www.youtube-nocookie.com/embed/${song.id}?rel=0&playsinline=1&modestbranding=1`;

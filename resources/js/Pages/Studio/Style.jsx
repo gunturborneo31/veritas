@@ -135,7 +135,7 @@ export default function Style({ greeting, template, templateTheme, style: savedS
                             <span className="truncate rounded-full bg-surface-container px-2.5 py-1 text-label-sm font-semibold text-on-surface-variant">{template.design_name ?? template.name}</span>
                         </div>
                         <div className="flex justify-center">
-                            <PhoneFrame className="max-w-[230px] sm:max-w-[280px]" screenClassName="h-[380px] sm:h-[520px] lg:h-[min(560px,calc(100dvh_-_16rem))]">
+                            <PhoneFrame className="[--phone-max:230px] sm:[--phone-max:280px]" offset="16rem">
                                 <Player greeting={{ ...greeting, theme }} mode="studio" watermark />
                             </PhoneFrame>
                         </div>

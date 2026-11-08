@@ -38,6 +38,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'brand' => config('kartukita.brand'),
+            'tagline' => config('kartukita.tagline'),
             'maps' => [
                 'tile_url' => config('kartukita.maps.tile_url'),
                 'attribution' => config('kartukita.maps.attribution'),

@@ -93,7 +93,7 @@ class CatalogTest extends TestCase
             ->has('templates.0.flow', 3));
     }
 
-    public function test_category_filters_count_stories_across_the_whole_catalog_even_when_one_is_selected(): void
+    public function test_category_filters_count_every_design_across_the_whole_catalog_even_when_one_is_selected(): void
     {
         $birthday = Category::factory()->create(['slug' => 'ulang-tahun']);
         $family = Category::factory()->create(['slug' => 'keluarga']);
@@ -104,9 +104,8 @@ class CatalogTest extends TestCase
 
         $this->get(route('catalog.index', ['kategori' => 'keluarga']))->assertInertia(fn (Assert $page) => $page
             ->has('templates', 1)
-            ->where('categories', fn ($categories) => collect($categories)->firstWhere('slug', 'ulang-tahun')['stories_count'] === 2
-                && collect($categories)->firstWhere('slug', 'ulang-tahun')['templates_count'] === 4
-                && collect($categories)->firstWhere('slug', 'keluarga')['stories_count'] === 1));
+            ->where('categories', fn ($categories) => collect($categories)->firstWhere('slug', 'ulang-tahun')['templates_count'] === 4
+                && collect($categories)->firstWhere('slug', 'keluarga')['templates_count'] === 1));
     }
 
     public function test_bundled_cover_from_public_folder_and_uploaded_cover_both_resolve_to_urls(): void
@@ -141,7 +140,7 @@ class CatalogTest extends TestCase
             ->where('templates.0.flow.1.optional', true));
     }
 
-    public function test_designs_of_one_series_share_a_single_catalog_card(): void
+    public function test_every_design_of_a_series_gets_its_own_catalog_card(): void
     {
         $series = Series::factory()->create(['name' => 'Tiup Lilin']);
         Template::factory()->for($series)->create(['slug' => 'pesta', 'design_name' => 'Pesta', 'price' => 35000, 'sort_order' => 0]);
@@ -149,12 +148,13 @@ class CatalogTest extends TestCase
         Template::factory()->create(['slug' => 'mandiri', 'sort_order' => 2]);
 
         $this->get(route('catalog.index'))->assertInertia(fn (Assert $page) => $page
-            ->has('templates', 2)
+            ->has('templates', 3)
             ->where('templates.0.slug', 'pesta')
-            ->where('templates.0.series.name', 'Tiup Lilin')
-            ->where('templates.0.designs.1.slug', 'pastel')
-            ->where('templates.0.designs.1.price', 29000)
-            ->has('templates.1.designs', 1));
+            ->where('templates.1.slug', 'pastel')
+            ->where('templates.1.design_name', 'Pastel')
+            ->where('templates.1.series.name', 'Tiup Lilin')
+            ->where('templates.1.price', 29000)
+            ->where('templates.2.slug', 'mandiri'));
     }
 
     public function test_template_detail_lists_only_published_designs_of_its_series(): void

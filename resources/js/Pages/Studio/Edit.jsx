@@ -512,7 +512,7 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
                 </div>
 
                 <aside className="sticky top-24 hidden flex-col items-center gap-2 lg:flex">
-                    <PhoneFrame screenClassName="h-[600px] max-h-[calc(100vh-14rem)]">
+                    <PhoneFrame offset="10rem">
                         <Player greeting={livePreview} mode="studio" watermark />
                     </PhoneFrame>
                     <p className="flex items-center gap-1 text-label-sm text-on-surface-variant">
@@ -528,7 +528,7 @@ export default function Edit({ greeting, template, occasions, missing, musicTrac
                     onClick={(event) => event.target === event.currentTarget && setShowPreview(false)}
                 >
                     <div className="flex w-full max-w-[340px] flex-col items-center gap-3">
-                        <PhoneFrame bare screenClassName="h-[min(620px,calc(100dvh_-_7rem))] min-h-[420px]">
+                        <PhoneFrame bare offset="7rem">
                             <Player greeting={livePreview} mode="studio" watermark />
                         </PhoneFrame>
                         <button type="button" onClick={() => setShowPreview(false)} className="rounded-full bg-primary px-6 py-3 text-label-lg text-on-primary shadow-md">

@@ -41,30 +41,18 @@ export function FlowPeek({ template, onClose }) {
 }
 
 /**
- * Titik warna tiap desain dalam satu seri ("4 desain").
+ * Judul kartu: nama tema (desain) bila template bagian dari seri, selain itu nama template.
+ * Tiap desain tampil sebagai kartu sendiri, jadi nama tema yang membedakannya.
  */
-export function DesignDots({ designs = [] }) {
-    if (designs.length < 2) {
-        return null;
-    }
-
-    return (
-        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-on-surface-variant">
-            <span className="flex -space-x-1">
-                {designs.slice(0, 5).map((design) => (
-                    <span key={design.slug} className="h-3.5 w-3.5 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: design.theme.accent }} />
-                ))}
-            </span>
-            {designs.length} desain
-        </span>
-    );
+export function cardTitle(template) {
+    return template.series && template.design_name ? template.design_name : (template.series?.name ?? template.name);
 }
 
 /**
- * Judul & cerita kartu: seri bila template bagian dari seri, selain itu template itu sendiri.
+ * Label kecil di atas judul: nama cerita (seri) yang dipakai tema ini.
  */
-export function cardTitle(template) {
-    return template.series?.name ?? template.name;
+export function cardKicker(template) {
+    return template.series && template.design_name ? template.series.name : null;
 }
 
 /**
@@ -106,11 +94,11 @@ export default function TemplateCard({ template, wide = false }) {
             </div>
 
             <div className="flex flex-1 flex-col gap-1.5 p-3">
+                {cardKicker(template) && <p className="line-clamp-1 text-[11px] font-bold uppercase tracking-wider" style={{ color: accent }}>{cardKicker(template)}</p>}
                 <h2 className="line-clamp-1 font-display text-headline-sm text-on-surface">{cardTitle(template)}</h2>
-                {(template.series?.story ?? template.story) && (
-                    <p className="line-clamp-2 text-[12.5px] leading-snug text-on-surface-variant">{template.series?.story ?? template.story}</p>
+                {(template.story ?? template.series?.story) && (
+                    <p className="line-clamp-2 text-[12.5px] leading-snug text-on-surface-variant">{template.story ?? template.series?.story}</p>
                 )}
-                <DesignDots designs={template.designs} />
 
                 <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 pt-1 text-xs text-on-surface-variant">
                     <span className="inline-flex items-center gap-0.5">
@@ -130,11 +118,7 @@ export default function TemplateCard({ template, wide = false }) {
 
                 <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5 pt-1.5">
                     <span className="font-display text-label-lg" style={{ color: accent }}>
-                        {(template.designs?.length ?? 0) > 1 && <span className="text-xs font-semibold text-on-surface-variant">mulai </span>}
-                        <Price
-                            price={Math.min(template.price, ...(template.designs ?? []).map((design) => design.price))}
-                            originalPrice={Math.min(template.original_price ?? template.price, ...(template.designs ?? []).map((design) => design.original_price ?? design.price))}
-                        />
+                        <Price price={template.price} originalPrice={template.original_price ?? template.price} />
                     </span>
                     <Link
                         href={route('catalog.demo', template.slug)}

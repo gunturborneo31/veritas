@@ -6,6 +6,7 @@ use App\Models\Greeting;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Concerns\CreatesGreetingTemplates;
 use Tests\TestCase;
@@ -22,7 +23,7 @@ class QrAndLegalTest extends TestCase
 
         $response->assertOk()
             ->assertHeader('Content-Type', 'image/png')
-            ->assertDownload('qr-kartukita-sarah-clarissa.png');
+            ->assertDownload('qr-'.Str::slug(config('kartukita.brand')).'-sarah-clarissa.png');
         $this->assertStringStartsWith("\x89PNG", $response->getContent());
     }
 

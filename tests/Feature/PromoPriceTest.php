@@ -52,8 +52,7 @@ class PromoPriceTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('templates.0.price', 15000)
                 ->where('templates.0.original_price', 29000)
-                ->where('templates.0.promo_label', 'Harga Promo')
-                ->where('templates.0.designs.0.price', 15000));
+                ->where('templates.0.promo_label', 'Harga Promo'));
     }
 
     public function test_invitations_use_their_own_promo_price_while_greetings_keep_the_general_one(): void

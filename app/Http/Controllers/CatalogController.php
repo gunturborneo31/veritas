@@ -7,7 +7,6 @@ use App\Models\Category;
 use App\Models\Template;
 use App\Models\TemplateComponent;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -41,15 +40,6 @@ class CatalogController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        // Jumlah cerita (seri) per momen untuk angka di tombol filter, dihitung dari seluruh katalog
-        // jenis ini agar tetap benar saat satu momen sedang dipilih.
-        $storiesPerCategory = Template::query()
-            ->published()
-            ->where('type', $type)
-            ->get(['id', 'series_id', 'category_id'])
-            ->groupBy('category_id')
-            ->map(fn (Collection $items): int => $items->unique(fn (Template $template): string => $template->catalogGroupKey())->count());
-
         return Inertia::render('Catalog/Index', [
             'categories' => Category::query()
                 ->withCount([
@@ -61,19 +51,10 @@ class CatalogController extends Controller
                 // Kategori kosong tetap tampil sebagai "segera hadir" di katalog ucapan; katalog undangan hanya yang berisi.
                 ->reject(fn (Category $category): bool => $category->templates_count === 0
                     && ($type === GreetingType::Undangan || $category->other_type_templates_count > 0))
-                ->map(fn (Category $category): array => [
-                    ...$category->only(['id', 'name', 'slug', 'emoji', 'templates_count']),
-                    'stories_count' => $storiesPerCategory->get($category->id, 0),
-                ])
+                ->map(fn (Category $category): array => $category->only(['id', 'name', 'slug', 'emoji', 'templates_count']))
                 ->values(),
-            // Satu kartu per seri; desain lain di seri yang sama ikut sebagai pilihan.
-            'templates' => $templates
-                ->groupBy(fn (Template $template): string => $template->catalogGroupKey())
-                ->map(fn (Collection $designs): array => [
-                    ...$designs->first()->toCardArray(),
-                    'designs' => $designs->map(fn (Template $design): array => $design->toDesignArray())->values()->all(),
-                ])
-                ->values(),
+            // Satu kartu per desain: pembeli langsung memilih tema, tanpa lapisan "cerita" di atasnya.
+            'templates' => $templates->map(fn (Template $template): array => $template->toCardArray())->values(),
             'filters' => ['jenis' => $type->value, 'kategori' => $categorySlug, 'cari' => $search],
         ]);
     }

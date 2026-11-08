@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Tujuan amplop digital. KartuKita hanya menampilkan nomor rekening/e-wallet (tamu menyalin
- * lalu transfer sendiri); uang tidak pernah melewati KartuKita, jadi tidak ada dana titipan.
+ * Tujuan amplop digital. Aplikasi hanya menampilkan nomor rekening/e-wallet (tamu menyalin
+ * lalu transfer sendiri); uang tidak pernah melewati aplikasi, jadi tidak ada dana titipan.
  */
 #[Fillable(['greeting_id', 'kind', 'provider', 'account_number', 'account_holder', 'address', 'position'])]
 class GiftAccount extends Model

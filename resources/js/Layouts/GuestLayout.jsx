@@ -2,7 +2,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link, usePage } from '@inertiajs/react';
 
 export default function GuestLayout({ children }) {
-    const { brand } = usePage().props;
+    const { brand, tagline } = usePage().props;
 
     return (
         <div className="relative flex min-h-screen flex-col items-center overflow-hidden bg-surface px-margin pt-10 sm:justify-center sm:pt-0">
@@ -11,7 +11,10 @@ export default function GuestLayout({ children }) {
 
             <Link href="/" className="relative flex flex-col items-center gap-2">
                 <ApplicationLogo className="h-16 w-16" />
-                <span className="font-display text-headline-md text-on-surface">{brand}</span>
+                <span className="flex flex-col items-center">
+                    <span className="font-display text-headline-md text-on-surface">{brand}</span>
+                    {tagline && <span className="text-label-md text-on-surface-variant">{tagline}</span>}
+                </span>
             </Link>
 
             <p className="relative mt-2 max-w-xs text-center text-body-sm text-on-surface-variant">

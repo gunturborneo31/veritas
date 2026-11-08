@@ -68,3 +68,30 @@
     -webkit-font-smoothing: antialiased;
     user-select: none;
 }
+
+/*
+ * Mockup HP (PhoneFrame.jsx): layar selalu potret 9:19. Lebar dihitung dari tinggi layar yang tersedia
+ * (100dvh dikurangi --phone-offset), jadi di layar pendek seluruh HP mengecil, bukan menjadi kotak.
+ * 20px = padding bingkai atas+bawah / kiri+kanan.
+ */
+@layer components {
+    .phone-frame {
+        width: min(100%, var(--phone-max, 340px), max(var(--phone-min, 220px), calc((100dvh - var(--phone-offset, 11rem) - 20px) * 9 / 19 + 20px)));
+    }
+
+    .phone-frame__screen {
+        aspect-ratio: 9 / 19;
+    }
+
+    /* HP sungguhan (mode bare): kartu memenuhi lebar layar dan setinggi layar yang tersisa. */
+    @media (max-width: 639px) {
+        .phone-frame--bare {
+            width: 100%;
+        }
+
+        .phone-frame--bare .phone-frame__screen {
+            aspect-ratio: auto;
+            height: max(420px, calc(100dvh - var(--phone-offset, 11rem)));
+        }
+    }
+}

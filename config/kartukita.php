@@ -8,7 +8,9 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'brand' => env('APP_NAME', 'KartuKita'),
+    'brand' => env('APP_NAME', 'Kitoo'),
+
+    'tagline' => env('APP_TAGLINE', 'Rayakan momen, kirim kejutan'),
 
     'support_whatsapp' => env('KARTUKITA_SUPPORT_WHATSAPP'),
 

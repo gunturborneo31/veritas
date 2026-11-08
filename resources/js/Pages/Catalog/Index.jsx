@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon';
 import Price from '@/Components/Price';
-import TemplateCard, { FlowPeek, cardTitle, visibleFlow } from '@/Components/TemplateCard';
+import TemplateCard, { FlowPeek, cardKicker, cardTitle, visibleFlow } from '@/Components/TemplateCard';
 import TemplateCover from '@/Components/TemplateCover';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { readableAccent } from '@/lib/theme';
@@ -71,22 +71,9 @@ function Spotlight({ template }) {
                             </span>
                         ))}
                     </div>
+                    {cardKicker(template) && <p className="text-label-sm font-bold uppercase tracking-wider" style={{ color: accent }}>{cardKicker(template)}</p>}
                     <h2 className="font-display text-headline-lg-mobile leading-tight text-on-surface">{cardTitle(template)}</h2>
-                    <p className="text-body-sm text-on-surface-variant">{template.series?.story ?? template.story ?? template.tagline}</p>
-                    {template.designs?.length > 1 && (
-                        <div className="no-scrollbar -mx-1 flex gap-1.5 overflow-x-auto px-1 py-0.5">
-                            {template.designs.map((design) => (
-                                <Link
-                                    key={design.slug}
-                                    href={route('catalog.show', design.slug)}
-                                    className="flex shrink-0 items-center gap-1.5 rounded-full bg-surface-container-low py-1 pl-1 pr-2.5 text-xs font-semibold text-on-surface"
-                                >
-                                    <span className="h-4 w-4 rounded-full" style={{ background: `linear-gradient(135deg, ${design.theme.accent}, ${design.theme.gradient[2]})` }} />
-                                    {design.design_name ?? design.name}
-                                </Link>
-                            ))}
-                        </div>
-                    )}
+                    <p className="text-body-sm text-on-surface-variant">{template.story ?? template.series?.story ?? template.tagline}</p>
 
                     <ol className="flex flex-wrap items-center gap-1 text-xs text-on-surface">
                         {flow.map((step, index) => (
@@ -186,11 +173,9 @@ export default function Index({ categories, templates, filters }) {
     const upcoming = categories.filter((category) => category.templates_count === 0);
     const activeCategory = categories.find((category) => category.slug === filters.kategori);
     const totalTemplates = categories.reduce((sum, category) => sum + category.templates_count, 0);
-    const totalSeries = templates.length;
 
-    const totalStories = categories.reduce((sum, category) => sum + category.stories_count, 0);
 
-    // Tampilan "Semua": momen dengan beberapa cerita mendapat bagian sendiri; momen lain digabung dalam satu grid
+    // Tampilan "Semua": momen dengan beberapa tema mendapat bagian sendiri; momen lain digabung dalam satu grid
     // (tiap kartu sudah berlabel momennya), agar tidak ada bagian yang hanya berisi satu kartu.
     const groups = categories
         .map((category) => ({ category, templates: gridTemplates.filter((template) => template.category?.slug === category.slug) }))
@@ -235,7 +220,7 @@ export default function Index({ categories, templates, filters }) {
                     </div>
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-container-lowest px-3 py-1 text-label-sm text-primary shadow-sm">
                         <Icon name="auto_awesome" filled size={14} className="text-tertiary" />
-                        {isFiltered ? 'Katalog terkurasi' : `${totalSeries} cerita interaktif`} • {totalTemplates} desain
+                        {totalTemplates} tema interaktif siap dipakai
                     </span>
                     <h1 className="mt-3 max-w-md font-display text-headline-lg-mobile leading-tight text-on-surface sm:text-headline-lg">{copy.heading}</h1>
                     <p className="mt-1.5 max-w-md text-body-sm text-on-surface-variant">{copy.body}</p>
@@ -257,7 +242,7 @@ export default function Index({ categories, templates, filters }) {
                 <div className="no-scrollbar flex items-center gap-2 overflow-x-auto px-margin py-1">
                     <button type="button" onClick={() => visit({ kategori: undefined })} className={chipClass(!filters.kategori)}>
                         Semua
-                        <span className={countClass(!filters.kategori)}>{totalStories}</span>
+                        <span className={countClass(!filters.kategori)}>{totalTemplates}</span>
                     </button>
                     {categories.map((category) => {
                         const isActive = filters.kategori === category.slug;
@@ -266,8 +251,8 @@ export default function Index({ categories, templates, filters }) {
                             <button key={category.slug} type="button" onClick={() => visit({ kategori: category.slug })} className={chipClass(isActive)}>
                                 <span>{category.emoji}</span>
                                 <span>{category.name}</span>
-                                {category.stories_count > 0 ? (
-                                    <span className={countClass(isActive)}>{category.stories_count}</span>
+                                {category.templates_count > 0 ? (
+                                    <span className={countClass(isActive)}>{category.templates_count}</span>
                                 ) : (
                                     <span className="rounded-full bg-tertiary-fixed px-1.5 text-[11px] font-bold uppercase text-on-tertiary-fixed">Segera</span>
                                 )}
@@ -277,8 +262,8 @@ export default function Index({ categories, templates, filters }) {
                 </div>
                 <p className="px-margin pt-1 text-body-sm text-on-surface-variant">
                     {activeCategory
-                        ? `${activeCategory.stories_count} cerita untuk momen ${activeCategory.name}, masing-masing dengan beberapa pilihan desain.`
-                        : `Semua momen: ${totalStories} cerita dari ${categories.filter((category) => category.stories_count > 0).length} momen.`}
+                        ? `${activeCategory.templates_count} pilihan tema untuk momen ${activeCategory.name}. Ketuk tema yang kamu suka.`
+                        : `Semua momen: ${totalTemplates} tema dari ${categories.filter((category) => category.templates_count > 0).length} momen.`}
                 </p>
             </section>
 
@@ -294,7 +279,7 @@ export default function Index({ categories, templates, filters }) {
                         <div className="mb-space-sm flex items-end justify-between gap-3 border-b border-outline-variant/40 pb-2">
                             <div className="min-w-0">
                                 <p className="text-label-sm uppercase tracking-wider text-primary">
-                                    {category.stories_count} cerita • {category.templates_count} desain
+                                    {category.templates_count} pilihan tema
                                 </p>
                                 <h2 id={`momen-${category.slug}`} className="flex items-center gap-2 font-display text-headline-sm text-on-surface">
                                     <span aria-hidden="true">{category.emoji}</span>
@@ -346,7 +331,7 @@ export default function Index({ categories, templates, filters }) {
                 <section className="px-margin pb-space-lg">
                     <div className="mb-space-sm flex items-end justify-between">
                         <h2 className="font-display text-headline-sm text-on-surface">
-                            {isFiltered ? `${templates.length} cerita ditemukan` : 'Cerita lainnya'}
+                            {isFiltered ? `${templates.length} tema ditemukan` : 'Tema lainnya'}
                         </h2>
                         {isFiltered && (
                             <button type="button" onClick={() => switchType(type)} className="text-label-md text-primary">
