@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon';
 import Price from '@/Components/Price';
-import TemplateCard, { FlowPeek, cardKicker, cardTitle, visibleFlow } from '@/Components/TemplateCard';
+import TemplateCard, { FlowPeek, cardTitle, visibleFlow } from '@/Components/TemplateCard';
 import TemplateCover from '@/Components/TemplateCover';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { readableAccent } from '@/lib/theme';
@@ -71,7 +71,6 @@ function Spotlight({ template }) {
                             </span>
                         ))}
                     </div>
-                    {cardKicker(template) && <p className="text-label-sm font-bold uppercase tracking-wider" style={{ color: accent }}>{cardKicker(template)}</p>}
                     <h2 className="font-display text-headline-lg-mobile leading-tight text-on-surface">{cardTitle(template)}</h2>
                     <p className="text-body-sm text-on-surface-variant">{template.story ?? template.series?.story ?? template.tagline}</p>
 

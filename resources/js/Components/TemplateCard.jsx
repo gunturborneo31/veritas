@@ -49,13 +49,6 @@ export function cardTitle(template) {
 }
 
 /**
- * Label kecil di atas judul: nama cerita (seri) yang dipakai tema ini.
- */
-export function cardKicker(template) {
-    return template.series && template.design_name ? template.series.name : null;
-}
-
-/**
  * Kartu template katalog: sampul bertema, intip alur, info durasi & interaksi.
  */
 export default function TemplateCard({ template, wide = false }) {
@@ -94,7 +87,6 @@ export default function TemplateCard({ template, wide = false }) {
             </div>
 
             <div className="flex flex-1 flex-col gap-1.5 p-3">
-                {cardKicker(template) && <p className="line-clamp-1 text-[11px] font-bold uppercase tracking-wider" style={{ color: accent }}>{cardKicker(template)}</p>}
                 <h2 className="line-clamp-1 font-display text-headline-sm text-on-surface">{cardTitle(template)}</h2>
                 {(template.story ?? template.series?.story) && (
                     <p className="line-clamp-2 text-[12.5px] leading-snug text-on-surface-variant">{template.story ?? template.series?.story}</p>
