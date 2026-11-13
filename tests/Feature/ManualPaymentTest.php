@@ -111,6 +111,21 @@ class ManualPaymentTest extends TestCase
         );
     }
 
+    public function test_telegram_is_sent_immediately_even_when_no_queue_worker_is_running(): void
+    {
+        config([
+            'queue.default' => 'database',
+            'services.telegram.bot_token' => 'bot-token',
+            'services.telegram.chat_id' => '12345',
+        ]);
+        Http::fake(['api.telegram.org/*' => Http::response(['ok' => true])]);
+        $order = $this->pendingOrderWithManualPayment();
+
+        $this->actingAs($order->user)->post(route('orders.manual.claim', $order), $this->proof());
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://api.telegram.org/botbot-token/sendPhoto');
+    }
+
     public function test_claim_without_proof_is_rejected_with_a_clear_message(): void
     {
         Notification::fake();

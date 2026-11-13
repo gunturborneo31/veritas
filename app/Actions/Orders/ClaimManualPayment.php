@@ -70,7 +70,9 @@ class ClaimManualPayment
         Notification::send(User::query()->where('is_admin', true)->get(), $notification);
 
         if (filled(config('services.telegram.bot_token')) && filled(config('services.telegram.chat_id'))) {
-            Notification::route(TelegramChannel::class, config('services.telegram.chat_id'))->notify($notification);
+            // Dikirim langsung (bukan lewat antrean): di hosting tanpa queue worker notifikasi antrean
+            // tidak pernah terkirim, padahal admin perlu tahu seketika. Kegagalan Telegram hanya dicatat di log.
+            Notification::route(TelegramChannel::class, config('services.telegram.chat_id'))->notifyNow($notification);
         }
     }
 }

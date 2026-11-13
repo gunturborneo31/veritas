@@ -9,10 +9,13 @@ use App\Models\Greeting;
 use App\Models\Order;
 use App\Models\User;
 use App\Support\Telegram\PaymentReviewActions;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Testing\TestResponse;
 use Tests\Concerns\CreatesGreetingTemplates;
 use Tests\TestCase;
@@ -51,6 +54,22 @@ class TelegramPaymentReviewTest extends TestCase
             'ok' => true,
             'result' => str_ends_with($request->url(), '/getUpdates') ? $this->pendingUpdates : [],
         ]));
+    }
+
+    /**
+     * Pemeriksaan CSRF otomatis mati saat test, jadi pastikan langsung bahwa rute webhook benar-benar
+     * melewati middleware CSRF yang dipakai grup web (bila tidak, Telegram & QRIS mendapat 419 di produksi).
+     */
+    public function test_webhooks_skip_the_csrf_middleware_used_by_the_web_group(): void
+    {
+        $csrfMiddleware = collect(app(Router::class)->getMiddlewareGroups()['web'])
+            ->first(fn (string $middleware): bool => is_a($middleware, PreventRequestForgery::class, true));
+
+        $this->assertNotNull($csrfMiddleware);
+
+        foreach (['webhooks.telegram', 'webhooks.qris'] as $routeName) {
+            $this->assertContains($csrfMiddleware, Route::getRoutes()->getByName($routeName)->excludedMiddleware(), $routeName);
+        }
     }
 
     public function test_webhook_without_the_secret_header_is_rejected(): void
