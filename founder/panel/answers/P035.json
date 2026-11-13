@@ -1,0 +1,13 @@
+{
+  "id": "P035",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "price",
+  "reason": "Rp29.000 sampai Rp35.000 buat satu ucapan itu kerasa mahal buat aku, apalagi ada yang Rp5.000-Rp10.000 atau gratis. Terus setelah bayar isinya dikunci dan nggak bisa aku edit sendiri, padahal aku orangnya takut banget salah ketik nama atau tanggal.",
+  "objection": "Kalau ternyata ada typo di nama atau tanggal setelah aku bayar, aku nggak bisa benerin sendiri. Bayar mahal tapi hasilnya ada salah, itu yang paling bikin aku ragu.",
+  "would_change_my_mind": "Bisa edit sendiri setelah bayar (minimal beberapa hari) dan harganya turun ke sekitar Rp15.000.",
+  "price_too_cheap": 3000,
+  "price_cheap": 10000,
+  "price_expensive": 20000,
+  "price_too_expensive": 30000
+}

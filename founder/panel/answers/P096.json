@@ -1,0 +1,13 @@
+{
+  "id": "P096",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "habit",
+  "reason": "Aku udah pernah pakai Lovio dan hasilnya oke, jadi buat apa pindah ke situs yang belum pernah aku dengar. Uangku pas-pasan, Rp30 ribuan buat ucapan itu nggak kecil, mending pakai yang sudah aku tahu.",
+  "objection": "Setelah bayar isinya dikunci dan nggak bisa aku edit sendiri. Kalau aku salah ketik nama atau tanggal, uangku hangus dan malu di depan pacar.",
+  "would_change_my_mind": "Bisa edit sendiri minimal sehari setelah bayar, plus harga di bawah Rp20 ribu buat pelajar.",
+  "price_too_cheap": 5000,
+  "price_cheap": 15000,
+  "price_expensive": 30000,
+  "price_too_expensive": 45000
+}

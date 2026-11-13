@@ -1,0 +1,13 @@
+{
+  "id": "P001",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "habit",
+  "reason": "Biasanya aku baru ingat H-1 dan langsung kirim video atau kolase screenshot di WhatsApp, gratis dan sudah cukup. Bayar Rp30 ribuan buat ucapan yang isinya bisa aku bikin sendiri rasanya belum perlu.",
+  "objection": "Kalau sudah bayar isinya dikunci dan nggak bisa aku edit, padahal aku bikinnya buru-buru malam itu juga, takut ada typo atau foto salah. Belum lagi waktu isi templatenya, padahal aku lagi mepet.",
+  "would_change_my_mind": "Kalau pacarku ulang tahun dan aku bisa jadiin ucapan dari screenshot-screenshotku dalam 5 menit, terus masih bisa edit kalau salah, mungkin aku coba sekali.",
+  "price_too_cheap": 5000,
+  "price_cheap": 15000,
+  "price_expensive": 30000,
+  "price_too_expensive": 50000
+}

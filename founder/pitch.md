@@ -1,0 +1,5 @@
+Kitoo (kitoo.my.id): buat ucapan digital interaktif atau undangan acara dari template siap pakai, langsung di HP, tanpa perlu bisa desain.
+Ucapan (ulang tahun, pasangan, keluarga, Lebaran, minta maaf, nembak, wisuda, terima kasih, kangen): isi foto, surat, musik, voice note, gembok PIN, kunci waktu, tiup lilin, kuis atau kartu gosok. Rp25.000 sampai Rp59.000, kebanyakan Rp29.000 sampai Rp35.000. Link tidak kedaluwarsa. Setelah dibayar, isi ucapan dikunci dan tidak bisa kamu edit sendiri.
+Undangan (pernikahan, lamaran, aqiqah, khitanan, pengajian, syukuran, peresmian): link pribadi per tamu, RSVP, amplop digital, buku ucapan, jadwal acara. Rp39.000 sampai Rp89.000 (pernikahan Rp79.000), tamu tidak dibatasi, bisa direvisi sampai 3 hari setelah acara.
+Coba dan lihat pratinjau dulu (dengan watermark) tanpa daftar akun, bayar sekali lewat QRIS saat mau dibagikan. Satu pembayaran untuk satu ucapan atau satu acara, tanpa langganan.
+Hasilnya link dan QR code yang dikirim lewat WhatsApp. Penerima tidak perlu akun atau aplikasi.

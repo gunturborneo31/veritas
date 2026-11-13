@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['code', 'greeting_id', 'user_id', 'promo_code_id', 'amount', 'discount', 'price_breakdown', 'status', 'data_confirmed_at', 'paid_at', 'cancelled_at'])]
+#[Fillable(['code', 'greeting_id', 'user_id', 'promo_code_id', 'amount', 'discount', 'price_breakdown', 'status', 'notify_whatsapp', 'data_confirmed_at', 'paid_at', 'cancelled_at'])]
 class Order extends Model
 {
     /** @use HasFactory<OrderFactory> */

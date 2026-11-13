@@ -23,14 +23,15 @@ class ClaimManualPayment
      * Pembeli menyatakan sudah bayar: bukti (bila diunggah) disimpan privat, pesanan menunggu
      * konfirmasi admin, isi kartu dikunci selama pemeriksaan, dan admin diberi tahu (dashboard,
      * email, dan Telegram beserta foto bukti). Tanpa unggahan berarti bukti dikirim lewat WhatsApp.
+     * Nomor WA (format 62…, opsional) dipakai untuk mengabari pembeli saat admin mengonfirmasi/menolak.
      */
-    public function handle(Order $order, ?UploadedFile $proof = null, ?string $senderAccountName = null): Order
+    public function handle(Order $order, ?UploadedFile $proof = null, ?string $senderAccountName = null, ?string $notifyWhatsapp = null): Order
     {
         $disk = config('kartukita.media.disk');
         $path = $proof?->storeAs("payments/{$order->code}", Str::ulid()->toBase32().'.'.$proof->extension(), $disk);
 
         try {
-            $order = DB::transaction(function () use ($order, $disk, $path, $senderAccountName): Order {
+            $order = DB::transaction(function () use ($order, $disk, $path, $senderAccountName, $notifyWhatsapp): Order {
                 $order = Order::query()->lockForUpdate()->findOrFail($order->id);
                 $payment = $order->latestPayment;
 
@@ -44,7 +45,7 @@ class ClaimManualPayment
                     'sender_account_name' => $senderAccountName,
                 ]);
 
-                $order->update(['status' => OrderStatus::MenungguKonfirmasi]);
+                $order->update(['status' => OrderStatus::MenungguKonfirmasi, 'notify_whatsapp' => $notifyWhatsapp]);
                 $order->greeting->forceFill(['status' => GreetingStatus::Terkunci])->save();
 
                 return $order;

@@ -44,6 +44,15 @@ return [
     | Buat bot di @BotFather, kirim pesan apa saja ke bot, lalu ambil chat_id dari
     | https://api.telegram.org/bot<token>/getUpdates. Kosongkan untuk mematikan.
     */
+    /*
+    | WhatsApp ke pembeli lewat Fonnte (fonnte.com): nomor WA admin dihubungkan dengan scan QR di
+    | dashboard Fonnte, lalu token perangkat diisi di sini. Kosongkan untuk mematikan (pesan hanya dicatat di log).
+    */
+    'fonnte' => [
+        'token' => env('FONNTE_TOKEN'),
+        'url' => env('FONNTE_URL', 'https://api.fonnte.com/send'),
+    ],
+
     'telegram' => [
         'bot_token' => env('TELEGRAM_BOT_TOKEN'),
         // Hanya chat ini yang boleh menekan tombol verifikasi pembayaran.

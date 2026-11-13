@@ -17,7 +17,7 @@ class ManualPaymentController extends Controller
     {
         abort_unless($order->user_id === $request->user()->id, 404);
 
-        $claim->handle($order, $request->file('proof'), $request->validated('sender_account_name'));
+        $claim->handle($order, $request->file('proof'), $request->validated('sender_account_name'), $request->whatsappNumber());
 
         return to_route('orders.show', $order)->with('success', $request->hasFile('proof')
             ? 'Bukti terkirim! Pembayaranmu sedang kami cek.'

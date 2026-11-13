@@ -60,8 +60,8 @@ function Step({ number, title, children }) {
  * Langkah 3 & 4: unggah screenshot/foto bukti bayar (wajib, dengan pratinjau) lalu kirim.
  * Bukti diteruskan ke admin lewat Telegram agar konfirmasi cepat.
  */
-function ProofForm({ orderCode, amount }) {
-    const { data, setData, post, processing, errors, progress } = useForm({ proof: null, sender_account_name: '' });
+function ProofForm({ orderCode, amount, defaultWhatsapp }) {
+    const { data, setData, post, processing, errors, progress } = useForm({ proof: null, sender_account_name: '', whatsapp: defaultWhatsapp ?? '' });
     const [preview, setPreview] = useState(null);
 
     useEffect(() => () => preview && URL.revokeObjectURL(preview), [preview]);
@@ -107,6 +107,28 @@ function ProofForm({ orderCode, amount }) {
                     placeholder="Nama akun pengirim (opsional), mis. Budi S."
                     className="w-full rounded-xl border-0 bg-surface-container-low px-3 py-2.5 text-body-md focus:ring-2 focus:ring-primary/40"
                 />
+
+                <div className="flex flex-col gap-1.5 rounded-2xl bg-surface-container-low p-3">
+                    <label htmlFor="notify-whatsapp" className="flex items-center gap-1.5 text-label-md text-on-surface">
+                        <Icon name="chat" size={18} className="text-whatsapp" />
+                        Kabari saya lewat WhatsApp
+                    </label>
+                    <input
+                        id="notify-whatsapp"
+                        type="tel"
+                        inputMode="tel"
+                        autoComplete="tel"
+                        value={data.whatsapp}
+                        onChange={(event) => setData('whatsapp', event.target.value)}
+                        maxLength={20}
+                        placeholder="Nomor WhatsApp, mis. 081234567890"
+                        className="w-full rounded-xl border-0 bg-surface-container-lowest px-3 py-2.5 text-body-md focus:ring-2 focus:ring-primary/40"
+                    />
+                    <p className="text-label-sm font-normal text-on-surface-variant">
+                        Begitu pembayaran dikonfirmasi, detail pesanan dan link kartumu kami kirim ke nomor ini. Kosongkan kalau tidak perlu.
+                    </p>
+                    {errors.whatsapp && <p className="text-label-sm text-error">{errors.whatsapp}</p>}
+                </div>
             </Step>
 
             <Step number={4} title="Kirim bukti">
@@ -202,7 +224,7 @@ function ManualPayment({ manual, orderCode }) {
                 <p className="text-body-sm text-on-surface-variant">QRIS ini tidak mengisi nominal otomatis. Selesaikan pembayaran di aplikasimu sampai muncul tanda berhasil.</p>
             </Step>
 
-            {manual.proof_channel === 'whatsapp' ? <WhatsAppProof orderCode={orderCode} whatsappUrl={manual.whatsapp_url} /> : <ProofForm orderCode={orderCode} amount={manual.amount} />}
+            {manual.proof_channel === 'whatsapp' ? <WhatsAppProof orderCode={orderCode} whatsappUrl={manual.whatsapp_url} /> : <ProofForm orderCode={orderCode} amount={manual.amount} defaultWhatsapp={manual.notify_whatsapp} />}
         </>
     );
 }
@@ -273,6 +295,12 @@ export default function Show({ order, greeting, isQrisReady, canSimulate }) {
                             <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
                             Menunggu konfirmasi admin
                         </p>
+                        {order.notify_whatsapp && (
+                            <p className="flex items-center gap-1.5 rounded-xl bg-surface-container-low px-3 py-2 text-label-sm font-normal text-on-surface-variant">
+                                <Icon name="chat" size={16} className="text-whatsapp" />
+                                Kabar konfirmasi juga dikirim ke WhatsApp {order.notify_whatsapp}.
+                            </p>
+                        )}
                         {order.review_whatsapp_url && (
                             <a
                                 href={order.review_whatsapp_url}

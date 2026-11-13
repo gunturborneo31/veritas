@@ -1,0 +1,13 @@
+{
+  "id": "P020",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "price",
+  "reason": "Rp29.000-35.000 cuma buat satu ucapan itu kemahalan buat aku, aku tahu ada yang Rp5.000-10.000 dengan fitur mirip. Lagian aku belum pernah dengar Kitoo, jadi belum berani bayar ke situs baru.",
+  "objection": "Harganya tiga kali lipat dari yang biasa aku lihat, dan aku nggak tahu Kitoo ini aman atau nggak, takut udah bayar QRIS tapi linknya nggak jadi atau harus nunggu admin.",
+  "would_change_my_mind": "Ada template ucapan di bawah Rp15.000 atau promo pertama yang murah, plus testimoni asli di TikTok yang bikin aku percaya.",
+  "price_too_cheap": 3000,
+  "price_cheap": 8000,
+  "price_expensive": 15000,
+  "price_too_expensive": 25000
+}

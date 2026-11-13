@@ -1,0 +1,13 @@
+{
+  "id": "P006",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "price",
+  "reason": "Rp29.000-35.000 buat satu ucapan kemahalan buat saya, di tempat lain ada yang Rp5.000-10.000 dan duitnya mending buat kado atau jajan bareng pacar. Fiturnya lucu sih, tapi ujungnya cuma link.",
+  "objection": "Harganya tiga kali lipat dari yang biasa saya lihat, terus setelah bayar nggak bisa diedit sendiri, kalau ada salah ketik nama atau tanggal ya sudah, rugi.",
+  "would_change_my_mind": "Ada promo tanggal kembar atau harga di bawah Rp15.000, plus bisa edit sendiri minimal sekali setelah bayar.",
+  "price_too_cheap": 3000,
+  "price_cheap": 8000,
+  "price_expensive": 15000,
+  "price_too_expensive": 25000
+}

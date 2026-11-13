@@ -1,0 +1,13 @@
+{
+  "id": "P018",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "price",
+  "reason": "Buat aqiqah atau pengajian, biasanya aku cuma kirim gambar flyer dari template gratis plus teks lokasi ke grup WA keluarga, beres. Bayar Rp39.000 ke atas buat link undangan acara kecil yang tamunya keluarga sendiri rasanya belum perlu, apalagi ada situs lain yang gratis.",
+  "objection": "Acaranya mepet dan tamunya keluarga yang sudah tahu, jadi RSVP dan link per tamu nggak terlalu kepakai, sementara yang gratis juga bisa langsung jadi.",
+  "would_change_my_mind": "Kalau bisa jadi dalam lima menit dari HP dan harganya untuk aqiqah/syukuran sekitar Rp20.000, atau ada versi gratis tanpa watermark yang cukup layak dikirim ke grup.",
+  "price_too_cheap": 5000,
+  "price_cheap": 15000,
+  "price_expensive": 35000,
+  "price_too_expensive": 60000
+}

@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Support\Payments\ManualQris;
+use App\Support\WhatsApp\PhoneNumber;
+use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -26,7 +28,20 @@ class ClaimManualPaymentRequest extends FormRequest
                 'max:'.config('kartukita.payment.manual.proof_max_kb'),
             ],
             'sender_account_name' => ['nullable', 'string', 'max:80'],
+            'whatsapp' => ['nullable', 'string', 'max:20', function (string $attribute, mixed $value, Closure $fail): void {
+                if (filled($value) && PhoneNumber::normalize($value) === null) {
+                    $fail('Nomor WhatsApp tidak valid. Contoh: 081234567890.');
+                }
+            }],
         ];
+    }
+
+    /**
+     * Nomor WA dalam format 62… atau null bila dikosongkan.
+     */
+    public function whatsappNumber(): ?string
+    {
+        return PhoneNumber::normalize($this->validated('whatsapp'));
     }
 
     /**

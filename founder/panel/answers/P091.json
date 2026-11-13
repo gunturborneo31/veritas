@@ -1,0 +1,13 @@
+{
+  "id": "P091",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "price",
+  "reason": "Rp29.000 sampai Rp35.000 buat satu ucapan itu mahal buat aku, aku tahu ada situs lain yang Rp5.000 sampai Rp10.000. Paling aku coba pratinjaunya, terus screenshot atau bikin sendiri aja.",
+  "objection": "Harganya tiga kali lipat dari situs lain yang aku tahu, dan setelah bayar isinya nggak bisa aku edit sendiri, jadi kalau typo ya rugi.",
+  "would_change_my_mind": "Ada ucapan yang harganya Rp10.000-an atau promo diskon pelajar buat pembelian pertama.",
+  "price_too_cheap": 3000,
+  "price_cheap": 8000,
+  "price_expensive": 15000,
+  "price_too_expensive": 25000
+}

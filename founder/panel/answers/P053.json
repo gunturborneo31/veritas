@@ -1,0 +1,13 @@
+{
+  "id": "P053",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "other",
+  "reason": "Bisa lihat pratinjau dulu dan bayar QRIS itu enak, tapi begitu dibayar isinya dikunci dan tidak bisa saya edit lagi. Saya pasti takut ada salah ketik nama atau tanggal yang baru kelihatan setelah dikirim ke pacar, dan Rp30 ribuan itu lumayan buat uang saku saya.",
+  "objection": "Setelah bayar ucapan tidak bisa direvisi sendiri, padahal undangan saja boleh direvisi. Kalau ada typo, malu dan uang hangus. Ditambah saya belum pernah dengar Kitoo, belum tahu apakah QRIS-nya langsung terkonfirmasi atau harus nunggu admin.",
+  "would_change_my_mind": "Boleh revisi isi ucapan sendiri minimal sekali atau dalam 24 jam setelah bayar, dan pembayaran QRIS langsung otomatis aktif tanpa nunggu admin.",
+  "price_too_cheap": 5000,
+  "price_cheap": 15000,
+  "price_expensive": 29000,
+  "price_too_expensive": 45000
+}

@@ -10,6 +10,7 @@ use App\Support\Greetings\QrCodeGenerator;
 use App\Support\Payments\FakeQrisGateway;
 use App\Support\Payments\ManualQris;
 use App\Support\Payments\QrisGateway;
+use App\Support\WhatsApp\PhoneNumber;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -60,7 +61,10 @@ class OrderController extends Controller
                     'merchant_name' => $manualQris->merchantName(),
                     'proof_channel' => $manualQris->proofChannel(),
                     'whatsapp_url' => $manualQris->whatsappUrl($payment),
+                    // Nomor untuk kabar konfirmasi: yang pernah diisi di pesanan ini, atau nomor HP akun.
+                    'notify_whatsapp' => PhoneNumber::display($order->notify_whatsapp ?? PhoneNumber::normalize($order->user?->phone)),
                 ],
+                'notify_whatsapp' => PhoneNumber::display($order->notify_whatsapp),
                 // Setelah klaim via WhatsApp, pembeli bisa membuka lagi chat untuk mengirim bukti.
                 'review_whatsapp_url' => $order->status === OrderStatus::MenungguKonfirmasi && $payment?->isManual() && $payment->proof_path === null
                     ? $manualQris->whatsappUrl($payment)

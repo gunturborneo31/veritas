@@ -1,0 +1,13 @@
+{
+  "id": "P090",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "convenience",
+  "reason": "Rp30 ribuan buat satu ucapan lumayan berat buat aku, dan pacarku paling cuma butuh chat panjang plus foto yang aku screenshot sendiri. Gembok PIN dan kuis malah bikin dia repot buka di HP yang sinyalnya suka jelek.",
+  "objection": "Penerima belum tentu mau repot buka link, masukin PIN atau main game, apalagi kalau sinyal lemah dan loadingnya lama; ditambah kalau sudah bayar ada typo nggak bisa aku edit sendiri.",
+  "would_change_my_mind": "Kalau ada momen besar kayak anniversary atau wisuda dan harganya di bawah Rp15.000, plus link-nya ringan dibuka di sinyal lemah dan masih bisa diedit setelah bayar.",
+  "price_too_cheap": 3000,
+  "price_cheap": 10000,
+  "price_expensive": 20000,
+  "price_too_expensive": 35000
+}

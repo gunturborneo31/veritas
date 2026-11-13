@@ -1,0 +1,286 @@
+{
+ "business": "Kitoo (kitoo.my.id), web ucapan digital interaktif dan undangan acara digital, Indonesia",
+ "seed": 550272,
+ "dealt": 100,
+ "answered": 100,
+ "skipped": [],
+ "buys": 26,
+ "passes": 74,
+ "buy_rate": 0.26,
+ "by_segment": [
+  [
+   "Calon pengantin yang menyiapkan lamaran atau pernikahan",
+   15,
+   0.8
+  ],
+  [
+   "Orang tua muda yang mengadakan aqiqah, khitanan, pengajian atau syukuran",
+   20,
+   0.35
+  ],
+  [
+   "Pekerja muda, beli ucapan untuk pasangan, orang tua atau teman",
+   30,
+   0.16666666666666666
+  ],
+  [
+   "Mahasiswa atau pelajar SMA akhir, beli ucapan untuk pacar atau sahabat",
+   35,
+   0.05714285714285714
+  ]
+ ],
+ "by_behaviour": [
+  [
+   "Ikut tren TikTok",
+   15,
+   0.9333333333333333
+  ],
+  [
+   "Mepet waktu",
+   20,
+   0.25
+  ],
+  [
+   "Perfeksionis",
+   12,
+   0.25
+  ],
+  [
+   "Keputusan bersama keluarga",
+   10,
+   0.2
+  ],
+  [
+   "Cukup yang gratis",
+   15,
+   0.06666666666666667
+  ],
+  [
+   "Pemburu harga",
+   18,
+   0.05555555555555555
+  ],
+  [
+   "Sudah pakai pesaing",
+   10,
+   0.0
+  ]
+ ],
+ "by_income": [
+  [
+   "Rp33,664,000 to Rp85,731,000",
+   33,
+   0.36363636363636365
+  ],
+  [
+   "Rp85,731,000 and up",
+   34,
+   0.35294117647058826
+  ],
+  [
+   "under Rp33,664,000",
+   33,
+   0.06060606060606061
+  ]
+ ],
+ "why_not": [
+  [
+   "price",
+   32,
+   [
+    "Rp29.000-35.000 buat satu ucapan kemahalan buat saya, di tempat lain ada yang Rp5.000-10.000 dan duitnya mending buat kado atau jajan bareng pacar. Fiturnya lucu sih, tapi ujungnya cuma link.",
+    "Lucu sih fitur gembok PIN sama tiup lilinnya, tapi bulan ini nggak ada yang ulang tahun, dan buat ucapan biasa aku cukup bikin di Canva atau template gratis terus kirim WA. Undangan juga keluarga pasti cari yang gratis dulu."
+   ],
+   [
+    "P006",
+    "P015"
+   ]
+  ],
+  [
+   "habit",
+   25,
+   [
+    "Biasanya aku baru ingat H-1 dan langsung kirim video atau kolase screenshot di WhatsApp, gratis dan sudah cukup. Bayar Rp30 ribuan buat ucapan yang isinya bisa aku bikin sendiri rasanya belum perlu.",
+    "Biasanya saya cukup kirim foto, video, atau bikin kartu di Canva gratis lalu kirim ke WA, dan itu sudah cukup buat pasangan atau orang tua. Bayar Rp29 ribuan buat satu ucapan yang habis dibuka sekali rasanya belum perlu."
+   ],
+   [
+    "P001",
+    "P007"
+   ]
+  ],
+  [
+   "need",
+   5,
+   [
+    "Lucu sih, tapi bulan ini nggak ada momen khusus buat pacar atau sahabatku, dan biasanya aku cukup bikin story IG, video CapCut, atau kumpulan screenshot kenangan gratis. Rp29 ribuan buat link doang lumayan buat uang jajan mahasiswa.",
+    "Aku biasanya baru ingat H-1, dan kalau mepet ya paling kirim chat panjang, voice note atau foto langsung di WhatsApp, gratis dan pasti dibuka. Rp30 ribuan buat satu link yang belum tentu dibuka penerima rasanya belum perlu."
+   ],
+   [
+    "P008",
+    "P012"
+   ]
+  ],
+  [
+   "quality",
+   4,
+   [
+    "Fiturnya lucu sih, tapi begitu bayar isinya dikunci dan nggak bisa aku edit lagi. Aku orangnya takut salah ketik nama atau tanggal, jadi mending kirim video atau pesan WA biasa yang gratis dan bisa langsung kuhapus terus kirim ulang kalau salah.",
+    "Saya orangnya teliti banget, dan begitu bayar isinya langsung dikunci, nggak bisa saya edit sendiri. Kalau ternyata ada salah ketik nama atau tanggal setelah terkirim, saya nggak mau ambil risiko itu buat Rp30 ribuan; mending kirim ucapan biasa di WhatsApp saja."
+   ],
+   [
+    "P004",
+    "P048"
+   ]
+  ],
+  [
+   "convenience",
+   4,
+   [
+    "Aku memang suka yang langsung jadi pas mepet H-1, tapi kalau ujungnya penerima malas buka link, ribet masukin PIN atau loadingnya lama di sinyal jelek, mending aku kirim chat panjang plus voice note gratis di WA. Rp30 ribuan buat sesuatu yang belum tentu dibuka itu sayang.",
+    "Biasanya aku baru ingat malam itu juga, dan yang paling cepat ya kirim chat panjang plus kumpulan screenshot foto kita di WA, gratis dan langsung kebaca. Bayar Rp30 ribuan buat link yang belum tentu dibuka rasanya belum perlu."
+   ],
+   [
+    "P014",
+    "P036"
+   ]
+  ],
+  [
+   "other",
+   3,
+   [
+    "Aku tipe yang takut salah ketik nama atau tanggal, dan di sini setelah bayar isi ucapannya dikunci, nggak bisa aku edit sendiri. Pratinjau memang membantu, tapi kalau baru sadar ada typo setelah dikirim ke pasangan atau orang tua, aku sudah bayar untuk sesuatu yang memalukan dan permanen.",
+    "Aku tipe yang takut salah ketik nama atau tanggal, dan di sini setelah bayar isinya dikunci, nggak bisa aku edit sendiri. Uang Rp30 ribuan buat aku lumayan, kalau ada typo setelah dikirim ya sia-sia, mending aku bikin video atau pesan sendiri gratis."
+   ],
+   [
+    "P005",
+    "P019"
+   ]
+  ],
+  [
+   "trust",
+   1,
+   [
+    "Biasanya aku baru ingat malam sebelumnya, jadi nggak bisa ambil risiko bayar ke situs yang belum pernah kudengar lalu linknya nggak langsung jadi. Mending kirim foto plus chat panjang di WA, gratis dan pasti sampai."
+   ],
+   [
+    "P068"
+   ]
+  ]
+ ],
+ "why_yes": [
+  [
+   "need",
+   15,
+   [
+    "Saya memang lagi siapin aqiqah anak dan sudah lihat undangan digital kayak gini di TikTok. Bisa coba gratis dulu, bayar sekali lewat QRIS, dan masih bisa direvisi, jadi Rp39 ribuan masih masuk buat sekali acara.",
+    "Saya memang sedang butuh undangan lamaran, dan bisa coba pratinjau dulu tanpa daftar plus revisi sampai 3 hari setelah acara itu pas buat saya yang takut salah ketik nama atau tanggal. Rp79.000 untuk tamu tak terbatas masih masuk akal, jadi saya coba satu dulu setelah cek pratinjaunya teliti."
+   ],
+   [
+    "P002",
+    "P010"
+   ]
+  ],
+  [
+   "convenience",
+   8,
+   [
+    "Aqiqah anak sudah dekat dan saya lihat undangan digital begini di TikTok, kalau bisa dicoba dulu tanpa daftar dan cuma bayar sekali di bawah Rp50.000, jauh lebih murah dan cepat daripada cetak undangan. Tapi saya baru bayar setelah pratinjaunya benar-benar sebagus yang di video.",
+    "Aku memang lagi butuh undangan lamaran yang bisa langsung jadi dan disebar ke grup WA malam itu juga, dan Rp79.000 untuk tamu tak terbatas plus RSVP dan amplop digital masih masuk akal. Yang bikin aku berani karena undangannya masih bisa direvisi, jadi kalau salah ketik nama atau jam masih aman."
+   ],
+   [
+    "P003",
+    "P011"
+   ]
+  ],
+  [
+   "habit",
+   3,
+   [
+    "Aku sering lihat kado link kayak gini di TikTok dan pengin bikin buat pacarku pas ultah, Rp29 ribuan masih masuk akal dibanding beli kado fisik. Bisa coba pratinjau dulu tanpa daftar juga bikin aku berani nyoba, tapi paling sekali aja kalau ada momennya.",
+    "Aku sering lihat kado digital kayak gini di TikTok dan pengen bikin yang mirip buat pacarku, Rp29 ribuan masih masuk akal buat sekali kasih. Bisa coba pratinjau dulu tanpa daftar, jadi aku berani coba, tapi cuma kalau ada momen kayak ulang tahun atau anniversary."
+   ],
+   [
+    "P017",
+    "P031"
+   ]
+  ]
+ ],
+ "flip": [
+  "Kalau pacarku ulang tahun dan aku bisa jadiin ucapan dari screenshot-screenshotku dalam 5 menit, terus masih bisa edit kalau salah, mungkin aku coba sekali.",
+  "Bisa edit sendiri isi ucapan setelah bayar, minimal beberapa hari atau sampai penerima membuka link, tanpa bayar lagi.",
+  "Bisa edit ucapan sendiri minimal beberapa hari setelah dibayar, seperti undangannya yang bisa direvisi sampai 3 hari setelah acara.",
+  "Ada promo tanggal kembar atau harga di bawah Rp15.000, plus bisa edit sendiri minimal sekali setelah bayar.",
+  "Kalau setelah bayar masih bisa edit sendiri minimal sekali atau beberapa jam, dan ada momen besar seperti ulang tahun pernikahan, mungkin saya coba sekali.",
+  "Kalau pas mendekati ulang tahun atau anniversary pacar dan harganya sekitar Rp15.000, aku mungkin coba yang ada gembok PIN dan tiup lilinnya.",
+  "Kalau harganya sekitar Rp10.000 atau ada promo tanggal kembar, buat momen spesial kayak nembak atau anniversary mungkin aku coba sekali.",
+  "Kalau aku lihat sendiri contohnya kebuka cepat dan ringan di HP biasa dengan sinyal jelek, plus bisa jadi dalam 5 menit, dan harganya sekitar Rp15.000 untuk momen penting kayak ulang tahun pacar.",
+  "Lihat sendiri contoh link yang kebuka cepat dan ringan di HP biasa tanpa harus PIN atau game, terus ada momen penting yang pas (ultah pacar) bulan itu.",
+  "Kalau pas ulang tahun atau anniversary pacar dan harganya sekitar Rp15.000, mungkin aku coba sekali buat kejutan.",
+  "Kalau masih bisa edit sendiri minimal 1 sampai 2 hari setelah bayar, dan pas ada ulang tahun istri, mungkin saya coba sekali.",
+  "Kalau bisa jadi dalam lima menit dari HP dan harganya untuk aqiqah/syukuran sekitar Rp20.000, atau ada versi gratis tanpa watermark yang cukup layak dikirim ke grup.",
+  "Bisa revisi sendiri minimal sehari setelah dibayar, kayak undangannya yang bisa direvisi.",
+  "Ada template ucapan di bawah Rp15.000 atau promo pertama yang murah, plus testimoni asli di TikTok yang bikin aku percaya.",
+  "Kalau setelah bayar masih bisa edit sendiri minimal beberapa jam atau sampai link pertama kali dibuka penerima.",
+  "Kalau saya coba pratinjaunya dan ternyata bisa jadi dalam beberapa menit, jauh lebih rapi dari yang gratis, dan ada bukti banyak pasangan lain sudah pakai tanpa masalah.",
+  "Promo tanggal kembar atau harga di bawah Rp15 ribu, ditambah bisa edit sekali setelah bayar.",
+  "Kalau aku lihat pratinjaunya jauh lebih bagus dan lengkap (RSVP, amplop digital, link per tamu) daripada yang gratis, dan ada teman yang sudah pakai dan puas, mungkin aku bayar untuk undangan nikahnya saja.",
+  "Kalau ada momen besar kayak anniversary atau ulang tahun pasangan dan harganya sekitar Rp10.000 sampai Rp15.000, plus jaminan link-nya ringan dibuka di sinyal lemah.",
+  "Kalau ada paket undangan sederhana sekitar Rp15.000 dan hasilnya bisa diunduh jadi gambar untuk dikirim ke kerabat yang tidak bisa buka link.",
+  "Kalau bisa jadi dalam 5 menit dan harganya sekitar Rp10.000-15.000 (atau ada promo tanggal kembar), mungkin aku coba sekali buat ulang tahun pasangan.",
+  "Kalau ada ucapan simpel harga Rp10-15 ribu, atau pas ultah pacar aku beneran lupa nyiapin kado dan butuh sesuatu yang kelihatan niat malam itu juga.",
+  "Ada promo tanggal kembar yang bikin harganya di bawah Rp15.000, plus boleh edit setelah bayar.",
+  "Harga di bawah Rp15.000 dan masih bisa edit sendiri sebentar setelah bayar.",
+  "Bisa edit sendiri setelah bayar (minimal beberapa hari) dan harganya turun ke sekitar Rp15.000.",
+  "Lihat contoh yang terbuka cepat dan ringan di HP sinyal lemah tanpa ribet, plus bisa jadi dalam 5 menit dari foto-foto di galeriku, dan masih bisa benerin typo sebentar setelah bayar.",
+  "Kalau ada ucapan yang harganya sekitar Rp10.000 atau promo pelajar, aku mau coba sekali buat momen penting kayak ulang tahun pacar.",
+  "Harga ucapan paling murah sekitar Rp10.000 sampai Rp15.000, atau ada promo diskon untuk pembelian pertama.",
+  "Kalau ada ucapan sederhana harga Rp10.000-an atau promo pelajar, sambil tetap ada fitur yang nggak ada di Lovio kayak kartu gosok atau tiup lilin.",
+  "Kalau harganya sekitar Rp10.000 atau ada promo tanggal kembar, mungkin aku coba sekali buat ulang tahun pacar.",
+  "Ada template dasar Rp10.000-15.000 atau promo/diskon pelajar, plus bisa edit sendiri setelah bayar kalau salah ketik.",
+  "Kalau undangan aqiqah/syukuran bisa Rp10.000 sampai Rp15.000 dan ada versi gambar atau teks biasa yang bisa langsung dibuka orang tua tanpa klik link.",
+  "Harga sekitar Rp10.000 sampai Rp15.000 untuk template ucapan yang simpel, dan masih bisa diedit sebentar setelah bayar kalau ada salah ketik.",
+  "Kalau ada template ucapan di kisaran Rp10.000 atau promo tanggal kembar, mungkin aku coba sekali buat ulang tahun pacar.",
+  "Bisa revisi sendiri sesudah bayar, minimal beberapa hari setelah dikirim seperti undangannya, tanpa harus bayar lagi.",
+  "Kalau ada fitur yang Lovio nggak punya dan lagi viral di TikTok, misalnya kartu gosok atau tiup lilin, dengan harga di bawah Rp20.000 pas ada momen ulang tahun pacar.",
+  "Kalau ada momen besar kayak ulang tahun pasangan atau anniversary dan harganya sekitar Rp10.000-15.000, mungkin aku coba sekali.",
+  "Teman saya kirim ucapan dari Kitoo dan saya lihat sendiri hasilnya lebih keren dari Lovio, plus ada bukti link langsung aktif begitu QRIS dibayar tanpa nunggu admin.",
+  "Boleh revisi isi ucapan sendiri minimal sekali atau dalam 24 jam setelah bayar, dan pembayaran QRIS langsung otomatis aktif tanpa nunggu admin.",
+  "Harga undangan pernikahan turun ke sekitar Rp15.000 sampai Rp20.000, atau ada fitur yang benar-benar tidak ada di situs murah yang saya pakai.",
+  "Kalau ada template ucapan sederhana harga Rp10.000 sampai Rp15.000 yang tetap bisa pakai foto dan musik, dan bisa langsung jadi dalam lima menit.",
+  "Kalau pas lagi mau adain aqiqah atau syukuran dan Kitoo lebih murah dari Lovio dengan tampilan yang gampang dibuka orang tua (misal ada versi gambar/PDF yang bisa dicetak sekalian), plus ada testimoni orang yang sudah pakai.",
+  "Ada acara keluarga dekat, misalnya aqiqah atau syukuran, dan saya bisa kasih contoh link ke orang tua untuk memastikan mereka bisa membukanya di HP mereka tanpa ribet.",
+  "Harga sekitar Rp10.000 untuk ucapan momen spesial seperti nembak atau anniversary.",
+  "Kalau ada template unik yang nggak ada di Lovio, misal kartu gosok atau tiup lilin yang viral di TikTok, dengan harga promo sekitar Rp15.000 dan masih bisa edit setelah bayar.",
+  "Kalau ada contoh nyata yang kebuka cepat di HP sinyal lemah dan masih bisa diedit sekali setelah bayar, plus harganya lebih murah dari yang biasa kupakai.",
+  "Kalau masih bisa diedit sendiri beberapa waktu setelah bayar dan harganya sekitar Rp10.000-an, mungkin aku coba sekali buat ulang tahun pacar.",
+  "Harga sekitar Rp10.000-Rp15.000 pas ulang tahun pacar atau anniversary, supaya terasa spesial tapi nggak bikin dompet kosong.",
+  "Kalau undangan aqiqah atau syukuran ada yang Rp15.000 atau lebih murah, atau ada promo yang bikin harganya setara situs lain.",
+  "Harga jelas lebih murah dari Lovio untuk undangan aqiqah atau khitanan, misalnya promo tanggal kembar di bawah Rp35.000, plus tampilan yang gampang dibuka orang tua.",
+  "Jaminan tertulis kalau pembayaran QRIS dikonfirmasi otomatis dan link langsung aktif dalam hitungan detik, plus testimoni atau review asli dari orang yang sudah pakai.",
+  "Harga turun ke sekitar Rp10.000-15.000 untuk ucapan biasa, atau ada promo pertama kali di kisaran itu, dan link-nya terbukti ringan dibuka di sinyal lemah.",
+  "Kalau ada momen spesial kayak anniversary atau mau nembak dan harganya promo sekitar Rp10.000-Rp15.000, misalnya pas tanggal kembar, mungkin aku coba sekali.",
+  "Ada jaminan bisa revisi sendiri, minimal sekali atau dalam 24 jam setelah bayar, untuk ucapan juga, ditambah diskon tanggal kembar seperti di Shopee.",
+  "Kalau ada versi murah sekitar Rp10.000 untuk momen yang benar-benar spesial, misalnya anniversary atau nembak, dan aku lihat sendiri temanku dapat ucapan begini terus heboh di story.",
+  "Ada template ucapan sederhana di kisaran Rp10.000 plus bukti testimoni atau review pembeli lain supaya aku yakin aman bayar.",
+  "Harga di bawah Rp15.000 untuk momen besar kayak ulang tahun atau anniversary pacar, plus bisa edit sendiri setelah bayar kalau ada typo.",
+  "Harga sekitar Rp10.000 untuk momen penting kayak anniversary, plus masih bisa edit sebentar setelah bayar.",
+  "Undangan aqiqah/syukuran sederhana di kisaran Rp15.000 dengan revisi tetap bisa, atau ada promo diskon yang bikin harganya dekat dengan situs murah lain.",
+  "Ada versi ringan yang murah sekitar Rp10.000-15.000 dan cepat kebuka di sinyal lemah, plus aku lihat langsung di TikTok kalau penerimanya beneran seneng dan nggak ribet bukanya.",
+  "Kalau setelah bayar aku tetap bisa revisi isi ucapan sendiri, minimal beberapa hari atau beberapa kali, seperti undangannya.",
+  "Kalau pas ada ulang tahun atau anniversary pacar dan ada promo tanggal kembar yang bikin harganya di bawah Rp20.000, plus boleh revisi sekali setelah bayar.",
+  "Kalau saya sedang menyiapkan aqiqah atau khitanan anak bulan ini dan bisa lihat contoh hasil jadi yang ringan dibuka, dengan jaminan revisi otomatis tampil di link yang sudah tersebar, saya mau bayar sekitar Rp39.000-49.000.",
+  "Kalau ada momen spesial besar seperti anniversary dan harganya sekitar Rp15.000, mungkin aku coba sekali buat pasangan.",
+  "Harga undangan aqiqah/syukuran di kisaran Rp10.000 sampai Rp15.000 dan halamannya ringan dibuka di HP sinyal lemah.",
+  "Kalau selain link juga bisa dapat gambar/poster undangan siap kirim untuk yang tua-tua, dengan harga sekitar Rp15.000 saat promo tanggal kembar.",
+  "Harga di bawah Rp15.000 atau ada momen besar kayak anniversary/wisuda pacar, dan pratinjaunya bikin aku yakin dia bakal terharu banget.",
+  "Kalau ada momen besar kayak anniversary atau wisuda dan harganya di bawah Rp15.000, plus link-nya ringan dibuka di sinyal lemah dan masih bisa diedit setelah bayar.",
+  "Ada ucapan yang harganya Rp10.000-an atau promo diskon pelajar buat pembelian pertama.",
+  "Kalau ada ucapan yang harganya Rp10.000-an, atau paket beberapa ucapan sekaligus yang jatuhnya murah per ucapan.",
+  "Harga undangan aqiqah/syukuran di bawah Rp15.000 atau ada promo yang bikin setara dengan situs termurah.",
+  "Bisa edit sendiri minimal sehari setelah bayar, plus harga di bawah Rp20 ribu buat pelajar.",
+  "Kalau harga undangan aqiqah atau syukuran sekitar Rp15.000 dan bisa jadi dalam 10 menit dari HP malam itu juga, saya mungkin coba karena praktis.",
+  "Kalau setelah bayar aku juga dapat versi gambar/poster yang bisa langsung dikirim dan di-screenshot di WA, jadi link-nya cuma pelengkap untuk RSVP dan amplop digital."
+ ],
+ "purchases_first_month_per_buyer": 1.0,
+ "price_answers": 100
+}

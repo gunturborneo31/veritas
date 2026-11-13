@@ -1,0 +1,13 @@
+{
+  "id": "P021",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "habit",
+  "reason": "Saya sudah pernah pakai Lovio dan hasilnya cukup oke, jadi tidak ada alasan kuat buat pindah ke situs yang belum saya kenal. Fiturnya kedengarannya mirip-mirip saja.",
+  "objection": "Begitu bayar, ucapannya dikunci dan tidak bisa saya edit sendiri. Kalau ada salah ketik nama atau tanggal, malu kalau sudah terkirim, dan saya tidak tahu harus minta tolong ke siapa.",
+  "would_change_my_mind": "Kalau setelah bayar masih bisa edit sendiri minimal beberapa jam atau sampai link pertama kali dibuka penerima.",
+  "price_too_cheap": 7000,
+  "price_cheap": 15000,
+  "price_expensive": 35000,
+  "price_too_expensive": 55000
+}

@@ -1,0 +1,13 @@
+{
+  "id": "P054",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "price",
+  "reason": "Undangan nikah Rp79.000 itu kemahalan buat saya, saya tahu ada situs undangan digital yang cuma Rp5.000 sampai Rp10.000, dan sisanya cukup kirim pesan atau video lewat WhatsApp gratis. Biaya nikah sudah banyak, ini pos yang paling gampang dihemat.",
+  "objection": "Harganya beberapa kali lipat dari situs lain yang fungsinya mirip, padahal ujungnya cuma link yang dikirim di WhatsApp.",
+  "would_change_my_mind": "Harga undangan pernikahan turun ke sekitar Rp15.000 sampai Rp20.000, atau ada fitur yang benar-benar tidak ada di situs murah yang saya pakai.",
+  "price_too_cheap": 3000,
+  "price_cheap": 10000,
+  "price_expensive": 25000,
+  "price_too_expensive": 45000
+}

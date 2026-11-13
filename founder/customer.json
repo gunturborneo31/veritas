@@ -1,0 +1,98 @@
+{
+  "business": "Kitoo (kitoo.my.id), web ucapan digital interaktif dan undangan acara digital, Indonesia",
+  "target": "Orang Indonesia 18 sampai 40 tahun, belanja lewat HP, yang mau memberi ucapan personal untuk pacar/keluarga/sahabat atau menyebar undangan acara keluarga lewat WhatsApp",
+  "where": "Indonesia, online lewat HP; link dibagikan lewat WhatsApp dan Instagram",
+  "age": [
+    18,
+    40
+  ],
+  "currency_note": "income adalah penghasilan atau uang saku per tahun dalam Rupiah",
+  "segments": [
+    {
+      "name": "Mahasiswa atau pelajar SMA akhir, beli ucapan untuk pacar atau sahabat",
+      "share": 0.35,
+      "income": [
+        12000000,
+        36000000
+      ]
+    },
+    {
+      "name": "Pekerja muda, beli ucapan untuk pasangan, orang tua atau teman",
+      "share": 0.3,
+      "income": [
+        48000000,
+        120000000
+      ]
+    },
+    {
+      "name": "Calon pengantin yang menyiapkan lamaran atau pernikahan",
+      "share": 0.15,
+      "income": [
+        60000000,
+        180000000
+      ]
+    },
+    {
+      "name": "Orang tua muda yang mengadakan aqiqah, khitanan, pengajian atau syukuran",
+      "share": 0.2,
+      "income": [
+        48000000,
+        144000000
+      ]
+    }
+  ],
+  "behaviours": [
+    {
+      "name": "Mepet waktu",
+      "share": 0.2,
+      "how": "Baru ingat H-1 atau malam itu juga, butuh yang langsung jadi dan langsung bisa dikirim."
+    },
+    {
+      "name": "Pemburu harga",
+      "share": 0.18,
+      "how": "Membandingkan beberapa situs dan memilih yang paling murah, tahu ada yang Rp5.000 sampai Rp10.000."
+    },
+    {
+      "name": "Cukup yang gratis",
+      "share": 0.15,
+      "how": "Biasanya kirim pesan, foto atau video lewat WhatsApp atau Canva, jarang membayar untuk ucapan."
+    },
+    {
+      "name": "Ikut tren TikTok",
+      "share": 0.15,
+      "how": "Tahu kado digital dari video TikTok atau Reels dan ingin bikin yang mirip."
+    },
+    {
+      "name": "Perfeksionis",
+      "share": 0.12,
+      "how": "Takut salah ketik nama atau tanggal, ingin bisa mengecek dan merevisi sebelum dan sesudah dikirim."
+    },
+    {
+      "name": "Sudah pakai pesaing",
+      "share": 0.1,
+      "how": "Pernah beli di Lovio atau situs undangan lain dan cukup puas."
+    },
+    {
+      "name": "Keputusan bersama keluarga",
+      "share": 0.1,
+      "how": "Untuk acara, orang tua atau pasangan ikut menentukan, dan kerabat tua harus bisa membuka undangannya."
+    }
+  ],
+  "objections": [
+    "Ada yang Rp5.000 sampai Rp10.000 atau bahkan gratis, kenapa harus bayar Rp25.000 sampai Rp35.000",
+    "Ucapan tidak bisa saya edit sendiri setelah bayar, kalau salah ketik bagaimana",
+    "Cukup kirim pesan atau video di WhatsApp, gratis",
+    "Belum pernah dengar Kitoo, aman tidak bayar ke situs baru, dan bagaimana kalau pembayaran harus menunggu konfirmasi admin",
+    "Penerima belum tentu mau repot buka link, masukkan PIN atau main game, apalagi di HP dengan sinyal lemah",
+    "Untuk undangan nikah ada paket gratis atau yang lebih lengkap di situs lain",
+    "Kerabat yang sudah tua mungkin bingung membuka undangan berupa link"
+  ],
+  "habits": [
+    "kamu buka TikTok dan Instagram setiap hari di HP Android",
+    "kamu bayar hampir semua belanja online lewat QRIS atau e-wallet",
+    "kamu aktif di beberapa grup WhatsApp keluarga dan teman",
+    "kamu sering belanja di Shopee saat tanggal kembar",
+    "kamu kuota internetnya sering menipis di akhir bulan",
+    "kamu suka menyimpan screenshot momen penting"
+  ]
+}

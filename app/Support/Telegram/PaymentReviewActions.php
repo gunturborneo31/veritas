@@ -94,7 +94,7 @@ class PaymentReviewActions
         }
 
         $this->bot->answerCallback($callbackId, '✅ Dikonfirmasi — kartu pembeli sudah terbit.');
-        $this->bot->editMessage($message, $this->originalText($message)."\n\n✅ DIKONFIRMASI • ".now()->format('d/m/Y H:i'));
+        $this->bot->editMessage($message, $this->originalText($message)."\n\n✅ DIKONFIRMASI • ".now()->format('d/m/Y H:i').self::whatsappNote($this->confirmPayment->whatsappSent));
     }
 
     /**
@@ -123,7 +123,19 @@ class PaymentReviewActions
         }
 
         $this->bot->answerCallback($callbackId, '❌ Ditolak — pembeli diminta mengirim bukti lagi.');
-        $this->bot->editMessage($message, $this->originalText($message)."\n\n❌ DITOLAK • ".now()->format('d/m/Y H:i'));
+        $this->bot->editMessage($message, $this->originalText($message)."\n\n❌ DITOLAK • ".now()->format('d/m/Y H:i').self::whatsappNote($this->rejectPayment->whatsappSent));
+    }
+
+    /**
+     * Keterangan kabar WA ke pembeli: terkirim, gagal (cek token Fonnte / perangkat), atau tidak ada nomor.
+     */
+    private static function whatsappNote(?bool $sent): string
+    {
+        return match ($sent) {
+            true => "\n💬 Kabar WA terkirim ke pembeli.",
+            false => "\n⚠️ Kabar WA gagal terkirim (cek token & perangkat Fonnte). Kabari pembeli manual, ya.",
+            null => '',
+        };
     }
 
     /**

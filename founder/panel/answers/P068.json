@@ -1,0 +1,13 @@
+{
+  "id": "P068",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "trust",
+  "reason": "Biasanya aku baru ingat malam sebelumnya, jadi nggak bisa ambil risiko bayar ke situs yang belum pernah kudengar lalu linknya nggak langsung jadi. Mending kirim foto plus chat panjang di WA, gratis dan pasti sampai.",
+  "objection": "Kitoo masih asing buatku, dan nggak ditulis apakah setelah scan QRIS linknya langsung aktif atau harus nunggu dicek admin. Kalau nunggu, ucapanku bisa telat. Isinya juga dikunci setelah bayar, jadi kalau ada salah ketik aku nggak bisa benerin sendiri.",
+  "would_change_my_mind": "Jaminan tertulis kalau pembayaran QRIS dikonfirmasi otomatis dan link langsung aktif dalam hitungan detik, plus testimoni atau review asli dari orang yang sudah pakai.",
+  "price_too_cheap": 5000,
+  "price_cheap": 12000,
+  "price_expensive": 25000,
+  "price_too_expensive": 40000
+}

@@ -1,0 +1,13 @@
+{
+  "id": "P052",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "habit",
+  "reason": "Saya sudah pernah pakai Lovio dan hasilnya oke, jadi buat apa pindah ke situs yang belum pernah saya dengar. Uang saya pas-pasan, Rp30 ribuan lebih aman saya keluarkan di tempat yang sudah terbukti.",
+  "objection": "Belum pernah dengar Kitoo, takut sudah bayar QRIS tapi linknya tidak jadi atau harus nunggu konfirmasi admin, padahal ucapannya mau dikirim pas momennya. Ditambah isinya tidak bisa diedit setelah bayar, kalau ada typo ya sudah.",
+  "would_change_my_mind": "Teman saya kirim ucapan dari Kitoo dan saya lihat sendiri hasilnya lebih keren dari Lovio, plus ada bukti link langsung aktif begitu QRIS dibayar tanpa nunggu admin.",
+  "price_too_cheap": 5000,
+  "price_cheap": 15000,
+  "price_expensive": 30000,
+  "price_too_expensive": 50000
+}

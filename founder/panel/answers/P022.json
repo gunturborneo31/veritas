@@ -1,0 +1,13 @@
+{
+  "id": "P022",
+  "buys": false,
+  "purchases_first_month": 0,
+  "reason_code": "price",
+  "reason": "Untuk undangan nikah saya tahu ada paket gratis di situs lain, dan karena saya ngurusnya mepet, saya bakal pakai yang sudah pernah saya lihat daripada coba yang baru dan bayar Rp79.000. Ucapan-ucapan lainnya saya nggak butuh sekarang.",
+  "objection": "Kenapa harus bayar Rp79.000 kalau undangan digital gratis ada di mana-mana? Saya juga belum kenal Kitoo, takut link-nya error pas sudah dikirim ke ratusan tamu.",
+  "would_change_my_mind": "Kalau saya coba pratinjaunya dan ternyata bisa jadi dalam beberapa menit, jauh lebih rapi dari yang gratis, dan ada bukti banyak pasangan lain sudah pakai tanpa masalah.",
+  "price_too_cheap": 10000,
+  "price_cheap": 35000,
+  "price_expensive": 79000,
+  "price_too_expensive": 150000
+}
