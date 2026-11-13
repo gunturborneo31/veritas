@@ -43,7 +43,6 @@ class ManualPaymentTest extends TestCase
             'kartukita.payment.manual.merchant_name' => 'KartuKita Official',
             'services.telegram.bot_token' => null,
             'services.telegram.chat_id' => null,
-            'services.fonnte.token' => null,
             'kartukita.media.disk' => 'local',
         ]);
 
@@ -302,55 +301,49 @@ class ManualPaymentTest extends TestCase
         $this->assertSame(OrderStatus::Menunggu, $order->refresh()->status);
     }
 
-    public function test_confirmation_sends_order_details_to_the_buyer_whatsapp_through_fonnte(): void
+    public function test_admin_page_offers_a_whatsapp_link_with_order_details_after_confirmation(): void
     {
         Notification::fake();
-        config(['services.fonnte.token' => 'token-fonnte']);
-        Http::fake(['api.fonnte.com/*' => Http::response(['status' => true])]);
+        $admin = User::factory()->admin()->create();
         $order = $this->pendingOrderWithManualPayment();
         $this->actingAs($order->user)->post(route('orders.manual.claim', $order), [...$this->proof(), 'whatsapp' => '081234567890']);
 
-        $this->actingAs(User::factory()->admin()->create())->post(route('admin.orders.confirm', $order));
+        $this->actingAs($admin)->post(route('admin.orders.confirm', $order));
 
-        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://api.fonnte.com/send'
-            && $request->hasHeader('Authorization', 'token-fonnte')
-            && $request['target'] === '6281234567890'
-            && str_contains($request['message'], 'DIKONFIRMASI')
-            && str_contains($request['message'], $order->code)
-            && str_contains($request['message'], route('recipient.show', $order->greeting->refresh()->slug)));
+        $this->actingAs($admin)->get(route('admin.orders.show', $order))->assertInertia(fn (Assert $page) => $page
+            ->where('order.buyer_whatsapp.number', '081234567890')
+            ->where('order.buyer_whatsapp.url', fn (string $url): bool => str_starts_with($url, 'https://wa.me/6281234567890?text=')
+                && str_contains(rawurldecode($url), 'DIKONFIRMASI')
+                && str_contains(rawurldecode($url), $order->code)
+                && str_contains(rawurldecode($url), route('recipient.show', $order->greeting->refresh()->slug))));
     }
 
-    public function test_rejection_tells_the_buyer_the_reason_on_whatsapp(): void
+    public function test_admin_page_offers_a_whatsapp_link_with_the_rejection_reason(): void
     {
         Notification::fake();
-        config(['services.fonnte.token' => 'token-fonnte']);
-        Http::fake(['api.fonnte.com/*' => Http::response(['status' => true])]);
+        $admin = User::factory()->admin()->create();
         $order = $this->pendingOrderWithManualPayment();
         $this->actingAs($order->user)->post(route('orders.manual.claim', $order), [...$this->proof(), 'whatsapp' => '081234567890']);
 
-        $this->actingAs(User::factory()->admin()->create())->post(route('admin.orders.reject', $order), ['note' => 'Dana belum masuk']);
+        $this->actingAs($admin)->post(route('admin.orders.reject', $order), ['note' => 'Dana belum masuk']);
 
-        Http::assertSent(fn (Request $request): bool => str_contains($request['message'], 'Dana belum masuk')
-            && str_contains($request['message'], route('orders.show', $order)));
+        $this->actingAs($admin)->get(route('admin.orders.show', $order))->assertInertia(fn (Assert $page) => $page
+            ->where('order.buyer_whatsapp.url', fn (string $url): bool => str_contains(rawurldecode($url), 'Dana belum masuk')
+                && str_contains(rawurldecode($url), route('orders.show', $order))));
     }
 
-    public function test_no_whatsapp_is_sent_without_a_number_and_a_fonnte_failure_does_not_block_confirmation(): void
+    public function test_no_whatsapp_link_when_the_buyer_left_no_number(): void
     {
         Notification::fake();
-        config(['services.fonnte.token' => 'token-fonnte']);
-        Http::fake(['api.fonnte.com/*' => Http::response(['status' => false, 'reason' => 'device disconnected'])]);
+        $admin = User::factory()->admin()->create();
+        $order = $this->pendingOrderWithManualPayment();
+        $order->user->update(['phone' => null]);
+        $this->actingAs($order->user)->post(route('orders.manual.claim', $order), $this->proof());
 
-        $withoutNumber = $this->pendingOrderWithManualPayment();
-        $this->actingAs($withoutNumber->user)->post(route('orders.manual.claim', $withoutNumber), $this->proof());
-        $this->actingAs(User::factory()->admin()->create())->post(route('admin.orders.confirm', $withoutNumber));
-        Http::assertNothingSent();
+        $this->actingAs($admin)->post(route('admin.orders.confirm', $order));
 
-        $withNumber = $this->pendingOrderWithManualPayment();
-        $this->actingAs($withNumber->user)->post(route('orders.manual.claim', $withNumber), [...$this->proof(), 'whatsapp' => '081234567890']);
-        $this->actingAs(User::factory()->admin()->create())->post(route('admin.orders.confirm', $withNumber));
-
-        $this->assertSame(OrderStatus::Lunas, $withNumber->refresh()->status);
-        Http::assertSentCount(1);
+        $this->assertSame(OrderStatus::Lunas, $order->refresh()->status);
+        $this->actingAs($admin)->get(route('admin.orders.show', $order))->assertInertia(fn (Assert $page) => $page->where('order.buyer_whatsapp', null));
     }
 
     private function proof(): array

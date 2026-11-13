@@ -6,6 +6,7 @@ use App\Actions\Orders\ConfirmPayment;
 use App\Actions\Orders\RejectPayment;
 use App\Models\Order;
 use App\Models\User;
+use App\Support\WhatsApp\OrderWhatsAppMessage;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -23,6 +24,7 @@ class PaymentReviewActions
         private TelegramBot $bot,
         private ConfirmPayment $confirmPayment,
         private RejectPayment $rejectPayment,
+        private OrderWhatsAppMessage $whatsapp,
     ) {}
 
     /**
@@ -93,8 +95,14 @@ class PaymentReviewActions
             return;
         }
 
+        $whatsappLink = $this->whatsapp->confirmedLink($order->refresh());
+
         $this->bot->answerCallback($callbackId, '✅ Dikonfirmasi — kartu pembeli sudah terbit.');
-        $this->bot->editMessage($message, $this->originalText($message)."\n\n✅ DIKONFIRMASI • ".now()->format('d/m/Y H:i').self::whatsappNote($this->confirmPayment->whatsappSent));
+        $this->bot->editMessage(
+            $message,
+            $this->originalText($message)."\n\n✅ DIKONFIRMASI • ".now()->format('d/m/Y H:i').self::whatsappNote($whatsappLink),
+            self::whatsappButton($whatsappLink, '📲 Kirim WA konfirmasi ke pembeli'),
+        );
     }
 
     /**
@@ -122,20 +130,29 @@ class PaymentReviewActions
             return;
         }
 
+        $whatsappLink = $this->whatsapp->rejectedLink($order->refresh(), self::REJECTION_NOTE);
+
         $this->bot->answerCallback($callbackId, '❌ Ditolak — pembeli diminta mengirim bukti lagi.');
-        $this->bot->editMessage($message, $this->originalText($message)."\n\n❌ DITOLAK • ".now()->format('d/m/Y H:i').self::whatsappNote($this->rejectPayment->whatsappSent));
+        $this->bot->editMessage(
+            $message,
+            $this->originalText($message)."\n\n❌ DITOLAK • ".now()->format('d/m/Y H:i').self::whatsappNote($whatsappLink),
+            self::whatsappButton($whatsappLink, '📲 Kirim WA alasan ke pembeli'),
+        );
+    }
+
+    private static function whatsappNote(?string $link): string
+    {
+        return $link === null ? '' : "\n👇 Ketuk tombol di bawah untuk mengabari pembeli lewat WhatsApp (pesan sudah terisi).";
     }
 
     /**
-     * Keterangan kabar WA ke pembeli: terkirim, gagal (cek token Fonnte / perangkat), atau tidak ada nomor.
+     * Tombol wa.me: membuka WhatsApp admin ke nomor pembeli dengan pesan siap kirim.
+     *
+     * @return list<list<array<string, string>>>
      */
-    private static function whatsappNote(?bool $sent): string
+    private static function whatsappButton(?string $link, string $label): array
     {
-        return match ($sent) {
-            true => "\n💬 Kabar WA terkirim ke pembeli.",
-            false => "\n⚠️ Kabar WA gagal terkirim (cek token & perangkat Fonnte). Kabari pembeli manual, ya.",
-            null => '',
-        };
+        return $link === null ? [] : [[['text' => $label, 'url' => $link]]];
     }
 
     /**

@@ -77,6 +77,28 @@ class TelegramPaymentReviewTest extends TestCase
             && $request['reply_markup'] === json_encode(['inline_keyboard' => []]));
     }
 
+    public function test_confirmation_offers_a_whatsapp_button_with_the_order_details_when_the_buyer_left_a_number(): void
+    {
+        User::factory()->admin()->create();
+        $order = $this->orderAwaitingReview();
+        $order->update(['notify_whatsapp' => '6281234567890']);
+
+        $this->webhook($this->tap('pay:ok', $order))->assertOk();
+
+        Http::assertSent(function (Request $request) use ($order): bool {
+            if (! str_ends_with($request->url(), '/editMessageCaption')) {
+                return false;
+            }
+
+            $button = json_decode($request['reply_markup'], true)['inline_keyboard'][0][0] ?? [];
+            parse_str((string) parse_url($button['url'] ?? '', PHP_URL_QUERY), $query);
+
+            return str_starts_with($button['url'] ?? '', 'https://wa.me/6281234567890?text=')
+                && str_contains($query['text'] ?? '', 'DIKONFIRMASI')
+                && str_contains($query['text'] ?? '', $order->code);
+        });
+    }
+
     public function test_buttons_from_another_chat_are_ignored(): void
     {
         User::factory()->admin()->create();

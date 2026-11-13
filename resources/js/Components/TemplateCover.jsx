@@ -113,7 +113,7 @@ export default function TemplateCover({ template, size = 'md', className = '' })
     const theme = { ...FALLBACK_THEME, ...(template.theme ?? {}) };
 
     if (template.cover_url) {
-        return <img src={template.cover_url} alt={template.name} className={`h-full w-full object-cover ${className}`} />;
+        return <img src={template.cover_url} alt={template.name} loading="lazy" decoding="async" className={`h-full w-full object-cover ${className}`} />;
     }
 
     const illustrationSize = { sm: 'w-[88%]', md: 'w-[78%]', lg: 'w-[70%]' }[size];

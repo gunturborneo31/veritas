@@ -79,6 +79,7 @@ class CheckoutController extends Controller
                 'suggestion' => CustomSlug::normalize($greeting->isInvitation() ? $greeting->sender_name : "untuk-{$greeting->recipient_name}"),
             ],
             'isManualPayment' => $manualQris->isEnabled(),
+            'manualQris' => $manualQris->isEnabled() ? ['image_url' => $manualQris->imageUrl(), 'merchant_name' => $manualQris->merchantName()] : null,
             'canPublishFree' => (bool) $request->user()?->is_admin && $greeting->isInvitation(),
         ]);
     }

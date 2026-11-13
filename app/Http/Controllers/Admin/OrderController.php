@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Support\Greetings\GreetingPresenter;
+use App\Support\WhatsApp\OrderWhatsAppMessage;
+use App\Support\WhatsApp\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -44,13 +47,27 @@ class OrderController extends Controller
         ]);
     }
 
-    public function show(Order $order, GreetingPresenter $presenter): Response
+    public function show(Order $order, GreetingPresenter $presenter, OrderWhatsAppMessage $whatsapp): Response
     {
         $order->load('user', 'payments.reviewer', 'greeting.template', 'greeting.gate');
+        $latestPayment = $order->payments->sortByDesc('id')->first();
+
+        // Tombol kabar WA ke pembeli (bila mengisi nomor): setelah lunas, atau setelah bukti terakhir ditolak.
+        $buyerWhatsapp = match (true) {
+            $order->status === OrderStatus::Lunas => ['label' => 'Kirim WA konfirmasi ke pembeli', 'url' => $whatsapp->confirmedLink($order)],
+            $latestPayment?->status === PaymentStatus::Ditolak && filled($latestPayment->review_note) => [
+                'label' => 'Kirim WA alasan penolakan ke pembeli',
+                'url' => $whatsapp->rejectedLink($order, $latestPayment->review_note),
+            ],
+            default => null,
+        };
 
         return Inertia::render('Admin/Orders/Show', [
             'order' => [
                 'code' => $order->code,
+                'buyer_whatsapp' => $buyerWhatsapp !== null && $buyerWhatsapp['url'] !== null
+                    ? [...$buyerWhatsapp, 'number' => PhoneNumber::display($order->notify_whatsapp)]
+                    : null,
                 'status' => $order->status->value,
                 'status_label' => $order->status->label(),
                 'amount' => $order->amount,

@@ -102,6 +102,23 @@ export default function Show({ order, greeting }) {
                         </section>
                     ))}
 
+                    {order.buyer_whatsapp && (
+                        <section className="space-y-2 rounded-2xl bg-white p-5 shadow-card">
+                            <h3 className="text-headline-sm">Kabari pembeli</h3>
+                            <p className="text-body-sm text-on-surface-variant">
+                                Pembeli minta dikabari lewat WhatsApp {order.buyer_whatsapp.number}. Tombol ini membuka WhatsApp-mu dengan pesan yang sudah terisi, tinggal kirim.
+                            </p>
+                            <a
+                                href={order.buyer_whatsapp.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex w-full items-center justify-center gap-2 rounded-full bg-whatsapp py-3 text-label-lg text-white"
+                            >
+                                📲 {order.buyer_whatsapp.label}
+                            </a>
+                        </section>
+                    )}
+
                     {isReviewable && (
                         <section className="space-y-3 rounded-2xl bg-white p-5 shadow-card">
                             <h3 className="text-headline-sm">Verifikasi</h3>

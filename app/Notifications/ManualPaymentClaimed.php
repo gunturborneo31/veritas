@@ -61,7 +61,7 @@ class ManualPaymentClaimed extends Notification implements ShouldQueue
             ...(filled($this->payment->sender_account_name) ? ["A.n. pengirim: {$this->payment->sender_account_name}"] : []),
             "Produk: {$order->greeting->template->name}",
             ...($this->payment->proof_path === null ? ['', '📱 Bukti dikirim lewat WhatsApp'.(filled($order->user->phone) ? " dari {$order->user->phone}" : '').'.'] : []),
-            ...(filled($order->notify_whatsapp) ? ['', '💬 Kabar konfirmasi otomatis dikirim ke WA '.PhoneNumber::display($order->notify_whatsapp).'.'] : []),
+            ...(filled($order->notify_whatsapp) ? ['', '💬 Pembeli minta dikabari lewat WA '.PhoneNumber::display($order->notify_whatsapp).'. Tombol kirim WA muncul setelah kamu memilih.'] : []),
             '',
             'Cocokkan dengan mutasi QRIS, lalu pilih tombol di bawah.',
         ];

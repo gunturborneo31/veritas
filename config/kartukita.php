@@ -140,13 +140,13 @@ return [
         | pembeli membayar nominal unik (harga + 3 digit), menekan "Saya sudah bayar", admin
         | mendapat notifikasi lalu cukup menekan Konfirmasi. Dipakai selama API QRIS belum aktif.
         */
-        'mode' => env('KARTUKITA_PAYMENT_MODE', 'qris'),
+        'mode' => env('KARTUKITA_PAYMENT_MODE', 'manual'),
 
         'manual' => [
             // Gambar QRIS statis dari dashboard merchant, relatif terhadap folder public/.
-            'qris_image' => env('KARTUKITA_MANUAL_QRIS_IMAGE', 'images/qris-statis.jpg'),
+            'qris_image' => env('KARTUKITA_MANUAL_QRIS_IMAGE', 'qr-veritas.jpeg'),
             // Harus sama dengan nama yang tertera di QRIS agar pembeli yakin tujuan pembayarannya benar.
-            'merchant_name' => env('KARTUKITA_MANUAL_MERCHANT_NAME', 'VERITAS WEB DEVELOPER'),
+            'merchant_name' => env('KARTUKITA_MANUAL_MERCHANT_NAME', 'KEDAI AK'),
             'proof_max_kb' => 5120,
             // `upload` = pembeli mengunggah bukti di web. `whatsapp` = pembeli mengirim bukti ke
             // KARTUKITA_SUPPORT_WHATSAPP (bila nomor belum diisi, otomatis kembali ke `upload`).

@@ -70,7 +70,7 @@ function AccountFields({ form }) {
 /**
  * Langkah 5 — Ringkasan & Bayar. Harga ditampilkan dari server; browser tidak mengirim harga.
  */
-export default function Show({ greeting, template, quote, missing, referralHint, link, needsAccount = false, isManualPayment = false, canPublishFree = false }) {
+export default function Show({ greeting, template, quote, missing, referralHint, link, needsAccount = false, isManualPayment = false, manualQris = null, canPublishFree = false }) {
     const form = useForm({ confirm_data: false, slug: link?.slug ?? '', name: '', email: '', phone: '', password: '' });
     const isComplete = missing.length === 0;
     const hasAccountData = !needsAccount || (form.data.name && form.data.email && form.data.phone && form.data.password);
@@ -211,9 +211,22 @@ export default function Show({ greeting, template, quote, missing, referralHint,
                         </div>
                         <p className="pt-2 text-label-sm font-normal text-on-surface-variant">
                             {isManualPayment
-                                ? 'QRIS dan nominal yang harus dibayar muncul setelah pesanan dibuat. Setelah bayar, kirim bukti pembayaran — kartu terbit begitu admin mengonfirmasi.'
+                                ? 'Nominal pas (dengan kode unik) muncul setelah kamu menekan Bayar. Setelah bayar, unggah bukti pembayaran — kartu terbit begitu admin mengonfirmasi.'
                                 : 'QR dengan nominal pas muncul setelah pesanan dibuat. Tidak perlu kirim bukti — kartu terbit otomatis begitu pembayaran masuk.'}
                         </p>
+                        {manualQris && (
+                            <div className="mt-2 flex flex-col items-center gap-1.5 rounded-2xl bg-white p-3">
+                                <img
+                                    src={manualQris.image_url}
+                                    alt={`QRIS ${manualQris.merchant_name}`}
+                                    loading="lazy"
+                                    className="w-full max-w-[260px] rounded-xl object-contain"
+                                />
+                                <span className="text-label-sm text-on-surface-variant">
+                                    Merchant: <strong className="text-on-surface">{manualQris.merchant_name}</strong>
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </section>
                 )}
