@@ -3,6 +3,22 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { dateTime, rupiah } from '@/lib/format';
 import { Head, Link } from '@inertiajs/react';
 
+/**
+ * Keterangan singkat di bawah total bila pesanan memakai kode promo (atau potongan lain, mis. gratis dari admin).
+ */
+function PromoNote({ promo }) {
+    if (!promo) {
+        return null;
+    }
+
+    return (
+        <span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-primary-fixed px-2 py-0.5 text-[11px] font-semibold text-primary">
+            <Icon name="sell" size={12} />
+            {promo.code ? `Promo ${promo.code}` : 'Potongan'} · −{rupiah(promo.discount)}
+        </span>
+    );
+}
+
 export default function Index({ orders, status, statuses }) {
     return (
         <AuthenticatedLayout header={<h2 className="text-headline-sm text-on-surface">Pesanan</h2>}>
@@ -39,6 +55,7 @@ export default function Index({ orders, status, statuses }) {
                                 <p className="truncate text-label-sm text-on-surface-variant">
                                     {order.template_name} • {dateTime(order.created_at)}
                                 </p>
+                                <PromoNote promo={order.promo} />
                             </div>
                             <Icon name="chevron_right" size={22} className="text-on-surface-variant" />
                         </Link>
@@ -70,7 +87,10 @@ export default function Index({ orders, status, statuses }) {
                                     <td className="px-4 py-3">{order.customer}</td>
                                     <td className="px-4 py-3">{order.recipient_name}</td>
                                     <td className="px-4 py-3">{order.template_name}</td>
-                                    <td className="px-4 py-3">{rupiah(order.amount)}</td>
+                                    <td className="px-4 py-3">
+                                        <span className="block">{rupiah(order.amount)}</span>
+                                        <PromoNote promo={order.promo} />
+                                    </td>
                                     <td className="px-4 py-3">{dateTime(order.created_at)}</td>
                                     <td className="px-4 py-3">
                                         <Link href={route('admin.orders.show', order.code)} className="text-primary underline">

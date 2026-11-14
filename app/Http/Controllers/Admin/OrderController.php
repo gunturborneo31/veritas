@@ -25,7 +25,7 @@ class OrderController extends Controller
         $status = $validated['status'] ?? OrderStatus::MenungguKonfirmasi->value;
 
         $orders = Order::query()
-            ->with('user', 'greeting.template')
+            ->with('user', 'greeting.template', 'promoCode:id,code')
             ->where('status', $status)
             ->latest()
             ->paginate(25)
@@ -34,6 +34,8 @@ class OrderController extends Controller
                 'code' => $order->code,
                 'status' => $order->status->label(),
                 'amount' => $order->amount,
+                // Keterangan promo di kolom total: kode yang dipakai (null bila kode sudah dihapus) dan besar potongan.
+                'promo' => $order->discount > 0 ? ['code' => $order->promoCode?->code, 'discount' => $order->discount] : null,
                 'customer' => $order->user->name,
                 'recipient_name' => $order->greeting->recipient_name,
                 'template_name' => $order->greeting->template->name,

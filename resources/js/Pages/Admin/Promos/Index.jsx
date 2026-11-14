@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { dateTime } from '@/lib/format';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 
 const inputClass = 'rounded-xl border-surface-container';
@@ -93,6 +93,9 @@ export default function Index({ promos, referralStats }) {
 
     const actions = (promo) => (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <Link href={route('admin.promos.show', promo.id)} className="font-semibold text-primary underline">
+                Lihat pemakai
+            </Link>
             <button type="button" onClick={() => startEditing(promo)} className="text-primary underline">
                 Ubah
             </button>

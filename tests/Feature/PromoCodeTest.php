@@ -170,6 +170,37 @@ class PromoCodeTest extends TestCase
         $this->assertModelExists($referral);
     }
 
+    public function test_admin_order_list_labels_totals_that_used_a_promo_code(): void
+    {
+        $promo = PromoCode::factory()->create(['code' => 'KITOOGRATIS']);
+        Order::factory()->status(OrderStatus::Lunas)->create(['promo_code_id' => $promo->id, 'discount' => 30000, 'amount' => 0]);
+        Order::factory()->status(OrderStatus::Lunas)->create(['amount' => 29000]);
+
+        $this->actingAs(User::factory()->admin()->create())
+            ->get(route('admin.orders.index', ['status' => OrderStatus::Lunas->value]))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('orders.data', fn ($orders) => collect($orders)->pluck('promo')->filter()->values()->all() === [['code' => 'KITOOGRATIS', 'discount' => 30000]]));
+    }
+
+    public function test_admin_can_see_who_used_a_promo_code(): void
+    {
+        $promo = PromoCode::factory()->create(['code' => 'KITOOGRATIS']);
+        $order = Order::factory()->status(OrderStatus::Lunas)->create(['promo_code_id' => $promo->id, 'discount' => 30000, 'amount' => 0]);
+        Order::factory()->create();
+
+        $this->actingAs(User::factory()->admin()->create())
+            ->get(route('admin.promos.show', $promo))
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/Promos/Show')
+                ->has('orders', 1)
+                ->where('orders.0.code', $order->code)
+                ->where('orders.0.customer.name', $order->user->name)
+                ->where('summary.paid', 1)
+                ->where('summary.total_discount', 30000));
+
+        $this->actingAs(User::factory()->create())->get(route('admin.promos.show', $promo))->assertForbidden();
+    }
+
     private function completeDraft(int $price = 29000): Greeting
     {
         return Greeting::factory()->for($this->createTemplate($price))->create(['content' => $this->completeContent()]);
